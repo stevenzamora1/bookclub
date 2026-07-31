@@ -54,7 +54,7 @@ window.START_YEAR = 2026;
 
 <script type="application/json" id="seed">
 {
-  "club": { "name": "Communist China Book Club", "year": "2026", "zodiac": "Year of the Horse" },
+  "club": { "name": "Communist China Book Club🌭", "year": "2026", "zodiac": "Year of the Horse" },
   "members": [
     { "id": "steven", "name": "Steven", "emoji": "" },
     { "id": "mia", "name": "Mia", "emoji": "🌭" }
@@ -1345,8 +1345,7 @@ const DFLY = '<svg class="dfly" id="dfly" viewBox="0 0 100 60" aria-hidden="true
 function renderRoulette(){
   const q = DATA.backlog || [];
   let html = '<div class="sheet-bar"><button class="btn ghost" data-act="close">← All months</button></div>'+
-    '<h2 class="sheet-month">Next pick</h2>'+
-    '<p class="empty-note">Throw everything either of you wants to read into the pile, then let it decide.</p>';
+    '<h2 class="sheet-month">Next pick</h2>';
 
   html += '<div class="section-label">The wheel</div>';
   if (q.length < 2){
