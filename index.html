@@ -14,25 +14,28 @@
      1. console.firebase.google.com -> Add project (skip Analytics)
      2. Databases & Storage > Firestore Database -> Create database
         Standard edition / Database ID stays (default) / production mode
-     3. Rules tab, paste this, Publish:
+     3. Authentication > Get started > Sign-in method > enable Anonymous
+     4. Firestore > Rules tab, paste this, Publish:
 
           rules_version = '2';
           service cloud.firestore {
             match /databases/{database}/documents {
               match /bookclub/{docId} {
-                allow read: if true;
-                allow create, update: if request.resource.data.months is list
+                allow read: if request.auth != null;
+                allow create, update: if request.auth != null
+                                      && request.resource.data.months is list
                                       && request.resource.data.months.size() > 0;
                 allow delete: if false;
               }
             }
           }
 
-        This blocks deletion outright and rejects empty writes, so nobody
-        can wipe the year. No sign-in needed.
+        Deletion is refused outright, empty writes are rejected, and every
+        request needs a token. The site signs in silently, so neither of
+        you sees a login screen.
 
-     4. Project settings (gear) > Your apps > Web (</>) -> register
-     5. Copy the six values into FIREBASE below
+     5. Project settings (gear) > Your apps > Web (</>) -> register
+     6. Copy the six values into FIREBASE below
 
      Each year lives in its own document: bookclub/2026, bookclub/2027...
      ============================================================= -->
@@ -150,7 +153,8 @@ window.START_YEAR = 2026;
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;
-  line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:6rem}
+  line-height:1.6;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;
+  padding-bottom:calc(5rem + env(safe-area-inset-bottom))}
 body.locked{overflow:hidden}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 :focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
@@ -171,6 +175,28 @@ img{display:block;max-width:100%}
 .chip[aria-pressed=true]{background:var(--c,var(--accent));border-color:var(--c,var(--accent));color:#fff}
 
 .masthead{padding:clamp(2rem,6vw,4rem) 0 1.75rem}
+.sky{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1}
+.sheet-inner{position:relative;z-index:1}
+.sky .df{position:absolute;left:0;width:54px;color:var(--gold);opacity:.15;
+  will-change:transform;animation:drift 58s linear infinite}
+.sky .df ellipse,.sky .df rect,.sky .df path{fill:currentColor}
+.sky .df .w{transform-box:view-box;transform-origin:50px 20px;
+  animation:hoverwing 2.4s ease-in-out infinite}
+.sky .df.a{top:7%}
+.sky .df.b{top:27%;width:34px;opacity:.10;animation-duration:82s;animation-delay:-30s}
+.sky .df.c{top:49%;width:68px;opacity:.13;animation-duration:47s;animation-delay:-14s}
+.sky .df.d{top:68%;width:44px;opacity:.11;animation-duration:71s;animation-delay:-52s}
+.sky .df.e{top:86%;width:58px;opacity:.14;animation-duration:63s;animation-delay:-38s}
+.sky-sheet .df{opacity:.09}
+@keyframes drift{
+  0%  {transform:translate3d(-110px,0,0) rotate(6deg)}
+  25% {transform:translate3d(28vw,-18px,0) rotate(-5deg)}
+  50% {transform:translate3d(54vw,13px,0) rotate(9deg)}
+  75% {transform:translate3d(80vw,-10px,0) rotate(-4deg)}
+  100%{transform:translate3d(calc(100vw + 110px),0,0) rotate(5deg)}
+}
+@keyframes hoverwing{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.7)}}
 .eyebrow{display:flex;align-items:center;gap:.6rem;font-family:var(--mono);font-size:.7rem;
   letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
 .eyebrow .line{flex:1;height:1px;background:var(--rule)}
@@ -393,13 +419,70 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
   font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
   transition:transform .25s ease;max-width:90vw;text-align:center}
 .toast.show{transform:translate(-50%,0)}
-@media (max-width:560px){.bom{grid-template-columns:1fr}.bom .cover-slot{max-width:170px}
-  .who-pick{margin-left:0;width:100%}}
+@media (max-width:640px){
+  .grid{grid-template-columns:repeat(auto-fill,minmax(142px,1fr));gap:.8rem}
+  .card{padding-bottom:.75rem}
+  .card-head{padding:.55rem .6rem .45rem}
+  .card-month{font-size:1.15rem}
+  .card-kind{font-size:.5rem;letter-spacing:.1em}
+  .cover-slot{margin:.6rem .6rem .6rem}
+  .card-body{padding:0 .6rem}
+  .card-title{font-size:.85rem}
+  .card-author{font-size:.6rem}
+  .markrow{font-size:.6rem;padding:.18rem 0}
+  .stamp{font-size:.5rem;padding:.2rem .35rem;letter-spacing:.12em}
+
+  .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+  .btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;
+    text-align:center;padding:.6rem .7rem;font-size:.62rem;letter-spacing:.1em}
+  .chip{min-height:38px;display:inline-flex;align-items:center;padding:.3rem .8rem}
+  .yr{width:40px;height:40px;font-size:1.1rem}
+  .who-pick{margin-left:0;width:100%}
+  .statusbar{gap:.5rem .9rem;font-size:.6rem}
+
+  .masthead{padding:1.75rem 0 1.25rem}
+  .colophon{gap:.3rem 1rem;font-size:.65rem}
+
+  .sheet-inner{padding:.75rem 1rem 5rem}
+  .sheet-bar{padding:.7rem 0 .8rem;margin-bottom:1rem}
+  .bom{grid-template-columns:1fr;gap:1.25rem}
+  .bom .cover-slot{max-width:150px}
+  .section-label{margin:2rem 0 1rem;font-size:.6rem}
+  .scoreline{gap:1.1rem;margin-top:1.1rem}
+  .score .val{font-size:1.6rem}
+  .quote p{font-size:.98rem}
+  .top{grid-template-columns:64px minmax(0,1fr);gap:.8rem}
+  .row{grid-template-columns:1fr 1fr}
+  .cover-row .field{min-width:100%}
+  .cover-row .btn{flex:1}
+
+  /* 16px stops iOS zooming the page when a field is focused */
+  input[type=text],input[type=number],input[type=url],textarea,select{font-size:16px}
+
+  .big-grid{grid-template-columns:1fr 1fr;gap:.7rem}
+  .bignum{padding:.85rem}
+  .duel{grid-template-columns:1fr}
+  .reel{padding:4.25rem 1rem 1.25rem;min-height:7rem}
+  .picks-grid{grid-template-columns:repeat(auto-fill,minmax(64px,1fr))}
+  .panel{padding:1.25rem 1.25rem calc(3rem + env(safe-area-inset-bottom))}
+}
+@media (max-width:380px){
+  .grid{grid-template-columns:1fr 1fr}
+  .toolbar{grid-template-columns:1fr}
+}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;
-  transition-duration:.01ms!important}.card:hover{transform:none}}
+  transition-duration:.01ms!important}.card:hover{transform:none}
+  .sky .df,.sky .df .w{animation:none!important}
+  .sky .df.a{transform:translate3d(8vw,0,0)}
+  .sky .df.b{transform:translate3d(34vw,0,0)}
+  .sky .df.c{transform:translate3d(58vw,0,0)}
+  .sky .df.d{transform:translate3d(20vw,0,0)}
+  .sky .df.e{transform:translate3d(74vw,0,0)}}
 </style>
 </head>
 <body>
+
+<div class="sky sky-page" aria-hidden="true"><svg class="df a" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg><svg class="df b" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg><svg class="df c" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg><svg class="df d" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg><svg class="df e" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg></div>
 
 <div class="wrap">
   <div class="statusbar">
@@ -433,6 +516,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
 
 <div class="scrim" id="scrim"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <div class="sky sky-sheet" aria-hidden="true"><svg class="df b" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg><svg class="df d" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg><svg class="df a" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg><svg class="df c" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg></div>
   <div class="sheet-inner" id="sheet-inner"></div>
 </div>
 
@@ -564,10 +648,25 @@ async function initSync(){
   setStatus('saving','Connecting');
   try {
     const V='https://www.gstatic.com/firebasejs/10.12.2/';
-    const [app, fs] = await Promise.all([
-      import(V+'firebase-app.js'), import(V+'firebase-firestore.js')
+    const [app, fs, authMod] = await Promise.all([
+      import(V+'firebase-app.js'),
+      import(V+'firebase-firestore.js'),
+      import(V+'firebase-auth.js')
     ]);
-    FB = { fs: fs, db: fs.getFirestore(app.initializeApp(cfg)) };
+    const application = app.initializeApp(cfg);
+
+    // Silent sign-in. Nobody sees a login screen; it just gives the browser a
+    // token so the security rules can require one. If the Anonymous provider
+    // isn't switched on in the Firebase console, this is where it fails.
+    try {
+      const a = authMod.getAuth(application);
+      if (!a.currentUser) await authMod.signInAnonymously(a);
+    } catch(err){
+      console.warn('Anonymous sign-in failed:', err);
+      setStatus('err','Turn on Anonymous sign-in in Firebase Authentication');
+    }
+
+    FB = { fs: fs, db: fs.getFirestore(application) };
     await loadYear(YEAR);
   } catch(e){
     setStatus('err','Could not reach Firebase — edits stay on this device');
