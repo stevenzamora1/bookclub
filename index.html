@@ -3,32 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Communist China Book Club — 2026</title>
+<title>Communist China Book Club</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Literata:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <!-- =============================================================
-     SETUP — paste your Firebase config below, then deploy.
+     SETUP
 
      1. console.firebase.google.com -> Add project (skip Analytics)
-     2. Build > Firestore Database -> Create database -> production mode
+     2. Databases & Storage > Firestore Database -> Create database
+        Standard edition / Database ID stays (default) / production mode
      3. Rules tab, paste this, Publish:
 
           rules_version = '2';
           service cloud.firestore {
             match /databases/{database}/documents {
               match /bookclub/{docId} {
-                allow read, write: if true;
+                allow read: if true;
+                allow create, update: if request.resource.data.months is list
+                                      && request.resource.data.months.size() > 0;
+                allow delete: if false;
               }
             }
           }
 
-     4. Project settings (gear) > Your apps > Web (</>) -> register app
-     5. Copy the firebaseConfig values into FIREBASE below
+        This blocks deletion outright and rejects empty writes, so nobody
+        can wipe the year. No sign-in needed.
 
-     Leave FIREBASE blank and the site still works — it just won't
-     sync, and you're back to Download / Restore backup by hand.
+     4. Project settings (gear) > Your apps > Web (</>) -> register
+     5. Copy the six values into FIREBASE below
+
+     Each year lives in its own document: bookclub/2026, bookclub/2027...
      ============================================================= -->
 <script>
 window.FIREBASE = {
@@ -39,17 +45,19 @@ window.FIREBASE = {
   messagingSenderId: "1080784017163",
   appId: "1:1080784017163:web:f0c62c0cfd2c8c010db40e"
 };
-window.DOC_PATH = ["bookclub", "2026"];   // collection, document
+window.COLLECTION = "bookclub";
+window.START_YEAR = 2026;
 </script>
 
 <script type="application/json" id="seed">
 {
   "club": { "name": "Communist China Book Club", "year": "2026", "zodiac": "Year of the Horse" },
   "members": [
-    { "id": "steven", "name": "Steven" },
-    { "id": "mia", "name": "Mia" }
+    { "id": "steven", "name": "Steven", "emoji": "" },
+    { "id": "mia", "name": "Mia", "emoji": "🌭" }
   ],
   "meta": { "updatedBy": "", "updatedAt": "" },
+  "backlog": [],
   "theme": {
     "--bg": "#16100e", "--fg": "#f0e6d6", "--card": "#efe3d0", "--card-fg": "#1a1310",
     "--accent": "#d6291e", "--gold": "#e5a93c",
@@ -59,60 +67,69 @@ window.DOC_PATH = ["bookclub", "2026"];   // collection, document
     {
       "id": "may", "name": "May", "bom": null,
       "top": [
-        { "member": "steven", "title": "Golden Son", "author": "Pierce Brown", "score": 5, "cover": "",
-          "quote": "How can I live with this? If I don't pull the trigger, millions will die. If you pull it, you accept that billions should live as slaves." },
-        { "member": "mia", "title": "The Score", "author": "Elle Kennedy", "score": 3.5, "cover": "",
-          "quote": "Please baby, I've been such a good boy." }
+        { "member": "steven", "title": "Golden Son", "author": "Pierce Brown", "score": 5,
+          "cover": "", "pages": null, "genres": [],
+          "quotes": ["How can I live with this? If I don't pull the trigger, millions will die. If you pull it, you accept that billions should live as slaves."] },
+        { "member": "mia", "title": "The Score", "author": "Elle Kennedy", "score": 3.5,
+          "cover": "", "pages": null, "genres": [],
+          "quotes": ["Please baby, I've been such a good boy."] }
       ]
     },
     {
       "id": "june", "name": "June",
       "bom": {
-        "title": "Throne of Glass", "author": "Sarah J. Maas", "goodreads": 4.18, "cover": "",
+        "title": "Throne of Glass", "author": "Sarah J. Maas", "goodreads": 4.18,
+        "cover": "", "pages": null, "genres": [],
         "scores": { "steven": 3.25, "mia": 4.5 },
         "quotes": {
-          "steven": "Libraries were full of ideas — perhaps the most dangerous and powerful of all weapons.",
-          "mia": "She was his fastest, but he'd never been able to quell the wildness within her."
+          "steven": ["Libraries were full of ideas — perhaps the most dangerous and powerful of all weapons."],
+          "mia": ["She was his fastest, but he'd never been able to quell the wildness within her."]
         }
       },
       "top": [
-        { "member": "steven", "title": "Morning Star", "author": "Pierce Brown", "score": 5, "cover": "",
-          "quote": "I will make a house for you in the Vale of your fathers. It will be beside my own. Join me there when you die. But I am no builder. So take your time. We will wait." },
-        { "member": "mia", "title": "Lights Out", "author": "Navessa Allen", "score": 4, "cover": "",
-          "quote": "But did you ever stop to consider whether or not YOU were safe with me." }
+        { "member": "steven", "title": "Morning Star", "author": "Pierce Brown", "score": 5,
+          "cover": "", "pages": null, "genres": [],
+          "quotes": ["I will make a house for you in the Vale of your fathers. It will be beside my own. Join me there when you die. But I am no builder. So take your time. We will wait."] },
+        { "member": "mia", "title": "Lights Out", "author": "Navessa Allen", "score": 4,
+          "cover": "", "pages": null, "genres": [],
+          "quotes": ["But did you ever stop to consider whether or not YOU were safe with me."] }
       ]
     },
     {
       "id": "july", "name": "July",
       "bom": {
-        "title": "Normal People", "author": "Sally Rooney", "goodreads": 3.81, "cover": "",
+        "title": "Normal People", "author": "Sally Rooney", "goodreads": 3.81,
+        "cover": "", "pages": null, "genres": [],
         "scores": { "steven": 3, "mia": 3 },
         "quotes": {
-          "steven": "He feels like he ruined the life of everyone who has ever even marginally liked him.",
-          "mia": "Marianne, I'm not a religious person, but I do sometimes think God made you for me."
+          "steven": ["He feels like he ruined the life of everyone who has ever even marginally liked him."],
+          "mia": ["Marianne, I'm not a religious person, but I do sometimes think God made you for me."]
         }
       },
       "top": [
-        { "member": "steven", "title": "The Butcher's Masquerade", "author": "Matt Dinniman", "score": 5, "cover": "", "quote": "" },
-        { "member": "mia", "title": "Insatiable", "author": "", "score": 5, "cover": "",
-          "quote": "You irritate me. You're a poisonous snake that won't fuck off from my mind. You're everywhere yet nowhere. A fucking disease." }
+        { "member": "steven", "title": "The Butcher's Masquerade", "author": "Matt Dinniman", "score": 5,
+          "cover": "", "pages": null, "genres": [], "quotes": [] },
+        { "member": "mia", "title": "Insatiable", "author": "", "score": 5,
+          "cover": "", "pages": null, "genres": [],
+          "quotes": ["You irritate me. You're a poisonous snake that won't fuck off from my mind. You're everywhere yet nowhere. A fucking disease.",
+                     "At least I got to kiss her."] }
       ]
     },
     { "id": "august", "name": "August",
-      "bom": { "title": "Haunting Adeline", "author": "H. D. Carlton", "goodreads": 3.94, "cover": "", "scores": {}, "quotes": {} },
-      "top": [] },
+      "bom": { "title": "Haunting Adeline", "author": "H. D. Carlton", "goodreads": 3.94,
+        "cover": "", "pages": null, "genres": [], "scores": {}, "quotes": {} }, "top": [] },
     { "id": "september", "name": "September",
-      "bom": { "title": "Empire of the Vampire", "author": "Jay Kristoff", "goodreads": 4.33, "cover": "", "scores": {}, "quotes": {} },
-      "top": [] },
+      "bom": { "title": "Empire of the Vampire", "author": "Jay Kristoff", "goodreads": 4.33,
+        "cover": "", "pages": null, "genres": [], "scores": {}, "quotes": {} }, "top": [] },
     { "id": "october", "name": "October",
-      "bom": { "title": "Fourth Wing", "author": "Rebecca Yarros", "goodreads": 4.56, "cover": "", "scores": {}, "quotes": {} },
-      "top": [] },
+      "bom": { "title": "Fourth Wing", "author": "Rebecca Yarros", "goodreads": 4.56,
+        "cover": "", "pages": null, "genres": [], "scores": {}, "quotes": {} }, "top": [] },
     { "id": "november", "name": "November",
-      "bom": { "title": "Hunting Adeline", "author": "H. D. Carlton", "goodreads": 4.07, "cover": "", "scores": {}, "quotes": {} },
-      "top": [] },
+      "bom": { "title": "Hunting Adeline", "author": "H. D. Carlton", "goodreads": 4.07,
+        "cover": "", "pages": null, "genres": [], "scores": {}, "quotes": {} }, "top": [] },
     { "id": "december", "name": "December",
-      "bom": { "title": "Anxious People", "author": "Fredrik Backman", "goodreads": 4.16, "cover": "", "scores": {}, "quotes": {} },
-      "top": [] }
+      "bom": { "title": "Anxious People", "author": "Fredrik Backman", "goodreads": 4.16,
+        "cover": "", "pages": null, "genres": [], "scores": {}, "quotes": {} }, "top": [] }
   ]
 }
 </script>
@@ -140,23 +157,27 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 img{display:block;max-width:100%}
 .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem)}
 
-.statusbar{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;
-  padding:.7rem 0;border-bottom:1px solid var(--rule);
-  font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase}
+.statusbar{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding:.7rem 0;
+  border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:.66rem;
+  letter-spacing:.12em;text-transform:uppercase}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--fg-dim);display:inline-block;
   margin-right:.5rem;vertical-align:middle}
 .dot.live{background:#3fbf6b}.dot.saving{background:var(--gold)}.dot.err{background:var(--accent)}
 .status{color:var(--fg-dim)}
 .who-pick{display:flex;gap:.35rem;margin-left:auto;align-items:center;flex-wrap:wrap}
 .who-pick > span{color:var(--fg-dim)}
-.chip{padding:.3rem .65rem;border:1px solid var(--rule);border-radius:99px;
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase}
+.chip{padding:.3rem .65rem;border:1px solid var(--rule);border-radius:99px;font-family:var(--mono);
+  font-size:.62rem;letter-spacing:.12em;text-transform:uppercase}
 .chip[aria-pressed=true]{background:var(--c,var(--accent));border-color:var(--c,var(--accent));color:#fff}
 
 .masthead{padding:clamp(2rem,6vw,4rem) 0 1.75rem}
-.eyebrow{display:flex;align-items:center;gap:1rem;font-family:var(--mono);font-size:.7rem;
+.eyebrow{display:flex;align-items:center;gap:.6rem;font-family:var(--mono);font-size:.7rem;
   letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
-.eyebrow::after{content:"";flex:1;height:1px;background:var(--rule)}
+.eyebrow .line{flex:1;height:1px;background:var(--rule)}
+.yr{border:1px solid var(--rule);border-radius:var(--radius);width:1.7rem;height:1.7rem;
+  display:inline-flex;align-items:center;justify-content:center;color:var(--gold);line-height:1}
+.yr:hover{border-color:var(--gold)}
+.yr[disabled]{opacity:.3;cursor:default}
 h1.title{font-family:var(--display);font-weight:800;font-size:clamp(2.6rem,9.5vw,6.5rem);
   line-height:.86;letter-spacing:-.01em;text-transform:uppercase;margin:0}
 h1.title em{font-style:normal;color:var(--accent)}
@@ -171,6 +192,7 @@ h1.title em{font-style:normal;color:var(--accent)}
 .btn:hover{background:var(--bg-2);border-color:var(--fg-dim)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn.primary:hover{filter:brightness(1.12)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#14100e}
 .btn.ghost{border-color:transparent;color:var(--fg-dim)}
 .btn.ghost:hover{color:var(--fg)}
 
@@ -182,31 +204,32 @@ h1.title em{font-style:normal;color:var(--accent)}
 .card:hover,.card:focus-visible{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--accent)}
 .card-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;
   padding:.7rem .9rem .55rem;border-bottom:1px solid color-mix(in srgb,var(--card-fg) 18%,transparent)}
-.card-month{font-family:var(--display);font-weight:800;text-transform:uppercase;
-  font-size:1.5rem;line-height:1}
-.card-kind{font-family:var(--mono);font-size:.55rem;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--card-dim)}
+.card-month{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:1.5rem;line-height:1}
+.card-kind{font-family:var(--mono);font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;color:var(--card-dim)}
 .cover-slot{position:relative;margin:1rem .9rem .85rem;aspect-ratio:2/3;
   background:color-mix(in srgb,var(--card-fg) 8%,transparent);border-radius:1px;overflow:hidden}
 .cover-slot img{width:100%;height:100%;object-fit:cover}
 .cover-fallback{position:absolute;inset:0;display:flex;align-items:flex-end;padding:.75rem;
-  font-family:var(--display);font-weight:600;text-transform:uppercase;font-size:1rem;
-  line-height:1.05;color:var(--card-dim);
-  background:repeating-linear-gradient(45deg,transparent,transparent 7px,
-    color-mix(in srgb,var(--card-fg) 5%,transparent) 7px,
-    color-mix(in srgb,var(--card-fg) 5%,transparent) 14px)}
+  font-family:var(--display);font-weight:600;text-transform:uppercase;font-size:1rem;line-height:1.05;
+  color:var(--card-dim);--vein:color-mix(in srgb,var(--card-fg) 11%,transparent);
+  background:
+    repeating-linear-gradient(101deg, transparent 0 15px, var(--vein) 15px 15.7px),
+    repeating-linear-gradient(7deg, transparent 0 10px, var(--vein) 10px 10.7px)}
 .card-body{padding:0 .9rem}
 .card-title{font-weight:600;font-size:.98rem;line-height:1.25;margin:0}
 .card-author{font-family:var(--mono);font-size:.68rem;color:var(--card-dim);margin:.3rem 0 0}
-.marks{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem}
-.mark{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--mono);
-  font-size:.68rem;font-weight:700;padding:.2rem .45rem;border-radius:1px;color:#fff}
-.mark .who{font-weight:400;opacity:.85;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase}
-.mark.avg{background:transparent;color:var(--card-dim);
-  border:1px solid color-mix(in srgb,var(--card-fg) 25%,transparent)}
+.marks{margin-top:.8rem;display:grid;gap:0}
+.markrow{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;
+  font-family:var(--mono);font-size:.66rem;padding:.22rem 0;
+  border-bottom:1px solid color-mix(in srgb,var(--card-fg) 12%,transparent)}
+.markrow:last-child{border-bottom:none}
+.markrow .who{color:var(--mc,var(--card-dim));letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.markrow .val{font-weight:700;color:var(--mc,var(--card-fg));white-space:nowrap}
+.markrow.avg .who,.markrow.avg .val{color:var(--card-dim);font-weight:400}
+.markrow .val.none{opacity:.35;font-weight:400}
 .stamp{position:absolute;top:.55rem;right:.6rem;transform:rotate(-9deg);font-family:var(--mono);
-  font-weight:700;font-size:.58rem;letter-spacing:.18em;padding:.25rem .5rem;
-  border:2px solid var(--gold);color:var(--gold);border-radius:2px;opacity:.85;pointer-events:none}
+  font-weight:700;font-size:.58rem;letter-spacing:.18em;padding:.25rem .5rem;border:2px solid var(--gold);
+  color:var(--gold);border-radius:2px;opacity:.85;pointer-events:none}
 .card.pending .cover-slot{opacity:.55}
 .card.now::after{content:"";position:absolute;inset:0;border:2px solid var(--accent);
   border-radius:var(--radius);pointer-events:none;z-index:1}
@@ -229,24 +252,23 @@ h1.title em{font-style:normal;color:var(--accent)}
 .section-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
   color:var(--gold);display:flex;align-items:center;gap:.9rem;margin:2.75rem 0 1.25rem}
 .section-label::after{content:"";flex:1;height:1px;background:var(--rule)}
-.bom{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);
-  gap:clamp(1.25rem,4vw,2.5rem);align-items:start}
+.bom{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:clamp(1.25rem,4vw,2.5rem);align-items:start}
 .bom .cover-slot{margin:0;background:var(--bg-2)}
-.bom .cover-fallback{color:var(--fg-dim);background:repeating-linear-gradient(45deg,transparent,
-  transparent 7px,color-mix(in srgb,var(--fg) 6%,transparent) 7px,
-  color-mix(in srgb,var(--fg) 6%,transparent) 14px)}
+.bom .cover-fallback{color:var(--fg-dim);--vein:color-mix(in srgb,var(--fg) 13%,transparent)}
 .book-title{font-family:var(--display);font-weight:600;text-transform:uppercase;
   font-size:clamp(1.5rem,4vw,2.4rem);line-height:.98;margin:0}
 .book-author{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;color:var(--fg-dim);margin:.55rem 0 0}
-.scoreline{display:flex;flex-wrap:wrap;gap:1.75rem;margin:1.5rem 0 0;padding:1rem 0;
-  border-block:1px solid var(--rule)}
+.tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.7rem}
+.tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.18rem .45rem;border:1px solid var(--rule);border-radius:99px;color:var(--fg-dim)}
+.scoreline{display:flex;flex-wrap:wrap;gap:1.75rem;margin:1.5rem 0 0;padding:1rem 0;border-block:1px solid var(--rule)}
 .score{display:flex;flex-direction:column;gap:.2rem}
-.score .lab{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--fg-dim)}
+.score .lab{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim)}
 .score .val{font-family:var(--display);font-weight:800;font-size:2.1rem;line-height:1}
 .score .val small{font-family:var(--mono);font-size:.7rem;font-weight:400;color:var(--fg-dim);margin-left:.15rem}
 .score.empty .val{color:var(--fg-dim);opacity:.5}
-.quotes{display:grid;gap:1.25rem;margin-top:1.75rem}
+.quotes{display:grid;gap:1.1rem;margin-top:1.75rem}
+.qgroup{display:grid;gap:.7rem}
 .quote{position:relative;padding:.15rem 0 .15rem 1.4rem;border-left:3px solid var(--qc,var(--accent))}
 .quote p{margin:0;font-size:clamp(1rem,2.2vw,1.18rem);line-height:1.55;font-style:italic}
 .quote .attr{display:block;margin-top:.6rem;font-family:var(--mono);font-style:normal;font-size:.65rem;
@@ -256,12 +278,12 @@ h1.title em{font-style:normal;color:var(--accent)}
 .top{display:grid;grid-template-columns:78px minmax(0,1fr);gap:1rem;align-items:start;
   padding-top:1rem;border-top:2px solid var(--qc,var(--accent))}
 .top .cover-slot{margin:0;background:var(--bg-2)}
-.top .cover-fallback{font-size:.7rem;padding:.4rem;color:var(--fg-dim);background:none}
+.top .cover-fallback{font-size:.7rem;padding:.4rem;color:var(--fg-dim);--vein:color-mix(in srgb,var(--fg) 13%,transparent)}
 .top-who{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
   color:var(--qc);margin:0 0 .35rem}
 .top-title{font-weight:600;font-size:1.05rem;line-height:1.25;margin:0}
 .top-meta{font-family:var(--mono);font-size:.68rem;color:var(--fg-dim);margin:.35rem 0 0}
-.top .quote{margin-top:.85rem;border-left-width:2px;padding-left:.9rem}
+.top .quote{margin-top:.7rem;border-left-width:2px;padding-left:.9rem}
 .top .quote p{font-size:.92rem}
 
 .field{display:block;margin-bottom:.85rem}
@@ -270,24 +292,22 @@ h1.title em{font-style:normal;color:var(--accent)}
 input[type=text],input[type=number],input[type=url],textarea,select{width:100%;background:var(--bg-2);
   color:var(--fg);border:1px solid var(--rule);border-radius:var(--radius);padding:.55rem .7rem;
   font-family:var(--body);font-size:.92rem}
-textarea{resize:vertical;min-height:4.5rem;font-style:italic}
+textarea{resize:vertical;min-height:4rem;font-style:italic}
 input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
-.field.mine input,.field.mine textarea{border-color:var(--gold);
-  background:color-mix(in srgb,var(--gold) 7%,var(--bg-2))}
+.field.mine input,.field.mine textarea{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 7%,var(--bg-2))}
 .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.85rem}
-.edit-block{border:1px solid var(--rule);border-radius:var(--radius);padding:1.1rem;
-  margin-bottom:1rem;background:color-mix(in srgb,var(--bg) 94%,var(--fg))}
+.edit-block{border:1px solid var(--rule);border-radius:var(--radius);padding:1.1rem;margin-bottom:1rem;
+  background:color-mix(in srgb,var(--bg) 94%,var(--fg))}
 .edit-block-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.9rem}
-.edit-block-head h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;
-  text-transform:uppercase;margin:0;color:var(--gold)}
-.cover-row{display:flex;gap:.5rem;align-items:flex-end}
-.cover-row .field{flex:1;margin-bottom:0}
+.edit-block-head h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;
+  margin:0;color:var(--gold)}
+.cover-row{display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap}
+.cover-row .field{flex:1;min-width:180px;margin-bottom:0}
 .cover-picks{margin-top:.9rem;padding:.9rem;border:1px dashed var(--rule);border-radius:var(--radius)}
 .picks-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.75rem;
   font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim)}
 .picks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:.6rem}
-.pick{padding:0;border:2px solid transparent;border-radius:2px;overflow:hidden;background:var(--bg-2);
-  display:block;text-align:left}
+.pick{padding:0;border:2px solid transparent;border-radius:2px;overflow:hidden;background:var(--bg-2);display:block;text-align:left}
 .pick img{width:100%;aspect-ratio:2/3;object-fit:cover}
 .pick:hover{border-color:var(--fg-dim)}
 .pick.on{border-color:var(--gold)}
@@ -296,6 +316,58 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
 .link{color:var(--gold);text-decoration:underline;text-underline-offset:3px;font-family:var(--mono);
   font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}
 .empty-note{font-family:var(--mono);font-size:.75rem;color:var(--fg-dim);margin:0}
+.qedit{display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.5rem}
+.qedit textarea{flex:1}
+.qedit button{margin-top:.15rem}
+
+/* wrapped */
+.big-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.bignum{border:1px solid var(--rule);border-radius:var(--radius);padding:1.1rem}
+.bignum .n{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,6vw,3.4rem);
+  line-height:.9;display:block;color:var(--gold)}
+.bignum .l{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--fg-dim);display:block;margin-top:.5rem}
+.duel{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.duel-card{border:1px solid var(--rule);border-radius:var(--radius);padding:1.1rem}
+.duel-card h5{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);margin:0 0 .7rem}
+.duel-card .bt{font-family:var(--display);font-weight:600;text-transform:uppercase;font-size:1.35rem;
+  line-height:1;margin:0 0 .6rem}
+.duel-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.72rem;
+  padding:.25rem 0;border-bottom:1px solid var(--rule)}
+.duel-row:last-child{border-bottom:none}
+.bar{height:6px;border-radius:99px;background:var(--bg-2);overflow:hidden;margin-top:.3rem}
+.bar i{display:block;height:100%;background:var(--gold)}
+.genre-row{display:flex;align-items:center;gap:.8rem;padding:.4rem 0;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:.72rem}
+.genre-row .gn{flex:1}
+.genre-row .gc{color:var(--fg-dim)}
+
+/* roulette */
+.reel{position:relative;overflow:hidden;border:2px solid var(--gold);border-radius:var(--radius);
+  padding:5rem clamp(1.5rem,5vw,2.5rem) clamp(1.5rem,5vw,2.5rem);
+  text-align:center;margin-bottom:1.5rem;min-height:8rem;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-end;gap:.5rem}
+.dfly{position:absolute;top:10px;left:50%;width:76px;height:46px;margin-left:-38px;
+  color:var(--gold);opacity:.9;pointer-events:none;
+  transition:transform .5s cubic-bezier(.34,1.35,.5,1)}
+.reel.spinning .dfly{transition:transform .11s ease-out}
+.dfly ellipse,.dfly rect,.dfly path{fill:currentColor}
+.dfly .w{transform-box:view-box;transform-origin:50px 20px;
+  animation:flutter .085s infinite alternate ease-in-out;animation-play-state:paused}
+.reel.spinning .dfly .w{animation-play-state:running}
+@keyframes flutter{from{transform:scaleY(1)}to{transform:scaleY(.4)}}
+.reel .rt{font-family:var(--display);font-weight:800;text-transform:uppercase;
+  font-size:clamp(1.6rem,6vw,3rem);line-height:.95;margin:0}
+.reel .ra{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;color:var(--fg-dim);margin:0}
+.reel.spinning .rt{color:var(--gold)}
+.queue{display:grid;gap:.5rem;margin-bottom:1.25rem}
+.qrow{display:flex;align-items:center;gap:.75rem;padding:.6rem .8rem;border:1px solid var(--rule);
+  border-radius:var(--radius)}
+.qrow.hot{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,transparent)}
+.qrow .qt{flex:1;font-size:.95rem}
+.qrow .qa{font-family:var(--mono);font-size:.65rem;color:var(--fg-dim)}
+.qrow .qw{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--qc)}
 
 .panel{position:fixed;top:0;right:0;bottom:0;width:min(380px,100%);z-index:60;background:var(--bg);
   border-left:1px solid var(--rule);overflow-y:auto;padding:1.5rem 1.5rem 4rem;
@@ -319,7 +391,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
 .toast{position:fixed;left:50%;bottom:1.5rem;transform:translate(-50%,140%);z-index:80;
   background:var(--gold);color:#14100e;padding:.65rem 1.1rem;border-radius:var(--radius);
   font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
-  transition:transform .25s ease}
+  transition:transform .25s ease;max-width:90vw;text-align:center}
 .toast.show{transform:translate(-50%,0)}
 @media (max-width:560px){.bom{grid-template-columns:1fr}.bom .cover-slot{max-width:170px}
   .who-pick{margin-left:0;width:100%}}
@@ -337,11 +409,18 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
   </div>
 
   <header class="masthead">
-    <div class="eyebrow"><span id="eyebrow-text"></span></div>
+    <div class="eyebrow">
+      <button class="yr" id="yr-prev" aria-label="Previous year">‹</button>
+      <span id="eyebrow-text"></span>
+      <button class="yr" id="yr-next" aria-label="Next year">›</button>
+      <span class="line"></span>
+    </div>
     <h1 class="title" id="club-title"></h1>
     <div class="colophon" id="colophon"></div>
     <div class="toolbar">
-      <button class="btn" id="btn-covers">Find missing covers</button>
+      <button class="btn gold" id="btn-wrapped">Wrapped</button>
+      <button class="btn primary" id="btn-roulette">Next pick roulette</button>
+      <button class="btn" id="btn-covers">Fill in book details</button>
       <button class="btn" id="btn-settings">Colors</button>
       <button class="btn ghost" id="btn-export">Download backup</button>
       <button class="btn ghost" id="btn-import">Restore backup</button>
@@ -353,193 +432,298 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
 </div>
 
 <div class="scrim" id="scrim"></div>
-<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-month">
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
   <div class="sheet-inner" id="sheet-inner"></div>
 </div>
 
 <aside class="panel" id="panel" aria-label="Colour settings">
-  <div class="panel-head"><h3>Colors</h3>
-    <button class="btn ghost" id="panel-close">Close</button></div>
+  <div class="panel-head"><h3>Colors</h3><button class="btn ghost" id="panel-close">Close</button></div>
   <div class="presets" id="presets"></div>
   <div id="color-rows"></div>
-  <div class="color-row">
-    <label for="radius">Corner radius</label>
-    <input type="range" id="radius" min="0" max="18" step="1" style="width:110px">
-  </div>
-  <p class="panel-note">Colors sync with everything else, so whatever you pick is what she sees too.</p>
+  <div class="color-row"><label for="radius">Corner radius</label>
+    <input type="range" id="radius" min="0" max="18" step="1" style="width:110px"></div>
+  <p class="panel-note">Colors are saved with this year's data, so whatever you pick is what she sees too.</p>
 </aside>
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* ========== state ========== */
+/* ================= constants ================= */
 const SEED = JSON.parse(document.getElementById('seed').textContent);
-let DATA = structuredClone(SEED);
-let openMonth = null, editing = false, me = null;
-let saveDoc = null, saveTimer = null;
+const MONTHS = ['January','February','March','April','May','June','July',
+                'August','September','October','November','December'];
+const MONTH_NO = {}; MONTHS.forEach((n,i)=>MONTH_NO[n.toLowerCase()]=i+1);
+const ZODIAC = ['Rat','Ox','Tiger','Rabbit','Dragon','Snake','Horse','Goat','Monkey','Rooster','Dog','Pig'];
+const zodiacFor = y => ZODIAC[(((Number(y)-4)%12)+12)%12];
 
 const THEME_KEYS = [['--bg','Page'],['--fg','Text'],['--card','Card'],['--card-fg','Card text'],
   ['--accent','Accent'],['--gold','Highlight'],['--reader-a','Reader 1'],['--reader-b','Reader 2']];
-
 const PRESETS = {
   'Lacquer':  {'--bg':'#16100e','--fg':'#f0e6d6','--card':'#efe3d0','--card-fg':'#1a1310','--accent':'#d6291e','--gold':'#e5a93c','--reader-a':'#d6291e','--reader-b':'#2e7d64','--radius':'2px'},
   'Newsprint':{'--bg':'#e5e0d5','--fg':'#191713','--card':'#fffdf6','--card-fg':'#191713','--accent':'#a92a1c','--gold':'#7a6a3c','--reader-a':'#a92a1c','--reader-b':'#26584a','--radius':'0px'},
   'Midnight': {'--bg':'#0d1220','--fg':'#e7ecf6','--card':'#e9ecf4','--card-fg':'#141a28','--accent':'#6c5ce7','--gold':'#f2c14e','--reader-a':'#6c5ce7','--reader-b':'#2fb8a8','--radius':'8px'},
   'Bramble':  {'--bg':'#1a0f18','--fg':'#f8e9f0','--card':'#fbedf3','--card-fg':'#25121d','--accent':'#e23e77','--gold':'#f0b45e','--reader-a':'#e23e77','--reader-b':'#8b6bd9','--radius':'12px'},
-  'Jade':     {'--bg':'#0e1a16','--fg':'#e9efe6','--card':'#f0eee0','--card-fg':'#131a15','--accent':'#c6402f','--gold':'#d9b65f','--reader-a':'#c6402f','--reader-b':'#3f8f76','--radius':'2px'}
+  'Jade':     {'--bg':'#0e1a16','--fg':'#e9efe6','--card':'#f0eee0','--card-fg':'#131a15','--accent':'#c6402f','--gold':'#d9b65f','--reader-a':'#c6402f','--reader-b':'#3f8f76','--radius':'2px'},
+  'Dragonfly':{'--bg':'#0d1b1a','--fg':'#e6f0ea','--card':'#e9efe8','--card-fg':'#0f1c1a','--accent':'#1f9c7a','--gold':'#e0a33a','--reader-a':'#e0653f','--reader-b':'#3d7fd6','--radius':'10px'}
 };
+
+/* ================= state ================= */
+let DATA = null;
+let YEAR = Number(window.START_YEAR) || 2026;
+let view = null;              // null | 'month' | 'wrapped' | 'roulette'
+let openMonth = null, editing = false, me = null;
+let FB = null, docRef = null, unsub = null, saveTimer = null;
+const LOCAL = {};             // year -> data, used when Firebase is off
+let spinning = false, rouletteHit = null;
 
 const $ = (s,r=document)=>r.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const memberName = id => (DATA.members.find(m=>m.id===id)||{}).name || id;
+const member = id => DATA.members.find(m=>m.id===id) || {id:id,name:id,emoji:''};
+const memberLabel = id => { const m=member(id); return m.name + (m.emoji ? ' '+m.emoji : ''); };
 const readerColor = id => DATA.members.findIndex(m=>m.id===id)===1 ? 'var(--reader-b)' : 'var(--reader-a)';
 const fmtScore = n => (n===''||n==null||isNaN(n)) ? null : (Math.round(Number(n)*100)/100).toString();
+const num = n => (n==null||n===''||isNaN(n)) ? null : Number(n);
 
 function toast(msg){
   const t=$('#toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200);
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2400);
 }
-function setStatus(kind,text){
-  $('#status').innerHTML = '<span class="dot '+kind+'"></span>'+esc(text);
+function setStatus(kind,text){ $('#status').innerHTML='<span class="dot '+kind+'"></span>'+esc(text); }
+
+/* ================= data shape ================= */
+function blankYear(y, from){
+  const base = from || SEED;
+  return {
+    club: { name: base.club.name, year: String(y), zodiac: 'Year of the '+zodiacFor(y) },
+    members: JSON.parse(JSON.stringify(base.members)),
+    theme: Object.assign({}, base.theme),
+    meta: { updatedBy:'', updatedAt:'' },
+    backlog: [],
+    months: MONTHS.map(n=>({ id:n.toLowerCase(), name:n, bom:null, top:[] }))
+  };
 }
 
-/* ========== sync ========== */
+/* upgrades old documents in place: single quotes -> arrays, missing fields */
+function migrate(d){
+  if (!d) return d;
+  d.club = d.club || {name:'Book Club', year:String(YEAR), zodiac:'Year of the '+zodiacFor(YEAR)};
+  if (!d.club.zodiac) d.club.zodiac = 'Year of the '+zodiacFor(d.club.year||YEAR);
+  d.members = d.members || JSON.parse(JSON.stringify(SEED.members));
+  d.members.forEach(m=>{ if (m.emoji==null) m.emoji=''; });
+  d.theme = Object.assign({}, PRESETS.Lacquer, d.theme||{});
+  d.meta = d.meta || {updatedBy:'',updatedAt:''};
+  d.backlog = Array.isArray(d.backlog) ? d.backlog : [];
+  d.backlog.forEach(b=>{ b.title=b.title||''; b.author=b.author||''; b.addedBy=b.addedBy||''; });
+  d.months = d.months || [];
+  d.months.forEach(m=>{
+    m.top = Array.isArray(m.top) ? m.top : [];
+    if (m.bom){
+      m.bom.cover = m.bom.cover || '';
+      m.bom.pages = num(m.bom.pages);
+      m.bom.genres = Array.isArray(m.bom.genres) ? m.bom.genres : [];
+      m.bom.scores = m.bom.scores || {};
+      m.bom.pickedBy = m.bom.pickedBy || '';
+      const q = m.bom.quotes || {};
+      m.bom.quotes = {};
+      d.members.forEach(x=>{
+        const v = q[x.id];
+        m.bom.quotes[x.id] = Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []);
+      });
+    }
+    m.top.forEach(b=>{
+      b.cover = b.cover || '';
+      b.pages = num(b.pages);
+      b.genres = Array.isArray(b.genres) ? b.genres : [];
+      if (b.quote !== undefined){
+        if (!Array.isArray(b.quotes)) b.quotes = b.quote ? [b.quote] : [];
+        delete b.quote;
+      }
+      if (!Array.isArray(b.quotes)) b.quotes = [];
+      b.quotes = b.quotes.filter(Boolean);
+    });
+  });
+  return d;
+}
+
+function allBooks(d){
+  const src = d || DATA, out = [];
+  (src.months||[]).forEach(m=>{ if(m.bom) out.push(m.bom); (m.top||[]).forEach(b=>out.push(b)); });
+  return out;
+}
+
+/* ================= sync ================= */
 async function initSync(){
   const cfg = window.FIREBASE || {};
-  if (!cfg.projectId){ setStatus('', 'Not syncing — add your Firebase keys'); return; }
+  if (!cfg.projectId){
+    setStatus('', 'Not syncing — add your Firebase keys');
+    LOCAL[YEAR] = migrate(JSON.parse(JSON.stringify(SEED)));
+    DATA = LOCAL[YEAR];
+    afterLoad();
+    return;
+  }
   setStatus('saving','Connecting');
   try {
-    const V = 'https://www.gstatic.com/firebasejs/10.12.2/';
+    const V='https://www.gstatic.com/firebasejs/10.12.2/';
     const [app, fs] = await Promise.all([
-      import(V + 'firebase-app.js'),
-      import(V + 'firebase-firestore.js')
+      import(V+'firebase-app.js'), import(V+'firebase-firestore.js')
     ]);
-    const db  = fs.getFirestore(app.initializeApp(cfg));
-    const ref = fs.doc(db, window.DOC_PATH[0], window.DOC_PATH[1]);
-
-    const first = await fs.getDoc(ref);
-    if (!first.exists()) await fs.setDoc(ref, DATA);   // first ever visit seeds the doc
-
-    saveDoc = async () => {
-      DATA.meta = { updatedBy: me || '', updatedAt: new Date().toISOString() };
-      setStatus('saving','Saving');
-      try { await fs.setDoc(ref, DATA); setStatus('live','All changes saved'); paintLastEdit(); }
-      catch (e){ setStatus('err','Save failed — check your connection'); }
-    };
-
-    fs.onSnapshot(ref, snap => {
-      if (!snap.exists() || snap.metadata.hasPendingWrites) return;
-      if (editing) return;                 // don't yank the page away from someone typing
-      const next = snap.data();
-      if (!next.months) return;
-      DATA = next;
-      DATA.theme = Object.assign({}, PRESETS.Lacquer, DATA.theme || {});
-      applyTheme(); syncPanelInputs(); render();
-      if (openMonth) renderSheet();
-      setStatus('live','All changes saved'); paintLastEdit();
-    }, () => setStatus('err','Lost connection'));
-
-    setStatus('live','All changes saved');
-  } catch (e){
+    FB = { fs: fs, db: fs.getFirestore(app.initializeApp(cfg)) };
+    await loadYear(YEAR);
+  } catch(e){
     setStatus('err','Could not reach Firebase — edits stay on this device');
+    LOCAL[YEAR] = migrate(JSON.parse(JSON.stringify(SEED)));
+    DATA = LOCAL[YEAR];
+    afterLoad();
   }
 }
 
+async function loadYear(y){
+  YEAR = Number(y);
+  if (!FB){
+    if (!LOCAL[YEAR]) LOCAL[YEAR] = migrate(blankYear(YEAR, DATA || SEED));
+    DATA = LOCAL[YEAR];
+    afterLoad();
+    return;
+  }
+  if (unsub){ unsub(); unsub = null; }
+  setStatus('saving','Loading '+YEAR);
+  const fs = FB.fs;
+  docRef = fs.doc(FB.db, window.COLLECTION, String(YEAR));
+  try {
+    const snap = await fs.getDoc(docRef);
+    if (!snap.exists()){
+      const fresh = (String(YEAR) === String(window.START_YEAR))
+        ? migrate(JSON.parse(JSON.stringify(SEED)))
+        : migrate(blankYear(YEAR, DATA || SEED));
+      fresh.club.year = String(YEAR);
+      await fs.setDoc(docRef, fresh);
+      DATA = fresh;
+    } else {
+      DATA = migrate(snap.data());
+    }
+    afterLoad();
+    unsub = fs.onSnapshot(docRef, s=>{
+      if (!s.exists() || s.metadata.hasPendingWrites) return;
+      if (editing || spinning) return;
+      const next = s.data();
+      if (!next || !next.months) return;
+      DATA = migrate(next);
+      applyTheme(); syncPanelInputs(); render();
+      if (view) renderSheet();
+      setStatus('live','All changes saved'); paintLastEdit();
+    }, ()=>setStatus('err','Lost connection'));
+    setStatus('live','All changes saved');
+  } catch(e){
+    setStatus('err','Could not load '+YEAR);
+  }
+}
+
+function afterLoad(){
+  applyTheme(); buildPanel(); syncPanelInputs(); buildWhoPicker(); render();
+  enrichBooks();
+}
+
+async function saveNow(){
+  if (!FB || !docRef) return;
+  DATA.meta = { updatedBy: me||'', updatedAt: new Date().toISOString() };
+  setStatus('saving','Saving');
+  try { await FB.fs.setDoc(docRef, DATA); setStatus('live','All changes saved'); paintLastEdit(); }
+  catch(e){ setStatus('err','Save failed — check your connection'); }
+}
 function queueSave(){
-  if (!saveDoc) return;
+  if (!FB) return;
   clearTimeout(saveTimer);
   setStatus('saving','Saving');
-  saveTimer = setTimeout(()=>saveDoc(), 700);
+  saveTimer = setTimeout(saveNow, 700);
 }
 
 function paintLastEdit(){
   const m = DATA.meta || {};
   if (!m.updatedAt){ $('#lastedit').textContent=''; return; }
-  const who = m.updatedBy ? memberName(m.updatedBy) : 'someone';
-  const when = new Date(m.updatedAt);
-  const mins = Math.round((Date.now()-when)/60000);
-  const ago = mins < 1 ? 'just now'
-    : mins < 60 ? mins+' min ago'
-    : mins < 1440 ? Math.round(mins/60)+' hr ago'
+  const who = m.updatedBy ? member(m.updatedBy).name : 'someone';
+  const when = new Date(m.updatedAt), mins = Math.round((Date.now()-when)/60000);
+  const ago = mins<1 ? 'just now' : mins<60 ? mins+' min ago'
+    : mins<1440 ? Math.round(mins/60)+' hr ago'
     : when.toLocaleDateString(undefined,{month:'short',day:'numeric'});
   $('#lastedit').textContent = 'Last edit by '+who+' · '+ago;
 }
 
-/* ========== identity ========== */
+/* ================= identity ================= */
 function buildWhoPicker(){
   const el = $('#who-pick');
   el.innerHTML = '<span>You are</span>' + DATA.members.map(m =>
-    '<button class="chip" data-me="'+esc(m.id)+'" aria-pressed="'+(me===m.id)+'" style="--c:'+readerColor(m.id)+'">'+esc(m.name)+'</button>').join('');
+    '<button class="chip" data-me="'+esc(m.id)+'" aria-pressed="'+(me===m.id)+
+    '" style="--c:'+readerColor(m.id)+'">'+esc(memberLabel(m.id))+'</button>').join('');
   el.querySelectorAll('[data-me]').forEach(b=>b.addEventListener('click',()=>{
     me = (me===b.dataset.me) ? null : b.dataset.me;
-    buildWhoPicker();
-    if (openMonth) renderSheet();
+    buildWhoPicker(); if (view) renderSheet();
   }));
 }
 
-/* ========== covers ========== */
-const coverCache = new Map();
-
-/* returns up to 12 candidate covers, Google Books first then Open Library */
-async function findCoverCandidates(title, author){
-  if (!title) return [];
+/* ================= book lookup ================= */
+const lookupCache = new Map();
+function cleanGenres(cats){
+  const drop = new Set(['fiction','general','nonfiction','juvenile fiction','young adult fiction','literary']);
+  const out = [];
+  (cats||[]).forEach(c=>String(c).split('/').forEach(p=>{
+    const t = p.trim();
+    if (!t || drop.has(t.toLowerCase()) || out.includes(t)) return;
+    out.push(t);
+  }));
+  return out.slice(0,3);
+}
+async function lookupBook(title, author){
+  if (!title) return {covers:[],pages:null,genres:[]};
   const key = (title+'|'+(author||'')).toLowerCase();
-  if (coverCache.has(key)) return coverCache.get(key);
+  if (lookupCache.has(key)) return lookupCache.get(key);
   const q = encodeURIComponent([title,author].filter(Boolean).join(' '));
-  const out = [], seen = new Set();
-  const push = (url,label) => {
-    if (!url || seen.has(url)) return;
-    seen.add(url); out.push({url:url, label:label||''});
-  };
+  const res = { covers:[], pages:null, genres:[] };
+  const addCover = (u,l)=>{ if(u && !res.covers.some(c=>c.url===u)) res.covers.push({url:u,label:l||''}); };
   try {
-    const r = await fetch('https://www.googleapis.com/books/v1/volumes?q='+q+'&maxResults=12&printType=books');
-    const j = await r.json();
+    const j = await (await fetch('https://www.googleapis.com/books/v1/volumes?q='+q+'&maxResults=12&printType=books')).json();
     (j.items||[]).forEach(it=>{
-      const vi = it.volumeInfo || {}, l = vi.imageLinks;
-      if (!l) return;
-      push((l.thumbnail||l.smallThumbnail||'').replace(/^http:/,'https:')
-             .replace('&edge=curl','').replace('zoom=1','zoom=3'),
-           [vi.publisher||vi.title, (vi.publishedDate||'').slice(0,4)].filter(Boolean).join(' · '));
+      const vi = it.volumeInfo||{}, l = vi.imageLinks;
+      if (l) addCover((l.thumbnail||l.smallThumbnail||'').replace(/^http:/,'https:')
+        .replace('&edge=curl','').replace('zoom=1','zoom=3'),
+        [vi.publisher||vi.title,(vi.publishedDate||'').slice(0,4)].filter(Boolean).join(' · '));
+      if (!res.pages && vi.pageCount) res.pages = vi.pageCount;
+      if (!res.genres.length && vi.categories) res.genres = cleanGenres(vi.categories);
     });
   } catch(e){}
   try {
-    const r = await fetch('https://openlibrary.org/search.json?q='+q+'&limit=12&fields=cover_i,title,first_publish_year');
-    const j = await r.json();
+    const j = await (await fetch('https://openlibrary.org/search.json?q='+q+
+      '&limit=12&fields=cover_i,title,first_publish_year,number_of_pages_median,subject')).json();
     (j.docs||[]).forEach(d=>{
-      if (!d.cover_i) return;
-      push('https://covers.openlibrary.org/b/id/'+d.cover_i+'-L.jpg',
-           [d.title, d.first_publish_year].filter(Boolean).join(' · '));
+      if (d.cover_i) addCover('https://covers.openlibrary.org/b/id/'+d.cover_i+'-L.jpg',
+        [d.title,d.first_publish_year].filter(Boolean).join(' · '));
+      if (!res.pages && d.number_of_pages_median) res.pages = d.number_of_pages_median;
+      if (!res.genres.length && d.subject) res.genres = cleanGenres(d.subject.slice(0,4));
     });
   } catch(e){}
-  const list = out.slice(0,12);
-  coverCache.set(key,list);
-  return list;
+  res.covers = res.covers.slice(0,12);
+  lookupCache.set(key,res);
+  return res;
 }
 
-async function findCover(title, author){
-  const list = await findCoverCandidates(title, author);
-  return list.length ? list[0].url : '';
-}
-function allBooks(){
-  const out=[];
-  DATA.months.forEach(m=>{ if(m.bom) out.push(m.bom); (m.top||[]).forEach(b=>out.push(b)); });
-  return out;
-}
-async function fillMissingCovers(opts){
+async function enrichBooks(opts){
   const announce = opts && opts.announce;
-  const todo = allBooks().filter(b=>!b.cover && b.title);
-  if (!todo.length){ if(announce) toast('Every book already has a cover'); return; }
-  if (announce) toast('Looking up '+todo.length+' cover'+(todo.length>1?'s':'')+'…');
-  let found=0;
+  const todo = allBooks().filter(b=>b.title && (!b.cover || b.pages==null || !b.genres.length));
+  if (!todo.length){ if(announce) toast('Every book already has cover, pages and genres'); return; }
+  if (announce) toast('Looking up '+todo.length+' book'+(todo.length>1?'s':'')+'…');
+  let changed = 0;
   for (const b of todo){
-    const url = await findCover(b.title,b.author);
-    if (url){ b.cover=url; found++; render(); if(openMonth) renderSheet(); }
+    const info = await lookupBook(b.title, b.author);
+    let hit = false;
+    if (!b.cover && info.covers.length){ b.cover = info.covers[0].url; hit = true; }
+    if (b.pages==null && info.pages){ b.pages = info.pages; hit = true; }
+    if (!b.genres.length && info.genres.length){ b.genres = info.genres; hit = true; }
+    if (hit){ changed++; render(); if (view) renderSheet(); }
   }
-  if (found) queueSave();
-  if (announce) toast(found ? 'Found '+found+' cover'+(found>1?'s':'') : 'No covers found');
+  if (changed) queueSave();
+  if (announce) toast(changed ? 'Filled in '+changed+' book'+(changed>1?'s':'') : 'Nothing new found');
 }
 
-/* ========== render: grid ========== */
+/* ================= grid ================= */
 function coverMarkup(book, cls){
   const t = esc(book && book.title || '');
   const img = book && book.cover
@@ -548,11 +732,14 @@ function coverMarkup(book, cls){
 }
 
 function render(){
+  if (!DATA) return;
   $('#club-title').innerHTML = esc(DATA.club.name).replace(/(\S+)$/,'<em>$1</em>');
-  $('#eyebrow-text').textContent = DATA.club.year+' · '+DATA.club.zodiac;
+  $('#eyebrow-text').textContent = YEAR+' · '+(DATA.club.zodiac||('Year of the '+zodiacFor(YEAR)));
+  $('#yr-prev').disabled = YEAR <= Number(window.START_YEAR);
 
-  const bits = ['<span><b>'+DATA.months.length+'</b> months on the shelf</span>',
-                '<span><b>'+allBooks().filter(b=>b.title).length+'</b> books logged</span>'];
+  const scored = allBooks().filter(b=>b.title);
+  const bits = ['<span><b>'+DATA.months.filter(m=>m.bom||(m.top||[]).length).length+'</b> months filled in</span>',
+                '<span><b>'+scored.length+'</b> books logged</span>'];
   DATA.members.forEach(m=>{
     const vals = allBooks().flatMap(b => b.scores
       ? (b.scores[m.id]!=null ? [Number(b.scores[m.id])] : [])
@@ -563,11 +750,8 @@ function render(){
   });
   $('#colophon').innerHTML = bits.join('');
 
-  const MONTH_NO = {january:1,february:2,march:3,april:4,may:5,june:6,
-    july:7,august:8,september:9,october:10,november:11,december:12};
-  const today = new Date();
-  const thisMonth = today.getMonth()+1;
-  const sameYear = String(today.getFullYear()) === String(DATA.club.year);
+  const today = new Date(), thisMonth = today.getMonth()+1;
+  const sameYear = today.getFullYear() === YEAR;
 
   $('#grid').innerHTML = DATA.months.map(m=>{
     const feature = m.bom || (m.top && m.top[0]) || null;
@@ -575,64 +759,97 @@ function render(){
     const hasScores = m.bom
       ? DATA.members.some(x=>fmtScore(sc[x.id])!==null)
       : (m.top||[]).some(b=>fmtScore(b.score)!==null);
+    const no = MONTH_NO[String(m.id).toLowerCase()]||0;
+    const isNow = sameYear && no===thisMonth;
 
-    const no    = MONTH_NO[String(m.id).toLowerCase()] || 0;
-    const isNow = sameYear && no === thisMonth;
     let stamp = '';
     if (!hasScores){
       if (isNow) stamp = '<span class="stamp now">Reading now</span>';
-      else if (sameYear && no && no < thisMonth) stamp = '<span class="stamp past">Not scored</span>';
+      else if (sameYear && no && no<thisMonth) stamp = '<span class="stamp past">Not scored</span>';
       else stamp = '<span class="stamp">To read</span>';
     }
-    let marks='';
+
+    let rows = '';
     if (m.bom){
-      marks = DATA.members.map(x=>{
-        const v=fmtScore(sc[x.id]);
-        return v===null?'':'<span class="mark" style="background:'+readerColor(x.id)+
-          '"><span class="who">'+esc(x.name[0])+'</span>'+v+'</span>';
+      rows = DATA.members.map(x=>{
+        const v = fmtScore(sc[x.id]);
+        return '<div class="markrow" style="--mc:'+readerColor(x.id)+'"><span class="who">'+
+          esc(memberLabel(x.id))+'</span><span class="val'+(v===null?' none':'')+'">'+
+          (v===null?'—':v)+'</span></div>';
       }).join('');
-      const g=fmtScore(m.bom.goodreads);
-      if (g) marks += '<span class="mark avg">GR '+g+'</span>';
+      const g = fmtScore(m.bom.goodreads);
+      rows += '<div class="markrow avg"><span class="who">Goodreads</span><span class="val'+
+        (g?'':' none')+'">'+(g||'—')+'</span></div>';
     } else {
-      marks = (m.top||[]).map(b=>{
-        const v=fmtScore(b.score);
-        return v===null?'':'<span class="mark" style="background:'+readerColor(b.member)+
-          '"><span class="who">'+esc(memberName(b.member)[0])+'</span>'+v+'</span>';
+      rows = (m.top||[]).map(b=>{
+        const v = fmtScore(b.score);
+        return '<div class="markrow" style="--mc:'+readerColor(b.member)+'"><span class="who">'+
+          esc(memberLabel(b.member))+'</span><span class="val'+(v===null?' none':'')+'">'+
+          (v===null?'—':v)+'</span></div>';
       }).join('');
     }
-    return '<button class="card '+(hasScores?'':'pending')+(isNow?' now':'')+'" data-month="'+esc(m.id)+'" aria-label="Open '+esc(m.name)+(isNow?', reading now':'')+'">'+
-      stamp+
+
+    return '<button class="card '+(hasScores?'':'pending')+(isNow?' now':'')+'" data-month="'+esc(m.id)+
+      '" aria-label="Open '+esc(m.name)+(isNow?', reading now':'')+'">'+stamp+
       '<div class="card-head"><span class="card-month">'+esc(m.name)+'</span>'+
       '<span class="card-kind">'+(isNow?'This month':(m.bom?'Book of the month':'Top books'))+'</span></div>'+
       coverMarkup(feature)+
       '<div class="card-body"><p class="card-title">'+esc(feature?feature.title:'Nothing picked yet')+'</p>'+
       (feature&&feature.author?'<p class="card-author">'+esc(feature.author)+'</p>':'')+
-      '<div class="marks">'+marks+'</div></div></button>';
+      '<div class="marks">'+rows+'</div></div></button>';
   }).join('');
 
   $('#grid').querySelectorAll('.card').forEach(c=>
-    c.addEventListener('click',()=>openSheet(c.dataset.month)));
+    c.addEventListener('click',()=>openSheet('month', c.dataset.month)));
   paintLastEdit();
 }
 
-/* ========== render: sheet ========== */
-function quoteMarkup(text, who, color){
-  return text
-    ? '<div class="quote" style="--qc:'+color+'"><p>'+esc(text)+'</p><span class="attr">'+esc(who)+'</span></div>'
-    : '<div class="quote empty" style="--qc:'+color+'"><p>No quote saved</p><span class="attr">'+esc(who)+'</span></div>';
+/* ================= sheet ================= */
+function openSheet(kind, id){
+  view = kind; openMonth = id||null; editing = false; rouletteHit = null;
+  $('#sheet').classList.add('open'); $('#scrim').classList.add('open');
+  document.body.classList.add('locked');
+  renderSheet();
+  const f = $('#sheet-inner [data-act="close"]'); if (f) f.focus();
+}
+function closeSheet(){
+  if (editing && view==='month'){
+    const m = DATA.months.find(x=>x.id===openMonth);
+    if (m){ commitFields(m); queueSave(); }
+  }
+  view = null; openMonth = null; editing = false; spinning = false;
+  $('#sheet').classList.remove('open'); $('#scrim').classList.remove('open');
+  document.body.classList.remove('locked');
+  render();
 }
 
 function renderSheet(){
+  if (view==='month') return renderMonthSheet();
+  if (view==='wrapped') return renderWrapped();
+  if (view==='roulette') return renderRoulette();
+}
+
+/* ---------- month sheet ---------- */
+function renderMonthSheet(){
   const m = DATA.months.find(x=>x.id===openMonth);
   if (!m) return;
-  const label = editing ? 'Done' : (me ? "Add "+esc(memberName(me))+"'s scores" : 'Edit this month');
+  const label = editing ? 'Done' : (me ? 'Add '+esc(member(me).name)+"'s scores" : 'Edit this month');
   $('#sheet-inner').innerHTML =
     '<div class="sheet-bar"><button class="btn ghost" data-act="close">← All months</button>'+
     '<button class="btn '+(editing?'primary':'')+'" data-act="toggle-edit">'+label+'</button></div>'+
-    '<h2 class="sheet-month" id="sheet-month">'+esc(m.name)+'</h2>'+
+    '<h2 class="sheet-month">'+esc(m.name)+' '+YEAR+'</h2>'+
     (editing ? editView(m) : readView(m));
-  wireSheet(m);
+  wireMonthSheet(m);
   $('#sheet').scrollTop = 0;
+}
+
+function quoteGroup(list, who, color){
+  if (!list || !list.length)
+    return '<div class="quote empty" style="--qc:'+color+'"><p>No quote saved</p>'+
+           '<span class="attr">'+esc(who)+'</span></div>';
+  return '<div class="qgroup">'+ list.map((q,i)=>
+    '<div class="quote" style="--qc:'+color+'"><p>'+esc(q)+'</p>'+
+    (i===list.length-1 ? '<span class="attr">'+esc(who)+'</span>' : '')+'</div>').join('') +'</div>';
 }
 
 function readView(m){
@@ -642,17 +859,23 @@ function readView(m){
     html += '<div class="section-label">Book of the month</div><div class="bom">'+coverMarkup(m.bom)+'<div>'+
       '<h3 class="book-title">'+esc(m.bom.title)+'</h3>'+
       (m.bom.author?'<p class="book-author">'+esc(m.bom.author)+'</p>':'')+
+      ((m.bom.pages||m.bom.genres.length||m.bom.pickedBy)
+        ? '<div class="tags">'+
+          (m.bom.pickedBy?'<span class="tag" style="color:'+readerColor(m.bom.pickedBy)+
+            ';border-color:'+readerColor(m.bom.pickedBy)+'">'+esc(member(m.bom.pickedBy).name)+"'s pick</span>":'')+
+          (m.bom.pages?'<span class="tag">'+m.bom.pages+' pages</span>':'')+
+          m.bom.genres.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div>' : '')+
       '<div class="scoreline">'+
         DATA.members.map(x=>{
           const v=fmtScore(s[x.id]);
           return '<div class="score '+(v===null?'empty':'')+'"><span class="lab" style="color:'+
-            readerColor(x.id)+'">'+esc(x.name)+'</span><span class="val">'+(v===null?'—':v)+
-            '<small>/5</small></span></div>';
+            readerColor(x.id)+'">'+esc(memberLabel(x.id))+'</span><span class="val">'+
+            (v===null?'—':v)+'<small>/5</small></span></div>';
         }).join('')+
         '<div class="score '+(g?'':'empty')+'"><span class="lab">Goodreads</span>'+
         '<span class="val">'+(g||'—')+'<small>/5</small></span></div>'+
       '</div><div class="quotes">'+
-        DATA.members.map(x=>quoteMarkup(q[x.id],x.name,readerColor(x.id))).join('')+
+        DATA.members.map(x=>quoteGroup(q[x.id], memberLabel(x.id), readerColor(x.id))).join('')+
       '</div></div></div>';
   }
   html += '<div class="section-label">Top books of the month</div>';
@@ -662,10 +885,11 @@ function readView(m){
     html += '<div class="tops">'+m.top.map(b=>{
       const c=readerColor(b.member), v=fmtScore(b.score);
       return '<div class="top" style="--qc:'+c+'">'+coverMarkup(b)+'<div>'+
-        '<p class="top-who">'+esc(memberName(b.member))+(v?' · '+v+'/5':'')+'</p>'+
+        '<p class="top-who">'+esc(memberLabel(b.member))+(v?' · '+v+'/5':'')+'</p>'+
         '<p class="top-title">'+esc(b.title)+'</p>'+
         (b.author?'<p class="top-meta">'+esc(b.author)+'</p>':'')+
-        (b.quote?'<div class="quote" style="--qc:'+c+'"><p>'+esc(b.quote)+'</p></div>':'')+
+        (b.pages?'<p class="top-meta">'+b.pages+' pages</p>':'')+
+        (b.quotes||[]).map(q=>'<div class="quote" style="--qc:'+c+'"><p>'+esc(q)+'</p></div>').join('')+
       '</div></div>';
     }).join('')+'</div>';
   }
@@ -679,8 +903,16 @@ function coverField(path, book){
     '<input type="url" data-f="'+path+'.cover" value="'+esc(book.cover||'')+
     '" placeholder="Paste one, or hit Browse covers"></label>'+
     '<button class="btn" data-find="'+path+'">Browse covers</button>'+
-    (book.cover ? '<button class="btn ghost" data-clear="'+path+'">Clear</button>' : '')+
+    (book.cover?'<button class="btn ghost" data-clear="'+path+'">Clear</button>':'')+
     '</div><div data-picks="'+path+'"></div>';
+}
+
+function quoteEditor(path, list, label, mine){
+  const rows = (list||[]).map((q,i)=>
+    '<div class="qedit"><textarea data-f="'+path+'.'+i+'">'+esc(q)+'</textarea>'+
+    '<button class="btn ghost" data-delq="'+path+'" data-i="'+i+'">×</button></div>').join('');
+  return '<div class="field'+(mine?' mine':'')+'"><span>'+esc(label)+'</span>'+rows+
+    '<button class="btn" data-addq="'+path+'">+ Add a quote</button></div>';
 }
 
 function editView(m){
@@ -695,14 +927,17 @@ function editView(m){
       '<label class="field"><span>Title</span><input type="text" data-f="bom.title" value="'+esc(m.bom.title)+'"></label>'+
       '<label class="field"><span>Author</span><input type="text" data-f="bom.author" value="'+esc(m.bom.author||'')+'"></label>'+
       '<label class="field"><span>Goodreads average</span><input type="number" step="0.01" min="0" max="5" data-f="bom.goodreads" value="'+esc(m.bom.goodreads==null?'':m.bom.goodreads)+'"></label>'+
+      '<label class="field"><span>Pages</span><input type="number" step="1" min="0" data-f="bom.pages" value="'+esc(m.bom.pages==null?'':m.bom.pages)+'"></label>'+
+      '<label class="field"><span>Whose pick</span><select data-f="bom.pickedBy">'+
+        '<option value="">Not recorded</option>'+
+        DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(m.bom.pickedBy===x.id?' selected':'')+'>'+
+          esc(memberLabel(x.id))+'</option>').join('')+'</select></label>'+
       '</div>'+coverField('bom', m.bom)+'<div class="row" style="margin-top:.85rem">'+
       DATA.members.map(x=>'<label class="field'+mineCls(x.id)+'"><span style="color:'+readerColor(x.id)+'">'+
-        esc(x.name)+"'s score"+(me===x.id?' (you)':'')+'</span><input type="number" step="0.25" min="0" max="5" data-f="bom.scores.'+
-        x.id+'" value="'+esc(s[x.id]==null?'':s[x.id])+'"></label>').join('')+
-      '</div>'+
-      DATA.members.map(x=>'<label class="field'+mineCls(x.id)+'"><span style="color:'+readerColor(x.id)+'">'+
-        esc(x.name)+"'s favourite quote"+(me===x.id?' (you)':'')+'</span><textarea data-f="bom.quotes.'+
-        x.id+'">'+esc(q[x.id]||'')+'</textarea></label>').join('')+
+        esc(memberLabel(x.id))+"'s score"+(me===x.id?' (you)':'')+'</span><input type="number" step="0.25" min="0" max="5" data-f="bom.scores.'+
+        x.id+'" value="'+esc(s[x.id]==null?'':s[x.id])+'"></label>').join('')+'</div>'+
+      DATA.members.map(x=>quoteEditor('bom.quotes.'+x.id, q[x.id],
+        memberLabel(x.id)+"'s quotes"+(me===x.id?' (you)':''), me===x.id)).join('')+
       '</div>';
   }
 
@@ -711,134 +946,445 @@ function editView(m){
     '<div class="edit-block"><div class="edit-block-head"><h4>Top book '+(i+1)+'</h4>'+
     '<button class="link" data-act="remove-top" data-i="'+i+'">Remove</button></div><div class="row">'+
     '<label class="field"><span>Who picked it</span><select data-f="top.'+i+'.member">'+
-      DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(b.member===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join('')+
+      DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(b.member===x.id?' selected':'')+'>'+esc(memberLabel(x.id))+'</option>').join('')+
     '</select></label>'+
     '<label class="field"><span>Title</span><input type="text" data-f="top.'+i+'.title" value="'+esc(b.title||'')+'"></label>'+
     '<label class="field"><span>Author</span><input type="text" data-f="top.'+i+'.author" value="'+esc(b.author||'')+'"></label>'+
     '<label class="field"><span>Score</span><input type="number" step="0.25" min="0" max="5" data-f="top.'+i+'.score" value="'+esc(b.score==null?'':b.score)+'"></label>'+
+    '<label class="field"><span>Pages</span><input type="number" step="1" min="0" data-f="top.'+i+'.pages" value="'+esc(b.pages==null?'':b.pages)+'"></label>'+
     '</div>'+coverField('top.'+i, b)+
-    '<label class="field" style="margin-top:.85rem"><span>Favourite quote</span>'+
-    '<textarea data-f="top.'+i+'.quote">'+esc(b.quote||'')+'</textarea></label></div>').join('');
+    quoteEditor('top.'+i+'.quotes', b.quotes, 'Favourite quotes', me===b.member)+'</div>').join('');
 
-  html += '<button class="btn" data-act="add-top">Add a top book'+(me?' for '+esc(memberName(me)):'')+'</button>';
+  html += '<button class="btn" data-act="add-top">Add a top book'+(me?' for '+esc(member(me).name):'')+'</button>';
   return html;
 }
 
-/* ========== edit plumbing ========== */
-function nodeAt(m,path){ const p=path.split('.'); return p[0]==='bom' ? m.bom : m.top[Number(p[1])]; }
-
+/* ---------- field plumbing ---------- */
+function getPath(obj, path){
+  return path.split('.').reduce((o,k)=> (o==null ? o : o[k]), obj);
+}
+function setPath(obj, path, val){
+  const p = path.split('.');
+  let cur = obj;
+  for (let i=0;i<p.length-1;i++){
+    if (cur[p[i]]==null) cur[p[i]] = /^\d+$/.test(p[i+1]) ? [] : {};
+    cur = cur[p[i]];
+  }
+  cur[p[p.length-1]] = val;
+}
 function commitFields(m){
   $('#sheet-inner').querySelectorAll('[data-f]').forEach(el=>{
-    const p = el.dataset.f.split('.');
-    let ref, key;
-    if (p[0]==='bom'){
-      if (!m.bom) return;
-      if (p.length===2){ ref=m.bom; key=p[1]; }
-      else { m.bom[p[1]] = m.bom[p[1]]||{}; ref=m.bom[p[1]]; key=p[2]; }
-    } else {
-      ref = m.top[Number(p[1])]; key = p[2];
-      if (!ref) return;
-    }
     let v = el.value;
     if (el.type==='number') v = v==='' ? null : Number(v);
-    ref[key] = v;
+    setPath(m, el.dataset.f, v);
   });
+  // drop empty quotes
+  if (m.bom) DATA.members.forEach(x=>{
+    m.bom.quotes[x.id] = (m.bom.quotes[x.id]||[]).map(s=>String(s||'').trim()).filter(Boolean);
+  });
+  (m.top||[]).forEach(b=>{ b.quotes = (b.quotes||[]).map(s=>String(s||'').trim()).filter(Boolean); });
 }
 
-function wireSheet(m){
-  $('#sheet-inner').querySelectorAll('[data-act]').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const act = btn.dataset.act;
-      if (editing && act!=='close') commitFields(m);
-      if (act==='close') return closeSheet();
-      if (act==='toggle-edit'){ editing=!editing; if(!editing) queueSave(); }
-      if (act==='add-bom')    m.bom = {title:'',author:'',goodreads:null,cover:'',scores:{},quotes:{}};
-      if (act==='remove-bom') m.bom = null;
-      if (act==='add-top')    (m.top=m.top||[]).push(
-        {member: me || DATA.members[0].id, title:'', author:'', score:null, cover:'', quote:''});
-      if (act==='remove-top') m.top.splice(Number(btn.dataset.i),1);
-      render(); renderSheet();
-    });
+function wireMonthSheet(m){
+  const root = $('#sheet-inner');
+  root.querySelectorAll('[data-act]').forEach(btn=>btn.addEventListener('click',()=>{
+    const act = btn.dataset.act;
+    if (editing && act!=='close') commitFields(m);
+    if (act==='close') return closeSheet();
+    if (act==='toggle-edit'){ editing=!editing; if(!editing) queueSave(); }
+    if (act==='add-bom') m.bom = {title:'',author:'',goodreads:null,cover:'',pages:null,genres:[],
+      pickedBy: me||'', scores:{}, quotes:Object.fromEntries(DATA.members.map(x=>[x.id,[]]))};
+    if (act==='remove-bom') m.bom = null;
+    if (act==='add-top') (m.top=m.top||[]).push({member: me||DATA.members[0].id, title:'', author:'',
+      score:null, cover:'', pages:null, genres:[], quotes:[]});
+    if (act==='remove-top') m.top.splice(Number(btn.dataset.i),1);
+    render(); renderSheet();
+  }));
+
+  root.querySelectorAll('[data-addq]').forEach(btn=>btn.addEventListener('click',()=>{
+    commitFields(m);
+    const list = getPath(m, btn.dataset.addq) || [];
+    list.push('');
+    setPath(m, btn.dataset.addq, list);
+    renderSheet();
+  }));
+  root.querySelectorAll('[data-delq]').forEach(btn=>btn.addEventListener('click',()=>{
+    commitFields(m);
+    const list = getPath(m, btn.dataset.delq) || [];
+    list.splice(Number(btn.dataset.i),1);
+    render(); renderSheet();
+  }));
+  root.querySelectorAll('[data-clear]').forEach(btn=>btn.addEventListener('click',()=>{
+    commitFields(m);
+    const b = getPath(m, btn.dataset.clear);
+    if (b){ b.cover=''; render(); renderSheet(); }
+  }));
+
+  root.querySelectorAll('[data-find]').forEach(btn=>btn.addEventListener('click', async ()=>{
+    commitFields(m);
+    const path = btn.dataset.find, book = getPath(m, path);
+    const box = root.querySelector('[data-picks="'+path+'"]');
+    if (!book || !book.title) return toast('Add a title first');
+    btn.textContent = 'Searching…';
+    const info = await lookupBook(book.title, book.author);
+    btn.textContent = 'Browse covers';
+    if (!info.covers.length){ box.innerHTML=''; return toast('Nothing found — paste a URL instead'); }
+    box.innerHTML = '<div class="cover-picks"><div class="picks-head"><span>'+info.covers.length+
+      ' covers for “'+esc(book.title)+'”</span><button class="link" data-close-picks="1">Close</button></div>'+
+      '<div class="picks-grid">'+info.covers.map((c,i)=>
+        '<button class="pick'+(c.url===book.cover?' on':'')+'" data-i="'+i+'" title="'+esc(c.label)+'">'+
+        '<img src="'+esc(c.url)+'" alt="Cover option '+(i+1)+'" loading="lazy" '+
+        'onerror="this.parentNode.style.display=\'none\'">'+
+        (c.label?'<span>'+esc(c.label)+'</span>':'')+'</button>').join('')+'</div></div>';
+    box.querySelectorAll('.pick').forEach(p=>p.addEventListener('click',()=>{
+      book.cover = info.covers[Number(p.dataset.i)].url;
+      box.querySelectorAll('.pick').forEach(x=>x.classList.remove('on'));
+      p.classList.add('on');
+      const input = root.querySelector('[data-f="'+path+'.cover"]');
+      if (input) input.value = book.cover;
+      render(); queueSave(); toast('Cover set');
+    }));
+    box.querySelector('[data-close-picks]').addEventListener('click',()=>{ box.innerHTML=''; });
+  }));
+}
+
+/* ================= wrapped ================= */
+function statsFor(){
+  const s = { books:0, pages:0, byMember:{}, gaps:[], genres:{}, grDelta:[], picks:{} };
+  DATA.members.forEach(x=>{
+    s.byMember[x.id]={scores:[],pages:0,best:null,count:0};
+    s.picks[x.id]={n:0, room:[], best:null, worst:null};
   });
-  $('#sheet-inner').querySelectorAll('[data-clear]').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      commitFields(m);
-      const book = nodeAt(m, btn.dataset.clear);
-      if (book){ book.cover=''; render(); renderSheet(); }
-    });
-  });
 
-  $('#sheet-inner').querySelectorAll('[data-find]').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      commitFields(m);
-      const path = btn.dataset.find;
-      const book = nodeAt(m, path);
-      const box  = $('#sheet-inner [data-picks="'+path+'"]');
-      if (!book || !book.title) return toast('Add a title first');
-
-      btn.textContent = 'Searching…';
-      const list = await findCoverCandidates(book.title, book.author);
-      btn.textContent = 'Browse covers';
-
-      if (!list.length){
-        box.innerHTML = '';
-        return toast('Nothing found — paste a URL instead');
-      }
-
-      box.innerHTML = '<div class="cover-picks"><div class="picks-head">'+
-        '<span>'+list.length+' covers for “'+esc(book.title)+'”</span>'+
-        '<button class="link" data-close-picks="'+path+'">Close</button></div>'+
-        '<div class="picks-grid">'+ list.map((c,i)=>
-          '<button class="pick'+(c.url===book.cover?' on':'')+'" data-pick="'+path+
-          '" data-i="'+i+'" title="'+esc(c.label)+'">'+
-          '<img src="'+esc(c.url)+'" alt="Cover option '+(i+1)+'" loading="lazy" '+
-          'onerror="this.parentNode.style.display=\'none\'">'+
-          (c.label ? '<span>'+esc(c.label)+'</span>' : '')+'</button>').join('')+
-        '</div></div>';
-
-      box.querySelectorAll('[data-pick]').forEach(p=>{
-        p.addEventListener('click',()=>{
-          book.cover = list[Number(p.dataset.i)].url;
-          box.querySelectorAll('.pick').forEach(x=>x.classList.remove('on'));
-          p.classList.add('on');
-          const input = $('#sheet-inner [data-f="'+path+'.cover"]');
-          if (input) input.value = book.cover;
-          render(); queueSave(); toast('Cover set');
+  DATA.months.forEach(m=>{
+    if (m.bom){
+      const sc = m.bom.scores||{};
+      const vals = DATA.members.map(x=>num(sc[x.id]));
+      const anyScored = vals.some(v=>v!=null);
+      if (anyScored){
+        s.books++;
+        if (m.bom.pages) s.pages += m.bom.pages;
+        (m.bom.genres||[]).forEach(g=>{
+          s.genres[g] = s.genres[g] || {n:0, sum:0, c:0};
+          s.genres[g].n++;
+          vals.forEach(v=>{ if(v!=null){ s.genres[g].sum+=v; s.genres[g].c++; } });
         });
+        DATA.members.forEach((x,i)=>{
+          const v = vals[i];
+          if (v==null) return;
+          const mm = s.byMember[x.id];
+          mm.scores.push(v); mm.count++;
+          if (m.bom.pages) mm.pages += m.bom.pages;
+          if (!mm.best || v>mm.best.score) mm.best = {title:m.bom.title, score:v};
+        });
+        if (m.bom.pickedBy && s.picks[m.bom.pickedBy]){
+          const got = vals.filter(v=>v!=null);
+          const room = got.reduce((a,c)=>a+c,0)/got.length;
+          const pk = s.picks[m.bom.pickedBy];
+          pk.n++; pk.room.push(room);
+          const entry = {title:m.bom.title, month:m.name, room:room};
+          if (!pk.best  || room > pk.best.room)  pk.best  = entry;
+          if (!pk.worst || room < pk.worst.room) pk.worst = entry;
+        }
+        if (vals.length===2 && vals[0]!=null && vals[1]!=null){
+          s.gaps.push({title:m.bom.title, month:m.name, a:vals[0], b:vals[1], gap:Math.abs(vals[0]-vals[1])});
+          const gr = num(m.bom.goodreads);
+          if (gr!=null) s.grDelta.push(((vals[0]+vals[1])/2) - gr);
+        }
+      }
+    }
+    (m.top||[]).forEach(b=>{
+      const v = num(b.score);
+      if (v==null || !b.title) return;
+      s.books++;
+      if (b.pages) s.pages += b.pages;
+      (b.genres||[]).forEach(g=>{
+        s.genres[g] = s.genres[g] || {n:0,sum:0,c:0};
+        s.genres[g].n++; s.genres[g].sum+=v; s.genres[g].c++;
       });
-      box.querySelector('[data-close-picks]').addEventListener('click',()=>{ box.innerHTML=''; });
+      const mm = s.byMember[b.member];
+      if (mm){
+        mm.scores.push(v); mm.count++;
+        if (b.pages) mm.pages += b.pages;
+        if (!mm.best || v>mm.best.score) mm.best = {title:b.title, score:v};
+      }
     });
   });
+  return s;
 }
 
-/* ========== sheet open/close ========== */
-function openSheet(id){
-  openMonth=id; editing=false;
-  $('#sheet').classList.add('open'); $('#scrim').classList.add('open');
-  document.body.classList.add('locked');
-  renderSheet();
-  const f=$('#sheet-inner [data-act="close"]'); if (f) f.focus();
+function renderWrapped(){
+  const s = statsFor();
+  const avg = a => a.length ? (a.reduce((x,y)=>x+y,0)/a.length) : null;
+  const gapsSorted = s.gaps.slice().sort((a,b)=>b.gap-a.gap);
+  const worst = gapsSorted[0], closest = gapsSorted[gapsSorted.length-1];
+  const genres = Object.entries(s.genres).sort((a,b)=>b[1].n-a[1].n).slice(0,6);
+  const grAvg = avg(s.grDelta);
+
+  let html = '<div class="sheet-bar"><button class="btn ghost" data-act="close">← All months</button></div>'+
+    '<h2 class="sheet-month">'+YEAR+' Wrapped</h2>'+
+    '<p class="empty-note">'+(DATA.club.zodiac||'')+' · everything you two have scored so far.</p>';
+
+  html += '<div class="section-label">The numbers</div><div class="big-grid">'+
+    '<div class="bignum"><span class="n">'+s.books+'</span><span class="l">books scored</span></div>'+
+    '<div class="bignum"><span class="n">'+(s.pages?s.pages.toLocaleString():'—')+'</span><span class="l">pages read</span></div>'+
+    DATA.members.map(x=>{
+      const a = avg(s.byMember[x.id].scores);
+      return '<div class="bignum"><span class="n" style="color:'+readerColor(x.id)+'">'+
+        (a==null?'—':a.toFixed(2))+'</span><span class="l">'+esc(memberLabel(x.id))+' average</span></div>';
+    }).join('')+'</div>';
+
+  if (!s.books){
+    html += '<p class="empty-note" style="margin-top:2rem">Nothing scored in '+YEAR+
+      ' yet — this fills in as you go.</p>';
+    $('#sheet-inner').innerHTML = html;
+    wireSimpleSheet(); return;
+  }
+
+  html += '<div class="section-label">Where you disagreed</div><div class="duel">';
+  if (worst && worst.gap>0){
+    html += '<div class="duel-card"><h5>Biggest split · '+esc(worst.month)+'</h5>'+
+      '<p class="bt">'+esc(worst.title)+'</p>'+
+      DATA.members.map((x,i)=>'<div class="duel-row"><span style="color:'+readerColor(x.id)+'">'+
+        esc(memberLabel(x.id))+'</span><span>'+(i===0?worst.a:worst.b)+'/5</span></div>').join('')+
+      '<div class="duel-row"><span>Gap</span><span>'+worst.gap.toFixed(2)+' points</span></div></div>';
+  }
+  if (closest && closest!==worst){
+    html += '<div class="duel-card"><h5>Most agreed · '+esc(closest.month)+'</h5>'+
+      '<p class="bt">'+esc(closest.title)+'</p>'+
+      DATA.members.map((x,i)=>'<div class="duel-row"><span style="color:'+readerColor(x.id)+'">'+
+        esc(memberLabel(x.id))+'</span><span>'+(i===0?closest.a:closest.b)+'/5</span></div>').join('')+
+      '<div class="duel-row"><span>Gap</span><span>'+closest.gap.toFixed(2)+' points</span></div></div>';
+  }
+  html += '</div>';
+
+  html += '<div class="section-label">Each of you</div><div class="duel">'+
+    DATA.members.map(x=>{
+      const mm = s.byMember[x.id], a = avg(mm.scores);
+      return '<div class="duel-card"><h5 style="color:'+readerColor(x.id)+'">'+esc(memberLabel(x.id))+'</h5>'+
+        '<div class="duel-row"><span>Books scored</span><span>'+mm.count+'</span></div>'+
+        '<div class="duel-row"><span>Average</span><span>'+(a==null?'—':a.toFixed(2))+'/5</span></div>'+
+        '<div class="duel-row"><span>Pages</span><span>'+(mm.pages?mm.pages.toLocaleString():'—')+'</span></div>'+
+        (mm.best?'<div class="duel-row"><span>Loved most</span><span>'+esc(mm.best.title)+' · '+mm.best.score+'</span></div>':'')+
+        '</div>';
+    }).join('')+'</div>';
+
+  const pickers = DATA.members.filter(x=>s.picks[x.id].n>0);
+  if (pickers.length){
+    const scoreOf = id => avg(s.picks[id].room);
+    const ranked = pickers.slice().sort((a,b)=>scoreOf(b.id)-scoreOf(a.id));
+    const lead = ranked[0], gap = ranked.length>1 ? (scoreOf(ranked[0].id)-scoreOf(ranked[1].id)) : 0;
+    html += '<div class="section-label">Who picks better</div>';
+    if (ranked.length>1){
+      html += '<div class="duel-card" style="margin-bottom:1rem">'+
+        '<p class="bt" style="color:'+readerColor(lead.id)+'">'+
+        (gap<0.05 ? 'Dead heat' : esc(member(lead.id).name)+' is winning')+'</p>'+
+        '<p class="empty-note">'+(gap<0.05
+          ? 'Your picks are averaging within a rounding error of each other.'
+          : esc(member(lead.id).name)+"'s picks average "+gap.toFixed(2)+
+            ' points higher across the room.')+'</p></div>';
+    }
+    html += '<div class="duel">'+ pickers.map(x=>{
+      const pk = s.picks[x.id], a = avg(pk.room);
+      return '<div class="duel-card"><h5 style="color:'+readerColor(x.id)+'">'+
+        esc(memberLabel(x.id))+"'s picks</h5>"+
+        '<div class="duel-row"><span>Books chosen</span><span>'+pk.n+'</span></div>'+
+        '<div class="duel-row"><span>Room average</span><span>'+(a==null?'—':a.toFixed(2))+'/5</span></div>'+
+        (pk.best?'<div class="duel-row"><span>Best call</span><span>'+esc(pk.best.title)+
+          ' · '+pk.best.room.toFixed(2)+'</span></div>':'')+
+        (pk.worst && pk.n>1?'<div class="duel-row"><span>Worst call</span><span>'+esc(pk.worst.title)+
+          ' · '+pk.worst.room.toFixed(2)+'</span></div>':'')+
+        '</div>';
+    }).join('') +'</div>';
+  } else {
+    html += '<div class="section-label">Who picks better</div>'+
+      '<p class="empty-note">No picks attributed yet. Open a month, hit edit, and set '+
+      '“Whose pick” on the book of the month — the tally builds from there.</p>';
+  }
+
+  if (genres.length){
+    html += '<div class="section-label">What you actually read</div>';
+    const top = genres[0][1].n;
+    html += genres.map(([g,v])=>{
+      const a = v.c ? (v.sum/v.c) : null;
+      return '<div class="genre-row"><span class="gn">'+esc(g)+
+        '<div class="bar"><i style="width:'+Math.round(v.n/top*100)+'%"></i></div></span>'+
+        '<span class="gc">'+v.n+' book'+(v.n>1?'s':'')+(a?' · '+a.toFixed(1)+'/5':'')+'</span></div>';
+    }).join('');
+  }
+
+  if (grAvg!=null){
+    const harsher = grAvg < 0;
+    html += '<div class="section-label">You vs everyone else</div>'+
+      '<div class="duel-card"><p class="bt">'+(harsher?'Harsher':'Softer')+' than Goodreads</p>'+
+      '<p class="empty-note">On books of the month, your average sits '+
+      Math.abs(grAvg).toFixed(2)+' points '+(harsher?'below':'above')+
+      ' the Goodreads score. Across '+s.grDelta.length+' book'+(s.grDelta.length>1?'s':'')+'.</p></div>';
+  }
+
+  html += '<div class="section-label">Missing data?</div>'+
+    '<p class="empty-note" style="margin-bottom:1rem">Page counts and genres come from Google Books '+
+    'and Open Library. If some are blank, run the lookup again.</p>'+
+    '<button class="btn" data-act="enrich">Fill in book details</button>';
+
+  $('#sheet-inner').innerHTML = html;
+  wireSimpleSheet();
+  $('#sheet').scrollTop = 0;
 }
-function closeSheet(){
-  const m = DATA.months.find(x=>x.id===openMonth);
-  if (editing && m){ commitFields(m); queueSave(); }
-  openMonth=null; editing=false;
-  $('#sheet').classList.remove('open'); $('#scrim').classList.remove('open');
-  document.body.classList.remove('locked');
-  render();
+
+/* ================= roulette ================= */
+const DFLY = '<svg class="dfly" id="dfly" viewBox="0 0 100 60" aria-hidden="true">'+
+  '<g class="w">'+
+    '<path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/>'+
+    '<path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/>'+
+    '<path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/>'+
+    '<path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/>'+
+  '</g>'+
+  '<ellipse cx="50" cy="20" rx="4.5" ry="5"/>'+
+  '<rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/>'+
+  '</svg>';
+
+function renderRoulette(){
+  const q = DATA.backlog || [];
+  let html = '<div class="sheet-bar"><button class="btn ghost" data-act="close">← All months</button></div>'+
+    '<h2 class="sheet-month">Next pick</h2>'+
+    '<p class="empty-note">Throw everything either of you wants to read into the pile, then let it decide.</p>';
+
+  html += '<div class="section-label">The wheel</div>';
+  if (q.length < 2){
+    html += '<div class="reel"><p class="rt">Need 2+</p><p class="ra">Add some books below first</p></div>';
+  } else {
+    const hit = rouletteHit!=null ? q[rouletteHit] : null;
+    html += '<div class="reel" id="reel">'+DFLY+'<p class="rt" id="reel-title">'+
+      (hit?esc(hit.title):'Ready')+'</p><p class="ra" id="reel-author">'+
+      (hit?esc([hit.author, hit.addedBy?('suggested by '+member(hit.addedBy).name):''].filter(Boolean).join(' · ')):
+        q.length+' books in the pile')+'</p></div>'+
+      '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem">'+
+      '<button class="btn gold" data-act="spin">'+(rouletteHit!=null?'Spin again':'Spin')+'</button>'+
+      (rouletteHit!=null
+        ? '<select id="assign-month" style="max-width:200px">'+
+          DATA.months.map(m=>'<option value="'+esc(m.id)+'"'+(m.bom?'':' ')+'>'+esc(m.name)+
+          (m.bom?' (taken)':'')+'</option>').join('')+'</select>'+
+          '<button class="btn primary" data-act="assign">Make it the pick</button>'
+        : '')+'</div>';
+  }
+
+  html += '<div class="section-label">The pile ('+q.length+')</div>';
+  html += '<div class="queue">'+ (q.length ? q.map((b,i)=>
+    '<div class="qrow'+(rouletteHit===i?' hot':'')+'" style="--qc:'+(b.addedBy?readerColor(b.addedBy):'var(--fg-dim)')+'">'+
+    '<span class="qt">'+esc(b.title)+(b.author?' <span class="qa">'+esc(b.author)+'</span>':'')+'</span>'+
+    (b.addedBy?'<span class="qw">'+esc(member(b.addedBy).name)+'</span>':'')+
+    '<button class="btn ghost" data-delq="'+i+'">×</button></div>').join('')
+    : '<p class="empty-note">Nothing in the pile yet.</p>') +'</div>';
+
+  html += '<div class="edit-block"><div class="edit-block-head"><h4>Add to the pile</h4></div>'+
+    '<div class="row">'+
+    '<label class="field"><span>Title</span><input type="text" id="q-title" placeholder="Book title"></label>'+
+    '<label class="field"><span>Author</span><input type="text" id="q-author" placeholder="Optional"></label>'+
+    '<label class="field"><span>Suggested by</span><select id="q-who">'+
+      '<option value="">Nobody in particular</option>'+
+      DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(me===x.id?' selected':'')+'>'+
+        esc(memberLabel(x.id))+'</option>').join('')+
+    '</select></label></div>'+
+    '<button class="btn" data-act="addq">Add it</button></div>';
+
+  $('#sheet-inner').innerHTML = html;
+  wireRoulette();
+  $('#sheet').scrollTop = 0;
 }
+
+function wireRoulette(){
+  const root = $('#sheet-inner');
+  root.querySelectorAll('[data-act]').forEach(btn=>btn.addEventListener('click',()=>{
+    const act = btn.dataset.act;
+    if (act==='close') return closeSheet();
+    if (act==='addq'){
+      const t = $('#q-title').value.trim();
+      if (!t) return toast('Give it a title');
+      DATA.backlog.push({ title:t, author:$('#q-author').value.trim(),
+        addedBy:$('#q-who').value || '' , cover:'' });
+      rouletteHit = null; queueSave(); renderRoulette(); toast('Added to the pile');
+    }
+    if (act==='spin') spin();
+    if (act==='assign'){
+      const monthId = $('#assign-month').value;
+      const m = DATA.months.find(x=>x.id===monthId);
+      const b = DATA.backlog[rouletteHit];
+      if (!m || !b) return;
+      m.bom = { title:b.title, author:b.author||'', goodreads:null, cover:b.cover||'',
+        pages:null, genres:[], pickedBy: b.addedBy||'', scores:{},
+        quotes:Object.fromEntries(DATA.members.map(x=>[x.id,[]])) };
+      DATA.backlog.splice(rouletteHit,1);
+      rouletteHit = null;
+      queueSave(); render(); renderRoulette();
+      toast(b.title+' is now '+m.name+"'s pick");
+      enrichBooks();
+    }
+  }));
+  root.querySelectorAll('[data-delq]').forEach(btn=>btn.addEventListener('click',()=>{
+    DATA.backlog.splice(Number(btn.dataset.delq),1);
+    rouletteHit = null; queueSave(); renderRoulette();
+  }));
+}
+
+function spin(){
+  const q = DATA.backlog||[];
+  if (q.length<2 || spinning) return;
+  const target = Math.floor(Math.random()*q.length);
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce){ rouletteHit = target; renderRoulette(); return; }
+
+  spinning = true;
+  const reel = $('#reel'), t = $('#reel-title'), a = $('#reel-author'), d = $('#dfly');
+  reel.classList.add('spinning');
+  a.textContent = 'spinning…';
+  const dart = () => {
+    if (!d) return;
+    const x = (Math.random()*2-1) * (reel.clientWidth/2 - 60);
+    const y = Math.random()*22 - 4;
+    const r = (Math.random()*2-1) * 16;
+    d.style.transform = 'translate('+x.toFixed(0)+'px,'+y.toFixed(0)+'px) rotate('+r.toFixed(0)+'deg)';
+  };
+  let i = 0, delay = 55;
+  const tick = () => {
+    t.textContent = q[i % q.length].title;
+    dart();
+    i++;
+    delay = delay * 1.13;
+    if (delay < 340){ setTimeout(tick, delay); }
+    else {
+      spinning = false;
+      rouletteHit = target;
+      reel.classList.remove('spinning');
+      if (d) d.style.transform = 'translate(0,0) rotate(0deg)';
+      setTimeout(renderRoulette, 480);
+    }
+  };
+  tick();
+}
+
+/* ================= shared sheet wiring ================= */
+function wireSimpleSheet(){
+  $('#sheet-inner').querySelectorAll('[data-act]').forEach(btn=>btn.addEventListener('click',()=>{
+    if (btn.dataset.act==='close') return closeSheet();
+    if (btn.dataset.act==='enrich') enrichBooks({announce:true});
+  }));
+}
+
 $('#scrim').addEventListener('click',()=>{ closeSheet(); closePanel(); });
 document.addEventListener('keydown',e=>{
   if (e.key!=='Escape') return;
   if ($('#panel').classList.contains('open')) return closePanel();
-  if (openMonth) closeSheet();
+  if (view) closeSheet();
 });
 
-/* ========== theme ========== */
+/* ================= theme ================= */
 function applyTheme(){
-  Object.entries(DATA.theme||{}).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));
+  Object.entries((DATA&&DATA.theme)||{}).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));
 }
 function buildPanel(){
+  if ($('#presets').dataset.built) return;
+  $('#presets').dataset.built = '1';
   $('#presets').innerHTML = Object.entries(PRESETS).map(([n,t])=>
     '<button class="preset" data-preset="'+esc(n)+'"><span class="swatches">'+
     '<i style="background:'+t['--bg']+'"></i><i style="background:'+t['--card']+'"></i>'+
@@ -846,7 +1392,7 @@ function buildPanel(){
     '</span>'+esc(n)+'</button>').join('');
   $('#presets').querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
     DATA.theme = Object.assign({}, PRESETS[b.dataset.preset]);
-    applyTheme(); syncPanelInputs(); render(); if(openMonth) renderSheet(); queueSave();
+    applyTheme(); syncPanelInputs(); render(); if(view) renderSheet(); queueSave();
   }));
   $('#color-rows').innerHTML = THEME_KEYS.map(([k,l])=>
     '<div class="color-row"><label for="c'+k+'">'+esc(l)+'</label>'+
@@ -854,7 +1400,7 @@ function buildPanel(){
   $('#color-rows').querySelectorAll('input[type=color]').forEach(inp=>{
     inp.addEventListener('input',()=>{
       DATA.theme[inp.dataset.var]=inp.value;
-      applyTheme(); render(); if(openMonth) renderSheet();
+      applyTheme(); render(); if(view) renderSheet();
     });
     inp.addEventListener('change', queueSave);
   });
@@ -862,6 +1408,7 @@ function buildPanel(){
   $('#radius').addEventListener('change', queueSave);
 }
 function syncPanelInputs(){
+  if (!DATA) return;
   THEME_KEYS.forEach(([k])=>{
     const i=$('#color-rows input[data-var="'+k+'"]');
     if (i && DATA.theme[k]) i.value=DATA.theme[k];
@@ -870,20 +1417,25 @@ function syncPanelInputs(){
 }
 function closePanel(){
   $('#panel').classList.remove('open');
-  if(!openMonth) $('#scrim').classList.remove('open');
+  if(!view) $('#scrim').classList.remove('open');
 }
 $('#btn-settings').addEventListener('click',()=>{
   $('#panel').classList.add('open'); $('#scrim').classList.add('open'); $('#panel-close').focus();
 });
 $('#panel-close').addEventListener('click', closePanel);
 
-/* ========== backup ========== */
+/* ================= toolbar ================= */
+$('#btn-wrapped').addEventListener('click',()=>openSheet('wrapped'));
+$('#btn-roulette').addEventListener('click',()=>openSheet('roulette'));
+$('#btn-covers').addEventListener('click',()=>enrichBooks({announce:true}));
+$('#yr-prev').addEventListener('click',()=>loadYear(YEAR-1));
+$('#yr-next').addEventListener('click',()=>loadYear(YEAR+1));
+
 $('#btn-export').addEventListener('click',()=>{
   const blob = new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob); a.download='bookclub-backup.json'; a.click();
-  URL.revokeObjectURL(a.href);
-  toast('Backup downloaded');
+  a.href=URL.createObjectURL(blob); a.download='bookclub-'+YEAR+'-backup.json'; a.click();
+  URL.revokeObjectURL(a.href); toast('Backup downloaded');
 });
 $('#btn-import').addEventListener('click',()=>$('#file-input').click());
 $('#file-input').addEventListener('change',e=>{
@@ -893,21 +1445,18 @@ $('#file-input').addEventListener('change',e=>{
     try{
       const next=JSON.parse(r.result);
       if(!next.months) throw new Error('bad file');
-      DATA=next; DATA.theme=Object.assign({},PRESETS.Lacquer,DATA.theme||{});
+      DATA = migrate(next);
       applyTheme(); syncPanelInputs(); render(); queueSave(); toast('Backup restored');
     }catch(err){ toast("That file isn't book club JSON"); }
   };
   r.readAsText(f); e.target.value='';
 });
-$('#btn-covers').addEventListener('click',()=>fillMissingCovers({announce:true}));
 
-/* ========== boot ========== */
-(async function boot(){
-  DATA.theme = Object.assign({}, PRESETS.Lacquer, DATA.theme||{});
-  applyTheme(); buildPanel(); syncPanelInputs(); buildWhoPicker(); render();
-  await initSync();
-  fillMissingCovers();
-  setInterval(paintLastEdit, 60000);
+/* ================= boot ================= */
+(function boot(){
+  document.documentElement.style.setProperty('--bg', PRESETS.Lacquer['--bg']);
+  initSync();
+  setInterval(()=>{ if(DATA) paintLastEdit(); }, 60000);
 })();
 </script>
 </body>
