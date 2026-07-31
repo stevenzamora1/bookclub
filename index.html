@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Communist China Book Club — 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Literata:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- =============================================================
+     SETUP — paste your Firebase config below, then deploy.
+
+     1. console.firebase.google.com -> Add project (skip Analytics)
+     2. Build > Firestore Database -> Create database -> production mode
+     3. Rules tab, paste this, Publish:
+
+          rules_version = '2';
+          service cloud.firestore {
+            match /databases/{database}/documents {
+              match /bookclub/{docId} {
+                allow read, write: if true;
+              }
+            }
+          }
+
+     4. Project settings (gear) > Your apps > Web (</>) -> register app
+     5. Copy the firebaseConfig values into FIREBASE below
+
+     Leave FIREBASE blank and the site still works — it just won't
+     sync, and you're back to Download / Restore backup by hand.
+     ============================================================= -->
+<script>
+window.FIREBASE = {
+  apiKey: "AIzaSyC9l5LzPi2AyS4WTmX4ZRvPbxIN_f4yUhU",
+  authDomain: "bookclub-8c44f.firebaseapp.com",
+  projectId: "bookclub-8c44f",
+  storageBucket: "bookclub-8c44f.firebasestorage.app",
+  messagingSenderId: "1080784017163",
+  appId: "1:1080784017163:web:f0c62c0cfd2c8c010db40e"
+};
+window.DOC_PATH = ["bookclub", "2026"];   // collection, document
+</script>
+
+<script type="application/json" id="seed">
+{
+  "club": { "name": "Communist China Book Club", "year": "2026", "zodiac": "Year of the Horse" },
+  "members": [
+    { "id": "steven", "name": "Steven" },
+    { "id": "mia", "name": "Mia" }
+  ],
+  "meta": { "updatedBy": "", "updatedAt": "" },
+  "theme": {
+    "--bg": "#16100e", "--fg": "#f0e6d6", "--card": "#efe3d0", "--card-fg": "#1a1310",
+    "--accent": "#d6291e", "--gold": "#e5a93c",
+    "--reader-a": "#d6291e", "--reader-b": "#2e7d64", "--radius": "2px"
+  },
+  "months": [
+    {
+      "id": "may", "name": "May", "bom": null,
+      "top": [
+        { "member": "steven", "title": "Golden Son", "author": "Pierce Brown", "score": 5, "cover": "",
+          "quote": "How can I live with this? If I don't pull the trigger, millions will die. If you pull it, you accept that billions should live as slaves." },
+        { "member": "mia", "title": "The Score", "author": "Elle Kennedy", "score": 3.5, "cover": "",
+          "quote": "Please baby, I've been such a good boy." }
+      ]
+    },
+    {
+      "id": "june", "name": "June",
+      "bom": {
+        "title": "Throne of Glass", "author": "Sarah J. Maas", "goodreads": 4.18, "cover": "",
+        "scores": { "steven": 3.25, "mia": 4.5 },
+        "quotes": {
+          "steven": "Libraries were full of ideas — perhaps the most dangerous and powerful of all weapons.",
+          "mia": "She was his fastest, but he'd never been able to quell the wildness within her."
+        }
+      },
+      "top": [
+        { "member": "steven", "title": "Morning Star", "author": "Pierce Brown", "score": 5, "cover": "",
+          "quote": "I will make a house for you in the Vale of your fathers. It will be beside my own. Join me there when you die. But I am no builder. So take your time. We will wait." },
+        { "member": "mia", "title": "Lights Out", "author": "Navessa Allen", "score": 4, "cover": "",
+          "quote": "But did you ever stop to consider whether or not YOU were safe with me." }
+      ]
+    },
+    {
+      "id": "july", "name": "July",
+      "bom": {
+        "title": "Normal People", "author": "Sally Rooney", "goodreads": 3.81, "cover": "",
+        "scores": { "steven": 3, "mia": 3 },
+        "quotes": {
+          "steven": "He feels like he ruined the life of everyone who has ever even marginally liked him.",
+          "mia": "Marianne, I'm not a religious person, but I do sometimes think God made you for me."
+        }
+      },
+      "top": [
+        { "member": "steven", "title": "The Butcher's Masquerade", "author": "Matt Dinniman", "score": 5, "cover": "", "quote": "" },
+        { "member": "mia", "title": "Insatiable", "author": "", "score": 5, "cover": "",
+          "quote": "You irritate me. You're a poisonous snake that won't fuck off from my mind. You're everywhere yet nowhere. A fucking disease." }
+      ]
+    },
+    { "id": "august", "name": "August",
+      "bom": { "title": "Haunting Adeline", "author": "H. D. Carlton", "goodreads": 3.94, "cover": "", "scores": {}, "quotes": {} },
+      "top": [] },
+    { "id": "september", "name": "September",
+      "bom": { "title": "Empire of the Vampire", "author": "Jay Kristoff", "goodreads": 4.33, "cover": "", "scores": {}, "quotes": {} },
+      "top": [] },
+    { "id": "october", "name": "October",
+      "bom": { "title": "Fourth Wing", "author": "Rebecca Yarros", "goodreads": 4.56, "cover": "", "scores": {}, "quotes": {} },
+      "top": [] },
+    { "id": "november", "name": "November",
+      "bom": { "title": "Hunting Adeline", "author": "H. D. Carlton", "goodreads": 4.07, "cover": "", "scores": {}, "quotes": {} },
+      "top": [] },
+    { "id": "december", "name": "December",
+      "bom": { "title": "Anxious People", "author": "Fredrik Backman", "goodreads": 4.16, "cover": "", "scores": {}, "quotes": {} },
+      "top": [] }
+  ]
+}
+</script>
+
+<style>
+:root{
+  --bg:#16100e; --fg:#f0e6d6; --card:#efe3d0; --card-fg:#1a1310;
+  --accent:#d6291e; --gold:#e5a93c; --reader-a:#d6291e; --reader-b:#2e7d64;
+  --radius:2px;
+  --bg-2: color-mix(in srgb, var(--bg) 88%, var(--fg));
+  --fg-dim: color-mix(in srgb, var(--fg) 55%, var(--bg));
+  --card-dim: color-mix(in srgb, var(--card-fg) 55%, var(--card));
+  --rule: color-mix(in srgb, var(--fg) 22%, transparent);
+  --display:"Big Shoulders Display","Haettenschweiler","Arial Narrow",sans-serif;
+  --body:"Literata",Georgia,"Times New Roman",serif;
+  --mono:"Space Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;
+  line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:6rem}
+body.locked{overflow:hidden}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+:focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
+img{display:block;max-width:100%}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem)}
+
+.statusbar{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;
+  padding:.7rem 0;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--fg-dim);display:inline-block;
+  margin-right:.5rem;vertical-align:middle}
+.dot.live{background:#3fbf6b}.dot.saving{background:var(--gold)}.dot.err{background:var(--accent)}
+.status{color:var(--fg-dim)}
+.who-pick{display:flex;gap:.35rem;margin-left:auto;align-items:center;flex-wrap:wrap}
+.who-pick > span{color:var(--fg-dim)}
+.chip{padding:.3rem .65rem;border:1px solid var(--rule);border-radius:99px;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase}
+.chip[aria-pressed=true]{background:var(--c,var(--accent));border-color:var(--c,var(--accent));color:#fff}
+
+.masthead{padding:clamp(2rem,6vw,4rem) 0 1.75rem}
+.eyebrow{display:flex;align-items:center;gap:1rem;font-family:var(--mono);font-size:.7rem;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--rule)}
+h1.title{font-family:var(--display);font-weight:800;font-size:clamp(2.6rem,9.5vw,6.5rem);
+  line-height:.86;letter-spacing:-.01em;text-transform:uppercase;margin:0}
+h1.title em{font-style:normal;color:var(--accent)}
+.colophon{display:flex;flex-wrap:wrap;gap:.4rem 1.5rem;margin-top:1.4rem;padding-top:1rem;
+  border-top:1px solid var(--rule);font-family:var(--mono);font-size:.72rem;
+  letter-spacing:.06em;color:var(--fg-dim)}
+.colophon b{color:var(--fg);font-weight:700}
+.toolbar{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.5rem}
+.btn{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:.6rem 1rem;border:1px solid var(--rule);border-radius:var(--radius);color:var(--fg);
+  transition:background .15s,border-color .15s,color .15s}
+.btn:hover{background:var(--bg-2);border-color:var(--fg-dim)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.12)}
+.btn.ghost{border-color:transparent;color:var(--fg-dim)}
+.btn.ghost:hover{color:var(--fg)}
+
+.grid{display:grid;gap:clamp(1rem,2.5vw,1.75rem);
+  grid-template-columns:repeat(auto-fill,minmax(215px,1fr));margin-top:.5rem}
+.card{position:relative;text-align:left;width:100%;background:var(--card);color:var(--card-fg);
+  border-radius:var(--radius);padding:0 0 1rem;overflow:hidden;
+  transition:transform .18s ease,box-shadow .18s ease}
+.card:hover,.card:focus-visible{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--accent)}
+.card-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;
+  padding:.7rem .9rem .55rem;border-bottom:1px solid color-mix(in srgb,var(--card-fg) 18%,transparent)}
+.card-month{font-family:var(--display);font-weight:800;text-transform:uppercase;
+  font-size:1.5rem;line-height:1}
+.card-kind{font-family:var(--mono);font-size:.55rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--card-dim)}
+.cover-slot{position:relative;margin:1rem .9rem .85rem;aspect-ratio:2/3;
+  background:color-mix(in srgb,var(--card-fg) 8%,transparent);border-radius:1px;overflow:hidden}
+.cover-slot img{width:100%;height:100%;object-fit:cover}
+.cover-fallback{position:absolute;inset:0;display:flex;align-items:flex-end;padding:.75rem;
+  font-family:var(--display);font-weight:600;text-transform:uppercase;font-size:1rem;
+  line-height:1.05;color:var(--card-dim);
+  background:repeating-linear-gradient(45deg,transparent,transparent 7px,
+    color-mix(in srgb,var(--card-fg) 5%,transparent) 7px,
+    color-mix(in srgb,var(--card-fg) 5%,transparent) 14px)}
+.card-body{padding:0 .9rem}
+.card-title{font-weight:600;font-size:.98rem;line-height:1.25;margin:0}
+.card-author{font-family:var(--mono);font-size:.68rem;color:var(--card-dim);margin:.3rem 0 0}
+.marks{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem}
+.mark{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--mono);
+  font-size:.68rem;font-weight:700;padding:.2rem .45rem;border-radius:1px;color:#fff}
+.mark .who{font-weight:400;opacity:.85;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase}
+.mark.avg{background:transparent;color:var(--card-dim);
+  border:1px solid color-mix(in srgb,var(--card-fg) 25%,transparent)}
+.stamp{position:absolute;top:.55rem;right:.6rem;transform:rotate(-9deg);font-family:var(--mono);
+  font-weight:700;font-size:.58rem;letter-spacing:.18em;padding:.25rem .5rem;
+  border:2px solid var(--gold);color:var(--gold);border-radius:2px;opacity:.85;pointer-events:none}
+.card.pending .cover-slot{opacity:.55}
+.card.now::after{content:"";position:absolute;inset:0;border:2px solid var(--accent);
+  border-radius:var(--radius);pointer-events:none;z-index:1}
+.card.now .card-kind{color:var(--accent)}
+.card.now.pending .cover-slot{opacity:1}
+.stamp.now{border-color:var(--accent);color:var(--accent);transform:rotate(-4deg);opacity:1}
+.stamp.past{border-color:var(--card-dim);color:var(--card-dim);opacity:.7}
+
+.scrim{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 82%,#000);
+  backdrop-filter:blur(3px);z-index:40;display:none}
+.scrim.open{display:block}
+.sheet{position:fixed;inset:0;z-index:50;overflow-y:auto;display:none;animation:rise .22s ease-out}
+.sheet.open{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.sheet-inner{max-width:960px;margin:0 auto;padding:clamp(1rem,4vw,3rem) clamp(1rem,4vw,2.5rem) 6rem}
+.sheet-bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;padding:.9rem 0 1rem;margin-bottom:1.5rem;background:linear-gradient(var(--bg) 72%,transparent)}
+.sheet-month{font-family:var(--display);font-weight:800;text-transform:uppercase;
+  font-size:clamp(2.4rem,8vw,4.5rem);line-height:.85;margin:0 0 .4rem}
+.section-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);display:flex;align-items:center;gap:.9rem;margin:2.75rem 0 1.25rem}
+.section-label::after{content:"";flex:1;height:1px;background:var(--rule)}
+.bom{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);
+  gap:clamp(1.25rem,4vw,2.5rem);align-items:start}
+.bom .cover-slot{margin:0;background:var(--bg-2)}
+.bom .cover-fallback{color:var(--fg-dim);background:repeating-linear-gradient(45deg,transparent,
+  transparent 7px,color-mix(in srgb,var(--fg) 6%,transparent) 7px,
+  color-mix(in srgb,var(--fg) 6%,transparent) 14px)}
+.book-title{font-family:var(--display);font-weight:600;text-transform:uppercase;
+  font-size:clamp(1.5rem,4vw,2.4rem);line-height:.98;margin:0}
+.book-author{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;color:var(--fg-dim);margin:.55rem 0 0}
+.scoreline{display:flex;flex-wrap:wrap;gap:1.75rem;margin:1.5rem 0 0;padding:1rem 0;
+  border-block:1px solid var(--rule)}
+.score{display:flex;flex-direction:column;gap:.2rem}
+.score .lab{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--fg-dim)}
+.score .val{font-family:var(--display);font-weight:800;font-size:2.1rem;line-height:1}
+.score .val small{font-family:var(--mono);font-size:.7rem;font-weight:400;color:var(--fg-dim);margin-left:.15rem}
+.score.empty .val{color:var(--fg-dim);opacity:.5}
+.quotes{display:grid;gap:1.25rem;margin-top:1.75rem}
+.quote{position:relative;padding:.15rem 0 .15rem 1.4rem;border-left:3px solid var(--qc,var(--accent))}
+.quote p{margin:0;font-size:clamp(1rem,2.2vw,1.18rem);line-height:1.55;font-style:italic}
+.quote .attr{display:block;margin-top:.6rem;font-family:var(--mono);font-style:normal;font-size:.65rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--qc,var(--accent))}
+.quote.empty p{color:var(--fg-dim);opacity:.6;font-style:normal;font-family:var(--mono);font-size:.8rem}
+.tops{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.top{display:grid;grid-template-columns:78px minmax(0,1fr);gap:1rem;align-items:start;
+  padding-top:1rem;border-top:2px solid var(--qc,var(--accent))}
+.top .cover-slot{margin:0;background:var(--bg-2)}
+.top .cover-fallback{font-size:.7rem;padding:.4rem;color:var(--fg-dim);background:none}
+.top-who{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--qc);margin:0 0 .35rem}
+.top-title{font-weight:600;font-size:1.05rem;line-height:1.25;margin:0}
+.top-meta{font-family:var(--mono);font-size:.68rem;color:var(--fg-dim);margin:.35rem 0 0}
+.top .quote{margin-top:.85rem;border-left-width:2px;padding-left:.9rem}
+.top .quote p{font-size:.92rem}
+
+.field{display:block;margin-bottom:.85rem}
+.field > span{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--fg-dim);margin-bottom:.35rem}
+input[type=text],input[type=number],input[type=url],textarea,select{width:100%;background:var(--bg-2);
+  color:var(--fg);border:1px solid var(--rule);border-radius:var(--radius);padding:.55rem .7rem;
+  font-family:var(--body);font-size:.92rem}
+textarea{resize:vertical;min-height:4.5rem;font-style:italic}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
+.field.mine input,.field.mine textarea{border-color:var(--gold);
+  background:color-mix(in srgb,var(--gold) 7%,var(--bg-2))}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.85rem}
+.edit-block{border:1px solid var(--rule);border-radius:var(--radius);padding:1.1rem;
+  margin-bottom:1rem;background:color-mix(in srgb,var(--bg) 94%,var(--fg))}
+.edit-block-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.9rem}
+.edit-block-head h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;
+  text-transform:uppercase;margin:0;color:var(--gold)}
+.cover-row{display:flex;gap:.5rem;align-items:flex-end}
+.cover-row .field{flex:1;margin-bottom:0}
+.cover-picks{margin-top:.9rem;padding:.9rem;border:1px dashed var(--rule);border-radius:var(--radius)}
+.picks-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.75rem;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim)}
+.picks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:.6rem}
+.pick{padding:0;border:2px solid transparent;border-radius:2px;overflow:hidden;background:var(--bg-2);
+  display:block;text-align:left}
+.pick img{width:100%;aspect-ratio:2/3;object-fit:cover}
+.pick:hover{border-color:var(--fg-dim)}
+.pick.on{border-color:var(--gold)}
+.pick span{display:block;font-family:var(--mono);font-size:.5rem;line-height:1.35;padding:.3rem;
+  color:var(--fg-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link{color:var(--gold);text-decoration:underline;text-underline-offset:3px;font-family:var(--mono);
+  font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}
+.empty-note{font-family:var(--mono);font-size:.75rem;color:var(--fg-dim);margin:0}
+
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(380px,100%);z-index:60;background:var(--bg);
+  border-left:1px solid var(--rule);overflow-y:auto;padding:1.5rem 1.5rem 4rem;
+  transform:translateX(101%);transition:transform .24s ease}
+.panel.open{transform:none;box-shadow:-24px 0 60px rgba(0,0,0,.45)}
+.panel h3{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:1.8rem;margin:0}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:.5rem;margin-bottom:1.75rem}
+.preset{border:1px solid var(--rule);border-radius:var(--radius);padding:.55rem;text-align:left;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase}
+.preset:hover{border-color:var(--gold)}
+.swatches{display:flex;gap:3px;margin-bottom:.45rem}
+.swatches i{width:14px;height:14px;border-radius:1px;display:block}
+.color-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.55rem 0;
+  border-bottom:1px solid var(--rule)}
+.color-row label{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:var(--fg-dim)}
+.color-row input[type=color]{width:44px;height:28px;padding:0;border:1px solid var(--rule);
+  border-radius:var(--radius);background:none;cursor:pointer}
+.panel-note{font-family:var(--mono);font-size:.65rem;line-height:1.7;color:var(--fg-dim);
+  margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--rule)}
+.toast{position:fixed;left:50%;bottom:1.5rem;transform:translate(-50%,140%);z-index:80;
+  background:var(--gold);color:#14100e;padding:.65rem 1.1rem;border-radius:var(--radius);
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  transition:transform .25s ease}
+.toast.show{transform:translate(-50%,0)}
+@media (max-width:560px){.bom{grid-template-columns:1fr}.bom .cover-slot{max-width:170px}
+  .who-pick{margin-left:0;width:100%}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;
+  transition-duration:.01ms!important}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="statusbar">
+    <span class="status" id="status"><span class="dot"></span>Starting up</span>
+    <span class="status" id="lastedit"></span>
+    <div class="who-pick" id="who-pick"><span>You are</span></div>
+  </div>
+
+  <header class="masthead">
+    <div class="eyebrow"><span id="eyebrow-text"></span></div>
+    <h1 class="title" id="club-title"></h1>
+    <div class="colophon" id="colophon"></div>
+    <div class="toolbar">
+      <button class="btn" id="btn-covers">Find missing covers</button>
+      <button class="btn" id="btn-settings">Colors</button>
+      <button class="btn ghost" id="btn-export">Download backup</button>
+      <button class="btn ghost" id="btn-import">Restore backup</button>
+      <input type="file" id="file-input" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <main><div class="grid" id="grid"></div></main>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-month">
+  <div class="sheet-inner" id="sheet-inner"></div>
+</div>
+
+<aside class="panel" id="panel" aria-label="Colour settings">
+  <div class="panel-head"><h3>Colors</h3>
+    <button class="btn ghost" id="panel-close">Close</button></div>
+  <div class="presets" id="presets"></div>
+  <div id="color-rows"></div>
+  <div class="color-row">
+    <label for="radius">Corner radius</label>
+    <input type="range" id="radius" min="0" max="18" step="1" style="width:110px">
+  </div>
+  <p class="panel-note">Colors sync with everything else, so whatever you pick is what she sees too.</p>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========== state ========== */
+const SEED = JSON.parse(document.getElementById('seed').textContent);
+let DATA = structuredClone(SEED);
+let openMonth = null, editing = false, me = null;
+let saveDoc = null, saveTimer = null;
+
+const THEME_KEYS = [['--bg','Page'],['--fg','Text'],['--card','Card'],['--card-fg','Card text'],
+  ['--accent','Accent'],['--gold','Highlight'],['--reader-a','Reader 1'],['--reader-b','Reader 2']];
+
+const PRESETS = {
+  'Lacquer':  {'--bg':'#16100e','--fg':'#f0e6d6','--card':'#efe3d0','--card-fg':'#1a1310','--accent':'#d6291e','--gold':'#e5a93c','--reader-a':'#d6291e','--reader-b':'#2e7d64','--radius':'2px'},
+  'Newsprint':{'--bg':'#e5e0d5','--fg':'#191713','--card':'#fffdf6','--card-fg':'#191713','--accent':'#a92a1c','--gold':'#7a6a3c','--reader-a':'#a92a1c','--reader-b':'#26584a','--radius':'0px'},
+  'Midnight': {'--bg':'#0d1220','--fg':'#e7ecf6','--card':'#e9ecf4','--card-fg':'#141a28','--accent':'#6c5ce7','--gold':'#f2c14e','--reader-a':'#6c5ce7','--reader-b':'#2fb8a8','--radius':'8px'},
+  'Bramble':  {'--bg':'#1a0f18','--fg':'#f8e9f0','--card':'#fbedf3','--card-fg':'#25121d','--accent':'#e23e77','--gold':'#f0b45e','--reader-a':'#e23e77','--reader-b':'#8b6bd9','--radius':'12px'},
+  'Jade':     {'--bg':'#0e1a16','--fg':'#e9efe6','--card':'#f0eee0','--card-fg':'#131a15','--accent':'#c6402f','--gold':'#d9b65f','--reader-a':'#c6402f','--reader-b':'#3f8f76','--radius':'2px'}
+};
+
+const $ = (s,r=document)=>r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const memberName = id => (DATA.members.find(m=>m.id===id)||{}).name || id;
+const readerColor = id => DATA.members.findIndex(m=>m.id===id)===1 ? 'var(--reader-b)' : 'var(--reader-a)';
+const fmtScore = n => (n===''||n==null||isNaN(n)) ? null : (Math.round(Number(n)*100)/100).toString();
+
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200);
+}
+function setStatus(kind,text){
+  $('#status').innerHTML = '<span class="dot '+kind+'"></span>'+esc(text);
+}
+
+/* ========== sync ========== */
+async function initSync(){
+  const cfg = window.FIREBASE || {};
+  if (!cfg.projectId){ setStatus('', 'Not syncing — add your Firebase keys'); return; }
+  setStatus('saving','Connecting');
+  try {
+    const V = 'https://www.gstatic.com/firebasejs/10.12.2/';
+    const [app, fs] = await Promise.all([
+      import(V + 'firebase-app.js'),
+      import(V + 'firebase-firestore.js')
+    ]);
+    const db  = fs.getFirestore(app.initializeApp(cfg));
+    const ref = fs.doc(db, window.DOC_PATH[0], window.DOC_PATH[1]);
+
+    const first = await fs.getDoc(ref);
+    if (!first.exists()) await fs.setDoc(ref, DATA);   // first ever visit seeds the doc
+
+    saveDoc = async () => {
+      DATA.meta = { updatedBy: me || '', updatedAt: new Date().toISOString() };
+      setStatus('saving','Saving');
+      try { await fs.setDoc(ref, DATA); setStatus('live','All changes saved'); paintLastEdit(); }
+      catch (e){ setStatus('err','Save failed — check your connection'); }
+    };
+
+    fs.onSnapshot(ref, snap => {
+      if (!snap.exists() || snap.metadata.hasPendingWrites) return;
+      if (editing) return;                 // don't yank the page away from someone typing
+      const next = snap.data();
+      if (!next.months) return;
+      DATA = next;
+      DATA.theme = Object.assign({}, PRESETS.Lacquer, DATA.theme || {});
+      applyTheme(); syncPanelInputs(); render();
+      if (openMonth) renderSheet();
+      setStatus('live','All changes saved'); paintLastEdit();
+    }, () => setStatus('err','Lost connection'));
+
+    setStatus('live','All changes saved');
+  } catch (e){
+    setStatus('err','Could not reach Firebase — edits stay on this device');
+  }
+}
+
+function queueSave(){
+  if (!saveDoc) return;
+  clearTimeout(saveTimer);
+  setStatus('saving','Saving');
+  saveTimer = setTimeout(()=>saveDoc(), 700);
+}
+
+function paintLastEdit(){
+  const m = DATA.meta || {};
+  if (!m.updatedAt){ $('#lastedit').textContent=''; return; }
+  const who = m.updatedBy ? memberName(m.updatedBy) : 'someone';
+  const when = new Date(m.updatedAt);
+  const mins = Math.round((Date.now()-when)/60000);
+  const ago = mins < 1 ? 'just now'
+    : mins < 60 ? mins+' min ago'
+    : mins < 1440 ? Math.round(mins/60)+' hr ago'
+    : when.toLocaleDateString(undefined,{month:'short',day:'numeric'});
+  $('#lastedit').textContent = 'Last edit by '+who+' · '+ago;
+}
+
+/* ========== identity ========== */
+function buildWhoPicker(){
+  const el = $('#who-pick');
+  el.innerHTML = '<span>You are</span>' + DATA.members.map(m =>
+    '<button class="chip" data-me="'+esc(m.id)+'" aria-pressed="'+(me===m.id)+'" style="--c:'+readerColor(m.id)+'">'+esc(m.name)+'</button>').join('');
+  el.querySelectorAll('[data-me]').forEach(b=>b.addEventListener('click',()=>{
+    me = (me===b.dataset.me) ? null : b.dataset.me;
+    buildWhoPicker();
+    if (openMonth) renderSheet();
+  }));
+}
+
+/* ========== covers ========== */
+const coverCache = new Map();
+
+/* returns up to 12 candidate covers, Google Books first then Open Library */
+async function findCoverCandidates(title, author){
+  if (!title) return [];
+  const key = (title+'|'+(author||'')).toLowerCase();
+  if (coverCache.has(key)) return coverCache.get(key);
+  const q = encodeURIComponent([title,author].filter(Boolean).join(' '));
+  const out = [], seen = new Set();
+  const push = (url,label) => {
+    if (!url || seen.has(url)) return;
+    seen.add(url); out.push({url:url, label:label||''});
+  };
+  try {
+    const r = await fetch('https://www.googleapis.com/books/v1/volumes?q='+q+'&maxResults=12&printType=books');
+    const j = await r.json();
+    (j.items||[]).forEach(it=>{
+      const vi = it.volumeInfo || {}, l = vi.imageLinks;
+      if (!l) return;
+      push((l.thumbnail||l.smallThumbnail||'').replace(/^http:/,'https:')
+             .replace('&edge=curl','').replace('zoom=1','zoom=3'),
+           [vi.publisher||vi.title, (vi.publishedDate||'').slice(0,4)].filter(Boolean).join(' · '));
+    });
+  } catch(e){}
+  try {
+    const r = await fetch('https://openlibrary.org/search.json?q='+q+'&limit=12&fields=cover_i,title,first_publish_year');
+    const j = await r.json();
+    (j.docs||[]).forEach(d=>{
+      if (!d.cover_i) return;
+      push('https://covers.openlibrary.org/b/id/'+d.cover_i+'-L.jpg',
+           [d.title, d.first_publish_year].filter(Boolean).join(' · '));
+    });
+  } catch(e){}
+  const list = out.slice(0,12);
+  coverCache.set(key,list);
+  return list;
+}
+
+async function findCover(title, author){
+  const list = await findCoverCandidates(title, author);
+  return list.length ? list[0].url : '';
+}
+function allBooks(){
+  const out=[];
+  DATA.months.forEach(m=>{ if(m.bom) out.push(m.bom); (m.top||[]).forEach(b=>out.push(b)); });
+  return out;
+}
+async function fillMissingCovers(opts){
+  const announce = opts && opts.announce;
+  const todo = allBooks().filter(b=>!b.cover && b.title);
+  if (!todo.length){ if(announce) toast('Every book already has a cover'); return; }
+  if (announce) toast('Looking up '+todo.length+' cover'+(todo.length>1?'s':'')+'…');
+  let found=0;
+  for (const b of todo){
+    const url = await findCover(b.title,b.author);
+    if (url){ b.cover=url; found++; render(); if(openMonth) renderSheet(); }
+  }
+  if (found) queueSave();
+  if (announce) toast(found ? 'Found '+found+' cover'+(found>1?'s':'') : 'No covers found');
+}
+
+/* ========== render: grid ========== */
+function coverMarkup(book, cls){
+  const t = esc(book && book.title || '');
+  const img = book && book.cover
+    ? '<img src="'+esc(book.cover)+'" alt="Cover of '+t+'" loading="lazy" onerror="this.style.display=\'none\'">' : '';
+  return '<div class="cover-slot '+(cls||'')+'"><div class="cover-fallback">'+(t||'No book yet')+'</div>'+img+'</div>';
+}
+
+function render(){
+  $('#club-title').innerHTML = esc(DATA.club.name).replace(/(\S+)$/,'<em>$1</em>');
+  $('#eyebrow-text').textContent = DATA.club.year+' · '+DATA.club.zodiac;
+
+  const bits = ['<span><b>'+DATA.months.length+'</b> months on the shelf</span>',
+                '<span><b>'+allBooks().filter(b=>b.title).length+'</b> books logged</span>'];
+  DATA.members.forEach(m=>{
+    const vals = allBooks().flatMap(b => b.scores
+      ? (b.scores[m.id]!=null ? [Number(b.scores[m.id])] : [])
+      : (b.member===m.id && b.score!=null && b.score!=='' ? [Number(b.score)] : [])
+    ).filter(n=>!isNaN(n));
+    if (vals.length) bits.push('<span>'+esc(m.name)+' averages <b>'+
+      (vals.reduce((a,c)=>a+c,0)/vals.length).toFixed(2)+'</b></span>');
+  });
+  $('#colophon').innerHTML = bits.join('');
+
+  const MONTH_NO = {january:1,february:2,march:3,april:4,may:5,june:6,
+    july:7,august:8,september:9,october:10,november:11,december:12};
+  const today = new Date();
+  const thisMonth = today.getMonth()+1;
+  const sameYear = String(today.getFullYear()) === String(DATA.club.year);
+
+  $('#grid').innerHTML = DATA.months.map(m=>{
+    const feature = m.bom || (m.top && m.top[0]) || null;
+    const sc = m.bom ? (m.bom.scores||{}) : {};
+    const hasScores = m.bom
+      ? DATA.members.some(x=>fmtScore(sc[x.id])!==null)
+      : (m.top||[]).some(b=>fmtScore(b.score)!==null);
+
+    const no    = MONTH_NO[String(m.id).toLowerCase()] || 0;
+    const isNow = sameYear && no === thisMonth;
+    let stamp = '';
+    if (!hasScores){
+      if (isNow) stamp = '<span class="stamp now">Reading now</span>';
+      else if (sameYear && no && no < thisMonth) stamp = '<span class="stamp past">Not scored</span>';
+      else stamp = '<span class="stamp">To read</span>';
+    }
+    let marks='';
+    if (m.bom){
+      marks = DATA.members.map(x=>{
+        const v=fmtScore(sc[x.id]);
+        return v===null?'':'<span class="mark" style="background:'+readerColor(x.id)+
+          '"><span class="who">'+esc(x.name[0])+'</span>'+v+'</span>';
+      }).join('');
+      const g=fmtScore(m.bom.goodreads);
+      if (g) marks += '<span class="mark avg">GR '+g+'</span>';
+    } else {
+      marks = (m.top||[]).map(b=>{
+        const v=fmtScore(b.score);
+        return v===null?'':'<span class="mark" style="background:'+readerColor(b.member)+
+          '"><span class="who">'+esc(memberName(b.member)[0])+'</span>'+v+'</span>';
+      }).join('');
+    }
+    return '<button class="card '+(hasScores?'':'pending')+(isNow?' now':'')+'" data-month="'+esc(m.id)+'" aria-label="Open '+esc(m.name)+(isNow?', reading now':'')+'">'+
+      stamp+
+      '<div class="card-head"><span class="card-month">'+esc(m.name)+'</span>'+
+      '<span class="card-kind">'+(isNow?'This month':(m.bom?'Book of the month':'Top books'))+'</span></div>'+
+      coverMarkup(feature)+
+      '<div class="card-body"><p class="card-title">'+esc(feature?feature.title:'Nothing picked yet')+'</p>'+
+      (feature&&feature.author?'<p class="card-author">'+esc(feature.author)+'</p>':'')+
+      '<div class="marks">'+marks+'</div></div></button>';
+  }).join('');
+
+  $('#grid').querySelectorAll('.card').forEach(c=>
+    c.addEventListener('click',()=>openSheet(c.dataset.month)));
+  paintLastEdit();
+}
+
+/* ========== render: sheet ========== */
+function quoteMarkup(text, who, color){
+  return text
+    ? '<div class="quote" style="--qc:'+color+'"><p>'+esc(text)+'</p><span class="attr">'+esc(who)+'</span></div>'
+    : '<div class="quote empty" style="--qc:'+color+'"><p>No quote saved</p><span class="attr">'+esc(who)+'</span></div>';
+}
+
+function renderSheet(){
+  const m = DATA.months.find(x=>x.id===openMonth);
+  if (!m) return;
+  const label = editing ? 'Done' : (me ? "Add "+esc(memberName(me))+"'s scores" : 'Edit this month');
+  $('#sheet-inner').innerHTML =
+    '<div class="sheet-bar"><button class="btn ghost" data-act="close">← All months</button>'+
+    '<button class="btn '+(editing?'primary':'')+'" data-act="toggle-edit">'+label+'</button></div>'+
+    '<h2 class="sheet-month" id="sheet-month">'+esc(m.name)+'</h2>'+
+    (editing ? editView(m) : readView(m));
+  wireSheet(m);
+  $('#sheet').scrollTop = 0;
+}
+
+function readView(m){
+  let html='';
+  if (m.bom){
+    const s=m.bom.scores||{}, q=m.bom.quotes||{}, g=fmtScore(m.bom.goodreads);
+    html += '<div class="section-label">Book of the month</div><div class="bom">'+coverMarkup(m.bom)+'<div>'+
+      '<h3 class="book-title">'+esc(m.bom.title)+'</h3>'+
+      (m.bom.author?'<p class="book-author">'+esc(m.bom.author)+'</p>':'')+
+      '<div class="scoreline">'+
+        DATA.members.map(x=>{
+          const v=fmtScore(s[x.id]);
+          return '<div class="score '+(v===null?'empty':'')+'"><span class="lab" style="color:'+
+            readerColor(x.id)+'">'+esc(x.name)+'</span><span class="val">'+(v===null?'—':v)+
+            '<small>/5</small></span></div>';
+        }).join('')+
+        '<div class="score '+(g?'':'empty')+'"><span class="lab">Goodreads</span>'+
+        '<span class="val">'+(g||'—')+'<small>/5</small></span></div>'+
+      '</div><div class="quotes">'+
+        DATA.members.map(x=>quoteMarkup(q[x.id],x.name,readerColor(x.id))).join('')+
+      '</div></div></div>';
+  }
+  html += '<div class="section-label">Top books of the month</div>';
+  if (!(m.top||[]).length){
+    html += '<p class="empty-note">Nothing logged yet. Hit the button up top to add one.</p>';
+  } else {
+    html += '<div class="tops">'+m.top.map(b=>{
+      const c=readerColor(b.member), v=fmtScore(b.score);
+      return '<div class="top" style="--qc:'+c+'">'+coverMarkup(b)+'<div>'+
+        '<p class="top-who">'+esc(memberName(b.member))+(v?' · '+v+'/5':'')+'</p>'+
+        '<p class="top-title">'+esc(b.title)+'</p>'+
+        (b.author?'<p class="top-meta">'+esc(b.author)+'</p>':'')+
+        (b.quote?'<div class="quote" style="--qc:'+c+'"><p>'+esc(b.quote)+'</p></div>':'')+
+      '</div></div>';
+    }).join('')+'</div>';
+  }
+  return html;
+}
+
+const mineCls = id => (me && me===id) ? ' mine' : '';
+
+function coverField(path, book){
+  return '<div class="cover-row"><label class="field"><span>Cover image URL</span>'+
+    '<input type="url" data-f="'+path+'.cover" value="'+esc(book.cover||'')+
+    '" placeholder="Paste one, or hit Browse covers"></label>'+
+    '<button class="btn" data-find="'+path+'">Browse covers</button>'+
+    (book.cover ? '<button class="btn ghost" data-clear="'+path+'">Clear</button>' : '')+
+    '</div><div data-picks="'+path+'"></div>';
+}
+
+function editView(m){
+  let html = '<div class="section-label">Book of the month</div>';
+  if (!m.bom){
+    html += '<p class="empty-note" style="margin-bottom:1rem">No book of the month for '+esc(m.name)+'.</p>'+
+      '<button class="btn" data-act="add-bom">Add book of the month</button>';
+  } else {
+    const s=m.bom.scores||{}, q=m.bom.quotes||{};
+    html += '<div class="edit-block"><div class="edit-block-head"><h4>Pick</h4>'+
+      '<button class="link" data-act="remove-bom">Remove</button></div><div class="row">'+
+      '<label class="field"><span>Title</span><input type="text" data-f="bom.title" value="'+esc(m.bom.title)+'"></label>'+
+      '<label class="field"><span>Author</span><input type="text" data-f="bom.author" value="'+esc(m.bom.author||'')+'"></label>'+
+      '<label class="field"><span>Goodreads average</span><input type="number" step="0.01" min="0" max="5" data-f="bom.goodreads" value="'+esc(m.bom.goodreads==null?'':m.bom.goodreads)+'"></label>'+
+      '</div>'+coverField('bom', m.bom)+'<div class="row" style="margin-top:.85rem">'+
+      DATA.members.map(x=>'<label class="field'+mineCls(x.id)+'"><span style="color:'+readerColor(x.id)+'">'+
+        esc(x.name)+"'s score"+(me===x.id?' (you)':'')+'</span><input type="number" step="0.25" min="0" max="5" data-f="bom.scores.'+
+        x.id+'" value="'+esc(s[x.id]==null?'':s[x.id])+'"></label>').join('')+
+      '</div>'+
+      DATA.members.map(x=>'<label class="field'+mineCls(x.id)+'"><span style="color:'+readerColor(x.id)+'">'+
+        esc(x.name)+"'s favourite quote"+(me===x.id?' (you)':'')+'</span><textarea data-f="bom.quotes.'+
+        x.id+'">'+esc(q[x.id]||'')+'</textarea></label>').join('')+
+      '</div>';
+  }
+
+  html += '<div class="section-label">Top books of the month</div>';
+  html += (m.top||[]).map((b,i)=>
+    '<div class="edit-block"><div class="edit-block-head"><h4>Top book '+(i+1)+'</h4>'+
+    '<button class="link" data-act="remove-top" data-i="'+i+'">Remove</button></div><div class="row">'+
+    '<label class="field"><span>Who picked it</span><select data-f="top.'+i+'.member">'+
+      DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(b.member===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join('')+
+    '</select></label>'+
+    '<label class="field"><span>Title</span><input type="text" data-f="top.'+i+'.title" value="'+esc(b.title||'')+'"></label>'+
+    '<label class="field"><span>Author</span><input type="text" data-f="top.'+i+'.author" value="'+esc(b.author||'')+'"></label>'+
+    '<label class="field"><span>Score</span><input type="number" step="0.25" min="0" max="5" data-f="top.'+i+'.score" value="'+esc(b.score==null?'':b.score)+'"></label>'+
+    '</div>'+coverField('top.'+i, b)+
+    '<label class="field" style="margin-top:.85rem"><span>Favourite quote</span>'+
+    '<textarea data-f="top.'+i+'.quote">'+esc(b.quote||'')+'</textarea></label></div>').join('');
+
+  html += '<button class="btn" data-act="add-top">Add a top book'+(me?' for '+esc(memberName(me)):'')+'</button>';
+  return html;
+}
+
+/* ========== edit plumbing ========== */
+function nodeAt(m,path){ const p=path.split('.'); return p[0]==='bom' ? m.bom : m.top[Number(p[1])]; }
+
+function commitFields(m){
+  $('#sheet-inner').querySelectorAll('[data-f]').forEach(el=>{
+    const p = el.dataset.f.split('.');
+    let ref, key;
+    if (p[0]==='bom'){
+      if (!m.bom) return;
+      if (p.length===2){ ref=m.bom; key=p[1]; }
+      else { m.bom[p[1]] = m.bom[p[1]]||{}; ref=m.bom[p[1]]; key=p[2]; }
+    } else {
+      ref = m.top[Number(p[1])]; key = p[2];
+      if (!ref) return;
+    }
+    let v = el.value;
+    if (el.type==='number') v = v==='' ? null : Number(v);
+    ref[key] = v;
+  });
+}
+
+function wireSheet(m){
+  $('#sheet-inner').querySelectorAll('[data-act]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const act = btn.dataset.act;
+      if (editing && act!=='close') commitFields(m);
+      if (act==='close') return closeSheet();
+      if (act==='toggle-edit'){ editing=!editing; if(!editing) queueSave(); }
+      if (act==='add-bom')    m.bom = {title:'',author:'',goodreads:null,cover:'',scores:{},quotes:{}};
+      if (act==='remove-bom') m.bom = null;
+      if (act==='add-top')    (m.top=m.top||[]).push(
+        {member: me || DATA.members[0].id, title:'', author:'', score:null, cover:'', quote:''});
+      if (act==='remove-top') m.top.splice(Number(btn.dataset.i),1);
+      render(); renderSheet();
+    });
+  });
+  $('#sheet-inner').querySelectorAll('[data-clear]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      commitFields(m);
+      const book = nodeAt(m, btn.dataset.clear);
+      if (book){ book.cover=''; render(); renderSheet(); }
+    });
+  });
+
+  $('#sheet-inner').querySelectorAll('[data-find]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      commitFields(m);
+      const path = btn.dataset.find;
+      const book = nodeAt(m, path);
+      const box  = $('#sheet-inner [data-picks="'+path+'"]');
+      if (!book || !book.title) return toast('Add a title first');
+
+      btn.textContent = 'Searching…';
+      const list = await findCoverCandidates(book.title, book.author);
+      btn.textContent = 'Browse covers';
+
+      if (!list.length){
+        box.innerHTML = '';
+        return toast('Nothing found — paste a URL instead');
+      }
+
+      box.innerHTML = '<div class="cover-picks"><div class="picks-head">'+
+        '<span>'+list.length+' covers for “'+esc(book.title)+'”</span>'+
+        '<button class="link" data-close-picks="'+path+'">Close</button></div>'+
+        '<div class="picks-grid">'+ list.map((c,i)=>
+          '<button class="pick'+(c.url===book.cover?' on':'')+'" data-pick="'+path+
+          '" data-i="'+i+'" title="'+esc(c.label)+'">'+
+          '<img src="'+esc(c.url)+'" alt="Cover option '+(i+1)+'" loading="lazy" '+
+          'onerror="this.parentNode.style.display=\'none\'">'+
+          (c.label ? '<span>'+esc(c.label)+'</span>' : '')+'</button>').join('')+
+        '</div></div>';
+
+      box.querySelectorAll('[data-pick]').forEach(p=>{
+        p.addEventListener('click',()=>{
+          book.cover = list[Number(p.dataset.i)].url;
+          box.querySelectorAll('.pick').forEach(x=>x.classList.remove('on'));
+          p.classList.add('on');
+          const input = $('#sheet-inner [data-f="'+path+'.cover"]');
+          if (input) input.value = book.cover;
+          render(); queueSave(); toast('Cover set');
+        });
+      });
+      box.querySelector('[data-close-picks]').addEventListener('click',()=>{ box.innerHTML=''; });
+    });
+  });
+}
+
+/* ========== sheet open/close ========== */
+function openSheet(id){
+  openMonth=id; editing=false;
+  $('#sheet').classList.add('open'); $('#scrim').classList.add('open');
+  document.body.classList.add('locked');
+  renderSheet();
+  const f=$('#sheet-inner [data-act="close"]'); if (f) f.focus();
+}
+function closeSheet(){
+  const m = DATA.months.find(x=>x.id===openMonth);
+  if (editing && m){ commitFields(m); queueSave(); }
+  openMonth=null; editing=false;
+  $('#sheet').classList.remove('open'); $('#scrim').classList.remove('open');
+  document.body.classList.remove('locked');
+  render();
+}
+$('#scrim').addEventListener('click',()=>{ closeSheet(); closePanel(); });
+document.addEventListener('keydown',e=>{
+  if (e.key!=='Escape') return;
+  if ($('#panel').classList.contains('open')) return closePanel();
+  if (openMonth) closeSheet();
+});
+
+/* ========== theme ========== */
+function applyTheme(){
+  Object.entries(DATA.theme||{}).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));
+}
+function buildPanel(){
+  $('#presets').innerHTML = Object.entries(PRESETS).map(([n,t])=>
+    '<button class="preset" data-preset="'+esc(n)+'"><span class="swatches">'+
+    '<i style="background:'+t['--bg']+'"></i><i style="background:'+t['--card']+'"></i>'+
+    '<i style="background:'+t['--accent']+'"></i><i style="background:'+t['--gold']+'"></i>'+
+    '</span>'+esc(n)+'</button>').join('');
+  $('#presets').querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
+    DATA.theme = Object.assign({}, PRESETS[b.dataset.preset]);
+    applyTheme(); syncPanelInputs(); render(); if(openMonth) renderSheet(); queueSave();
+  }));
+  $('#color-rows').innerHTML = THEME_KEYS.map(([k,l])=>
+    '<div class="color-row"><label for="c'+k+'">'+esc(l)+'</label>'+
+    '<input type="color" id="c'+k+'" data-var="'+k+'"></div>').join('');
+  $('#color-rows').querySelectorAll('input[type=color]').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      DATA.theme[inp.dataset.var]=inp.value;
+      applyTheme(); render(); if(openMonth) renderSheet();
+    });
+    inp.addEventListener('change', queueSave);
+  });
+  $('#radius').addEventListener('input',e=>{ DATA.theme['--radius']=e.target.value+'px'; applyTheme(); });
+  $('#radius').addEventListener('change', queueSave);
+}
+function syncPanelInputs(){
+  THEME_KEYS.forEach(([k])=>{
+    const i=$('#color-rows input[data-var="'+k+'"]');
+    if (i && DATA.theme[k]) i.value=DATA.theme[k];
+  });
+  $('#radius').value = parseInt(DATA.theme['--radius']||'2',10);
+}
+function closePanel(){
+  $('#panel').classList.remove('open');
+  if(!openMonth) $('#scrim').classList.remove('open');
+}
+$('#btn-settings').addEventListener('click',()=>{
+  $('#panel').classList.add('open'); $('#scrim').classList.add('open'); $('#panel-close').focus();
+});
+$('#panel-close').addEventListener('click', closePanel);
+
+/* ========== backup ========== */
+$('#btn-export').addEventListener('click',()=>{
+  const blob = new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='bookclub-backup.json'; a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Backup downloaded');
+});
+$('#btn-import').addEventListener('click',()=>$('#file-input').click());
+$('#file-input').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const next=JSON.parse(r.result);
+      if(!next.months) throw new Error('bad file');
+      DATA=next; DATA.theme=Object.assign({},PRESETS.Lacquer,DATA.theme||{});
+      applyTheme(); syncPanelInputs(); render(); queueSave(); toast('Backup restored');
+    }catch(err){ toast("That file isn't book club JSON"); }
+  };
+  r.readAsText(f); e.target.value='';
+});
+$('#btn-covers').addEventListener('click',()=>fillMissingCovers({announce:true}));
+
+/* ========== boot ========== */
+(async function boot(){
+  DATA.theme = Object.assign({}, PRESETS.Lacquer, DATA.theme||{});
+  applyTheme(); buildPanel(); syncPanelInputs(); buildWhoPicker(); render();
+  await initSync();
+  fillMissingCovers();
+  setInterval(paintLastEdit, 60000);
+})();
+</script>
+</body>
+</html>
