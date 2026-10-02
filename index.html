@@ -3,10 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#120b18">
 <title>Communist China Book Club</title>
+<!-- Site icon (favicon): a gold dragonfly. Three copies of the same picture, because browsers
+     disagree on format: SVG for modern browsers, a small PNG for older ones, and a larger PNG
+     that iPhones use when the site is added to the home screen. -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230d1b1a'/%3E%3Cg transform='translate(-5.5 3.1) rotate(24 32 34) translate(32 34) scale(.86) translate(-32 -34)'%3E%3Cg fill='%23f1c56c'%3E%3Cellipse cx='17' cy='15.5' rx='15' ry='3.5' transform='rotate(20 17 15.5)'/%3E%3Cellipse cx='47' cy='15.5' rx='15' ry='3.5' transform='rotate(-20 47 15.5)'/%3E%3Cellipse cx='18.5' cy='27.2' rx='14' ry='3.7' transform='rotate(-14 18.5 27.2)'/%3E%3Cellipse cx='45.5' cy='27.2' rx='14' ry='3.7' transform='rotate(14 45.5 27.2)'/%3E%3C/g%3E%3Cg fill='%23e0a33a'%3E%3Ccircle cx='32' cy='12.5' r='4.6'/%3E%3Cellipse cx='32' cy='21.5' rx='3.9' ry='5.4'/%3E%3Crect x='30.1' y='23' width='3.8' height='35' rx='1.9'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
+<link rel="alternate icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEpUlEQVR4nLyXW0wcVRjH/zOzu7PL7OwFBJZbhVJKqbSWmmJLhYQSbaiJSmpSa4IaNbFpo8EHfTDeXoyxNWKT+kaaWK1G+6DRmkptYlWgFIpQoZQipRiku+wu7C47e4Wd8cxSlkthL3Xh9zJzzndmzn++c77vm6PAQgwGgzYl5XVA2kla2yiKykASkCTJSi49ANUueL2NcDqdczZq7ibFZKqlGbqJdGRjFZGA22JIfNlrsZyLCOCysvbSNPUz1pBQSNwni6Cg1xu1Wu4aUZKFNUT2hEAJWxguNfUQTVFPLzTyGgXaP9uLVB2Lq0MOBGdEJBvywbxSVFrI3NTOpUbBPwO3dwZHnipG87EabFmvx2ogz82wvPZjcmdYauz/x4UD1fnQcyocJFeHEMTVmw4kEwoSz7A6XeNyxjG7DyqGQnnJfSAbFDXbTcgwsLjwpxkLgud/KqAMRAD//kr2tn4bStbpsSGHD7e3FhqRadTgQtesiN0b1fjqiAm1Wzn0jgZhF0JIlKgCJLJVf2ofw6Y8HYpydbMi1huJcODSNTuOHUzHujQV0nUKVJWo8UWLG4lCxxoQEiUcauzAj5f+jfQ17C/BwyVpSOPnH/cFJdwLSzwg4f5MLTbn65FpUEPDMnK8wheYCXtCrVJge5GR7AkauzbpMThsQbaBCe+Rz/9woXskgESh+JzsiPSjr5Th2ZqCuwb5iYC/hp3ovDGBll4r6h8tQGWeBzMBD0TioW+6RCg5AzKMahi1Kow7/Ri1emFx+GAmm7lvxAmbMxBbgBzvJ17bgcJsHaLR0TuKIs4WaevXlYJWqKI+M2x242KPFSfPDWHE4on0L1oCqyOAU+eH0XfLCQ1xN0WWWM0qoGQWb5UMbQhBz2xOsHloXBwMITeDA6tkVhRg5Fk8QJbW6vDjyuAklvXASqST+C8wabEhl4eCrL/P7cK7T/KQiEJ9TjGmAjQ+OXMdHQMTZA9xJFTV4QnnCIUkDIy60EqWT/AvDtW4BCzleH06KjZq8Pb3PjS9+YicUsP93X9PouHEFdw0C3G/K2YYLiXHyKB6cwq+63SjucuGt5p6IrayolQ0H92D2vL4fymiJqLlePUxA0rzWLzxtQ1uvxSODrsrgD1lmWFPKBQ0nqjIxcRUIK7akZAHOBWFuh08fu33Ycwxv5byxq3/sBWTU/Oh9sFL2/D4rpyY70xIwDMVPNRKGqdaXHfZ5BCravgFP7SNRvqOH34IWWkaJEWAHIn1u/W4cTuArlvLJxUnKdmHP+1E3Tu/4fJ1O1gVg7rKvKjvVSBO9j3IkdzP4KOzEzHHyhlz/3u/h8NRriVJEfB8pY6k2Gmc7/XG+wjGSdKJRVxLUF6oRnE2i9NtbvJFSCo0OTSMxxr0HPl6/7SIb9sTr/fRkOeWPdATbZCceKqKNThz2Q3PPdb8KPTQEqSoAkpz2bDbv2ydQrKR56bUJlM+qXbdpG3A2uKcDolltN9iGYEovYi1RsIL8tzhAh4UhAEFx3VQNFUtn1iwitw5nB7wmM1n5XbkD2JaEIaCDHNSpVQGyTA51fGkuHBIAneO562k+p8mx/P6abu9b872HwAAAP//wE3S/wAAAAZJREFUAwBOj6u10Tg6/AAAAABJRU5ErkJggg==">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Literata:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Literata:ital,wght@0,400;0,600;1,400&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- =============================================================
      SETUP
@@ -138,45 +145,61 @@ window.START_YEAR = 2026;
 </script>
 
 <style>
+/* =====================================================================
+   HOW THE LOOK IS PUT TOGETHER
+   - Colours come from the nine variables on the first two lines below. The script
+     overwrites them with this month's theme (or your own colours) as soon as it runs.
+   - Three fonts, each with one job: --display for the big condensed headings (site
+     title, month names, book titles), --ui for everything you read or press, and
+     --quote for quotes.
+   ===================================================================== */
 :root{
-  --bg:#16100e; --fg:#f0e6d6; --card:#efe3d0; --card-fg:#1a1310;
-  --accent:#d6291e; --gold:#e5a93c; --reader-a:#d6291e; --reader-b:#2e7d64;
-  --radius:2px;
-  --bg-2: color-mix(in srgb, var(--bg) 88%, var(--fg));
-  --fg-dim: color-mix(in srgb, var(--fg) 55%, var(--bg));
+  --bg:#120b18; --fg:#f3ebf7; --card:#efe6d6; --card-fg:#1a1022;
+  --accent:#f2761b; --gold:#b98cff; --reader-a:#ff8c3a; --reader-b:#8fe36a; --radius:6px;
+  /* text colour to use ON TOP of each of those colours; the script picks dark or white */
+  --on-accent:#14100e; --on-gold:#14100e; --on-a:#14100e; --on-b:#14100e;
+  /* everything below is worked out from the nine above */
+  --bg-2: color-mix(in srgb, var(--bg) 90%, var(--fg));
+  --bg-3: color-mix(in srgb, var(--bg) 80%, var(--fg));
+  --fg-dim: color-mix(in srgb, var(--fg) 60%, var(--bg));
   --card-dim: color-mix(in srgb, var(--card-fg) 55%, var(--card));
-  --rule: color-mix(in srgb, var(--fg) 22%, transparent);
+  --rule: color-mix(in srgb, var(--fg) 17%, transparent);
+  --veil: color-mix(in srgb, var(--bg) 82%, #000);      /* backdrop behind an open month */
+  --r-s: calc(var(--radius) * .5 + 2px);                 /* small corners: covers, buttons, fields */
+  --r-l: calc(var(--radius) * 1.5 + 2px);                /* large corners: panels */
   --display:"Big Shoulders Display","Haettenschweiler","Arial Narrow",sans-serif;
-  --body:"Literata",Georgia,"Times New Roman",serif;
-  --mono:"Space Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --ui:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --quote:"Literata",Georgia,"Times New Roman",serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;
-  line-height:1.6;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;
+body{background:var(--bg);color:var(--fg);font-family:var(--ui);font-size:16px;
+  line-height:1.5;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;
   padding-bottom:calc(5rem + env(safe-area-inset-bottom))}
-body.locked{overflow:hidden}
+body.locked{overflow:hidden;background:var(--veil)}
+/* a sheet is open: the page underneath is hidden, so nothing can peek out below it */
+body.locked .wrap{visibility:hidden}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 :focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
 img{display:block;max-width:100%}
-.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem)}
+[hidden]{display:none!important}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem)}
 
-.statusbar{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding:.7rem 0;
-  border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:.66rem;
-  letter-spacing:.12em;text-transform:uppercase}
+/* ---------- top strip ---------- */
+.statusbar{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.25rem;padding:.7rem 0;
+  border-bottom:1px solid var(--rule);font-size:.82rem;color:var(--fg-dim)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--fg-dim);display:inline-block;
   margin-right:.5rem;vertical-align:middle}
 .dot.live{background:#3fbf6b}.dot.saving{background:var(--gold)}.dot.err{background:var(--accent)}
-.status{color:var(--fg-dim)}
-.who-pick{display:flex;gap:.35rem;margin-left:auto;align-items:center;flex-wrap:wrap}
-.who-pick > span{color:var(--fg-dim)}
-.chip{padding:.3rem .65rem;border:1px solid var(--rule);border-radius:99px;font-family:var(--mono);
-  font-size:.62rem;letter-spacing:.12em;text-transform:uppercase}
-.chip[aria-pressed=true]{background:var(--c,var(--accent));border-color:var(--c,var(--accent));color:#fff}
+.who-pick{display:flex;gap:.4rem;margin-left:auto;align-items:center;flex-wrap:wrap}
+.chip{padding:.3rem .8rem;border:1px solid var(--rule);border-radius:99px;font-size:.82rem;
+  font-weight:500;color:var(--fg);transition:border-color .15s,background .15s}
+.chip:hover{border-color:var(--fg-dim)}
+.chip[aria-pressed=true]{background:var(--c,var(--accent));border-color:var(--c,var(--accent));
+  color:var(--oc,var(--on-accent));font-weight:600}
 
-.masthead{padding:clamp(2rem,6vw,4rem) 0 1.75rem}
+/* ---------- drifting dragonflies ---------- */
 .sky{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-.wrap{position:relative;z-index:1}
 .sheet-inner{position:relative;z-index:1}
 .sky .df{position:absolute;left:0;width:54px;color:var(--gold);opacity:.15;
   will-change:transform;animation:drift 58s linear infinite}
@@ -197,197 +220,245 @@ img{display:block;max-width:100%}
   100%{transform:translate3d(calc(100vw + 110px),0,0) rotate(5deg)}
 }
 @keyframes hoverwing{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.7)}}
-.eyebrow{display:flex;align-items:center;gap:.6rem;font-family:var(--mono);font-size:.7rem;
-  letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+
+/* ---------- title block ---------- */
+.masthead{padding:clamp(1.75rem,5vw,3.5rem) 0 1.75rem}
+.eyebrow{display:flex;align-items:center;gap:.6rem;font-size:.9rem;font-weight:600;
+  color:var(--gold);margin-bottom:1rem}
 .eyebrow .line{flex:1;height:1px;background:var(--rule)}
-.yr{border:1px solid var(--rule);border-radius:var(--radius);width:1.7rem;height:1.7rem;
-  display:inline-flex;align-items:center;justify-content:center;color:var(--gold);line-height:1}
-.yr:hover{border-color:var(--gold)}
+.yr{border:1px solid var(--rule);border-radius:99px;width:1.8rem;height:1.8rem;
+  display:inline-flex;align-items:center;justify-content:center;color:var(--fg);line-height:1}
+.yr:hover{border-color:var(--fg-dim)}
 .yr[disabled]{opacity:.3;cursor:default}
 h1.title{font-family:var(--display);font-weight:800;font-size:clamp(2.6rem,9.5vw,6.5rem);
   line-height:.86;letter-spacing:-.01em;text-transform:uppercase;margin:0}
 h1.title em{font-style:normal;color:var(--accent)}
-.colophon{display:flex;flex-wrap:wrap;gap:.4rem 1.5rem;margin-top:1.4rem;padding-top:1rem;
-  border-top:1px solid var(--rule);font-family:var(--mono);font-size:.72rem;
-  letter-spacing:.06em;color:var(--fg-dim)}
-.colophon b{color:var(--fg);font-weight:700}
-.toolbar{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.5rem}
-.btn{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
-  padding:.6rem 1rem;border:1px solid var(--rule);border-radius:var(--radius);color:var(--fg);
-  transition:background .15s,border-color .15s,color .15s}
+.colophon{display:flex;flex-wrap:wrap;gap:.3rem 1.5rem;margin-top:1.4rem;padding-top:1rem;
+  border-top:1px solid var(--rule);font-size:.9rem;color:var(--fg-dim)}
+.colophon b{color:var(--fg);font-weight:600}
+
+/* ---------- buttons ---------- */
+.btn{font-size:.88rem;font-weight:600;line-height:1.2;padding:.6rem 1rem;border:1px solid var(--rule);
+  border-radius:var(--r-s);color:var(--fg);transition:background .15s,border-color .15s,color .15s,filter .15s}
 .btn:hover{background:var(--bg-2);border-color:var(--fg-dim)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn.primary:hover{filter:brightness(1.12)}
-.btn.gold{background:var(--gold);border-color:var(--gold);color:#14100e}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{background:var(--accent);filter:brightness(1.1)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--on-gold)}
+.btn.gold:hover{background:var(--gold);filter:brightness(1.08)}
 .btn.ghost{border-color:transparent;color:var(--fg-dim)}
 .btn.ghost:hover{color:var(--fg)}
+.link{color:var(--gold);text-decoration:underline;text-underline-offset:3px;font-size:.88rem;font-weight:500}
 
-.grid{display:grid;gap:clamp(1rem,2.5vw,1.75rem);
-  grid-template-columns:repeat(auto-fill,minmax(215px,1fr));margin-top:.5rem}
-.card{position:relative;text-align:left;width:100%;background:var(--card);color:var(--card-fg);
-  border-radius:var(--radius);padding:0 0 1rem;overflow:hidden;
-  display:flex;flex-direction:column;justify-content:flex-start; /* keep content at the top */
-  transition:transform .18s ease,box-shadow .18s ease}
-.card:hover,.card:focus-visible{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--accent)}
-.card-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;
-  padding:.7rem .9rem .55rem;border-bottom:1px solid color-mix(in srgb,var(--card-fg) 18%,transparent)}
-.card-month{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:1.5rem;line-height:1}
-.card-kind{font-family:var(--mono);font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;color:var(--card-dim)}
-.cover-slot{position:relative;margin:1rem .9rem .85rem;aspect-ratio:2/3;
-  background:color-mix(in srgb,var(--card-fg) 8%,transparent);border-radius:1px;overflow:hidden}
-.cover-slot img{position:relative;width:100%;height:100%;object-fit:cover}
+/* ---------- the shelf: one cover per month, straight on the page ---------- */
+.grid{display:grid;gap:clamp(1.75rem,3.5vw,2.75rem) clamp(1rem,2.5vw,1.75rem);
+  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));margin-top:.75rem}
+.card{position:relative;display:flex;flex-direction:column;justify-content:flex-start;--gap:.7rem;gap:var(--gap);
+  width:100%;text-align:left;border-radius:var(--r-s)}
+.card-top{display:flex;align-items:center;height:1.5rem;overflow:hidden}
+.card-month{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:1.45rem;
+  line-height:1;letter-spacing:.01em}
+/* the badge on the corner of the cover */
+.card-kind{position:absolute;z-index:5;left:.5rem;top:calc(1.5rem + var(--gap) + .5rem);
+  font-size:.74rem;font-weight:600;line-height:1.3;white-space:nowrap;padding:.16rem .55rem;border-radius:99px;
+  color:var(--fg);background:color-mix(in srgb,var(--bg) 74%,transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:transform .2s ease}
+.card.is-now .card-kind{background:var(--accent);color:var(--on-accent)}
+
+/* a cover. The cream "blank book" underneath shows when a book has no cover art */
+.cover-slot{position:relative;aspect-ratio:2/3;overflow:hidden;border-radius:var(--r-s);background:var(--card);
+  box-shadow:0 18px 30px -16px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.25)}
+.cover-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cover-fallback{position:absolute;inset:0;display:flex;align-items:flex-end;padding:.75rem;
   font-family:var(--display);font-weight:600;text-transform:uppercase;font-size:1rem;line-height:1.05;
-  color:var(--card-dim);--vein:color-mix(in srgb,var(--card-fg) 11%,transparent);
+  color:var(--card-dim);--vein:color-mix(in srgb,var(--card-fg) 10%,transparent);
   background:
     repeating-linear-gradient(101deg, transparent 0 15px, var(--vein) 15px 15.7px),
     repeating-linear-gradient(7deg, transparent 0 10px, var(--vein) 10px 10.7px)}
-.card-body{padding:0 .9rem}
-.card-title{font-weight:600;font-size:.98rem;line-height:1.25;margin:0}
-.card-author{font-family:var(--mono);font-size:.68rem;color:var(--card-dim);margin:.3rem 0 0}
-.marks{margin-top:.8rem;display:grid;gap:0}
-.markrow{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;
-  font-family:var(--mono);font-size:.66rem;padding:.22rem 0;
-  border-bottom:1px solid color-mix(in srgb,var(--card-fg) 12%,transparent)}
-.markrow:last-child{border-bottom:none}
-.markrow .who{color:var(--mc,var(--card-dim));letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.markrow .val{font-weight:700;color:var(--mc,var(--card-fg));white-space:nowrap}
-.markrow.avg .who,.markrow.avg .val{color:var(--card-dim);font-weight:400}
-.markrow .val.none{opacity:.35;font-weight:400}
-.stamp{position:absolute;top:.55rem;right:.6rem;transform:rotate(-9deg);font-family:var(--mono);
-  font-weight:700;font-size:.58rem;letter-spacing:.18em;padding:.25rem .5rem;border:2px solid var(--gold);
-  color:var(--gold);border-radius:2px;opacity:.85;pointer-events:none}
-.card.pending .cover-slot{opacity:.55}
-.card.now::after{content:"";position:absolute;inset:0;border:2px solid var(--accent);
-  border-radius:var(--radius);pointer-events:none;z-index:1}
-.card.now .card-kind{color:var(--accent)}
-.card.now.pending .cover-slot{opacity:1}
-.stamp.now{border-color:var(--accent);color:var(--accent);transform:rotate(-4deg);opacity:1}
-.stamp.past{border-color:var(--card-dim);color:var(--card-dim);opacity:.7}
+.card > .cover-slot,.card > .cover-stack{transition:transform .2s ease}
+.card:hover > .cover-slot,.card:hover > .cover-stack,.card:hover > .card-kind,
+.card:focus-visible > .cover-slot,.card:focus-visible > .cover-stack,.card:focus-visible > .card-kind{transform:translateY(-5px)}
+/* this month gets a ring in the accent colour */
+.card.is-now > .cover-slot,.card.is-now > .cover-stack .cover-slot:first-child{
+  outline:2px solid var(--accent);outline-offset:3px}
+/* a month with nothing picked: an empty outline instead of a cover */
+.card.empty > .cover-slot{background:none;box-shadow:none;border:1.5px dashed var(--rule)}
+.card.empty .cover-fallback{background:none;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--ui);font-weight:500;font-size:.85rem;text-transform:none;color:var(--fg-dim)}
 
-/* a month with more than one shared book: fanned covers + a block per book */
-.cover-stack{position:relative;margin:1rem .9rem .85rem;aspect-ratio:2/3}
-.cover-stack .cover-slot{position:absolute;margin:0;width:70%;
-  background:color-mix(in srgb,var(--card-fg) 8%,var(--card));
-  box-shadow:0 0 0 2px var(--card),0 4px 10px rgba(0,0,0,.28)}
+.card-body{display:grid;gap:.8rem}
+.cbook{display:grid;gap:.12rem}
+.card-title{font-weight:600;font-size:1rem;line-height:1.25;margin:0}
+.card-author{font-size:.82rem;color:var(--fg-dim);margin:0}
+/* scores under a cover: a coloured number, then whose it is */
+.scores{display:flex;flex-wrap:wrap;gap:.05rem .9rem;margin-top:.3rem;font-size:.8rem;color:var(--fg-dim)}
+.sc{display:inline-flex;align-items:baseline;gap:.3rem;white-space:nowrap}
+.sc b{font-size:.98rem;font-weight:700;color:var(--c,var(--fg));font-variant-numeric:tabular-nums}
+.sc.none b{color:var(--fg-dim);opacity:.6;font-weight:500}
+
+/* a month with more than one book: the covers fan out */
+.cover-stack{position:relative;aspect-ratio:2/3}
+.cover-stack .cover-slot{position:absolute;width:70%;
+  box-shadow:0 0 0 3px var(--bg),0 16px 26px -14px rgba(0,0,0,.75)}
 .cover-stack .cover-slot:nth-child(1){left:0;top:0;z-index:3}
 .cover-stack .cover-slot:nth-child(2){right:0;bottom:0;z-index:2}
 .cover-stack.n3 .cover-slot{width:60%}
 .cover-stack.n3 .cover-slot:nth-child(2){right:20%;bottom:20%}
 .cover-stack.n3 .cover-slot:nth-child(3){right:0;bottom:0;z-index:1}
 .cover-stack .cover-fallback{font-size:.8rem;padding:.5rem}
-.cover-stack .more{position:absolute;right:.35rem;bottom:.35rem;z-index:4;font-family:var(--mono);
-  font-size:.6rem;font-weight:700;padding:.15rem .4rem;border-radius:99px;
-  background:var(--card-fg);color:var(--card)}
-.card.pending .cover-stack{opacity:.55}
-.card.pending .cover-stack .cover-slot{opacity:1}
-.card.now.pending .cover-stack{opacity:1}
-.cbook + .cbook{margin-top:.7rem;padding-top:.7rem;
-  border-top:1px solid color-mix(in srgb,var(--card-fg) 18%,transparent)}
-.cbook .marks{margin-top:.35rem}
+.cover-stack .more{position:absolute;right:.35rem;bottom:.35rem;z-index:4;font-size:.72rem;font-weight:700;
+  padding:.1rem .45rem;border-radius:99px;background:var(--fg);color:var(--bg)}
 
-.scrim{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 82%,#000);
-  backdrop-filter:blur(3px);z-index:40;display:none}
+/* ---------- an open month ---------- */
+.scrim{position:fixed;inset:0;background:var(--veil);z-index:40;display:none}
 .scrim.open{display:block}
+.scrim.thin{background:rgba(0,0,0,.35)}      /* behind the Colors panel: see-through, so you can watch the page change */
+/* the month's covers, blurred until only their colours are left, strongest at the top
+   and fading into the plain backdrop lower down */
+.sheet-wash{position:fixed;inset:0;z-index:45;overflow:hidden;pointer-events:none;display:none}
+.sheet-wash.on{display:block}
+.sheet-wash .imgs{position:absolute;inset:-25% -20% 25% -20%;display:flex;filter:blur(70px) saturate(1.6);opacity:.72}
+.sheet-wash img{flex:1;min-width:0;max-width:none;height:100%;object-fit:cover}
+.sheet-wash::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,
+  color-mix(in srgb,var(--veil) 58%,transparent) 0%,
+  color-mix(in srgb,var(--veil) 76%,transparent) 42%,
+  var(--veil) 80%)}
 .sheet{position:fixed;inset:0;z-index:50;overflow-y:auto;display:none;animation:rise .22s ease-out}
 .sheet.open{display:block}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.sheet-inner{max-width:960px;margin:0 auto;padding:clamp(1rem,4vw,3rem) clamp(1rem,4vw,2.5rem) 6rem}
-.sheet-bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;
-  gap:1rem;padding:.9rem 0 1rem;margin-bottom:1.5rem;background:linear-gradient(var(--bg) 72%,transparent)}
+.sheet-inner{max-width:960px;margin:0 auto;padding:clamp(.75rem,3vw,2rem) clamp(1rem,4vw,2.5rem) 6rem}
+.sheet-bar{position:sticky;top:.6rem;z-index:2;display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;padding:.4rem;margin:0 -.4rem 1.75rem;border:1px solid var(--rule);
+  border-radius:calc(var(--r-s) + .4rem);background:color-mix(in srgb,var(--veil) 60%,transparent);
+  -webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3)}
 .sheet-month{font-family:var(--display);font-weight:800;text-transform:uppercase;
   font-size:clamp(2.4rem,8vw,4.5rem);line-height:.85;margin:0 0 .4rem}
-.section-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--gold);display:flex;align-items:center;gap:.9rem;margin:2.75rem 0 1.25rem}
+.section-label{display:flex;align-items:center;gap:.9rem;margin:2.5rem 0 1.25rem;
+  font-size:.9rem;font-weight:600;color:var(--gold)}
 .section-label::after{content:"";flex:1;height:1px;background:var(--rule)}
-.bom{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:clamp(1.25rem,4vw,2.5rem);align-items:start}
+.bom{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:clamp(1.25rem,4vw,2.5rem);align-items:start}
 .bom + .bom{margin-top:2.5rem;padding-top:2.5rem;border-top:1px solid var(--rule)}
-.bom .cover-slot{margin:0;background:var(--bg-2)}
-.bom .cover-fallback{color:var(--fg-dim);--vein:color-mix(in srgb,var(--fg) 13%,transparent)}
 .book-title{font-family:var(--display);font-weight:600;text-transform:uppercase;
   font-size:clamp(1.5rem,4vw,2.4rem);line-height:.98;margin:0}
-.book-author{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;color:var(--fg-dim);margin:.55rem 0 0}
-.tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.7rem}
-.tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
-  padding:.18rem .45rem;border:1px solid var(--rule);border-radius:99px;color:var(--fg-dim)}
+.book-author{font-size:.98rem;color:var(--fg-dim);margin:.5rem 0 0}
+.tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
+.tag{font-size:.78rem;font-weight:500;line-height:1.3;padding:.2rem .65rem;border:1px solid var(--rule);
+  border-radius:99px;color:var(--fg-dim)}
 .scoreline{display:flex;flex-wrap:wrap;gap:1.75rem;margin:1.5rem 0 0;padding:1rem 0;border-block:1px solid var(--rule)}
-.score{display:flex;flex-direction:column;gap:.2rem}
-.score .lab{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim)}
-.score .val{font-family:var(--display);font-weight:800;font-size:2.1rem;line-height:1}
-.score .val small{font-family:var(--mono);font-size:.7rem;font-weight:400;color:var(--fg-dim);margin-left:.15rem}
+.score{display:flex;flex-direction:column;gap:.15rem}
+.score .lab{font-size:.82rem;font-weight:600;color:var(--fg-dim)}
+.score .val{font-family:var(--display);font-weight:800;font-size:2.1rem;line-height:1;font-variant-numeric:tabular-nums}
+.score .val small{font-family:var(--ui);font-size:.8rem;font-weight:400;color:var(--fg-dim);margin-left:.15rem}
 .score.empty .val{color:var(--fg-dim);opacity:.5}
 .quotes{display:grid;gap:1.1rem;margin-top:1.75rem}
 .qgroup{display:grid;gap:.7rem}
 .quote{position:relative;padding:.15rem 0 .15rem 1.4rem;border-left:3px solid var(--qc,var(--accent))}
-.quote p{margin:0;font-size:clamp(1rem,2.2vw,1.18rem);line-height:1.55;font-style:italic}
-.quote .attr{display:block;margin-top:.6rem;font-family:var(--mono);font-style:normal;font-size:.65rem;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--qc,var(--accent))}
-.quote.empty p{color:var(--fg-dim);opacity:.6;font-style:normal;font-family:var(--mono);font-size:.8rem}
+.quote p{margin:0;font-family:var(--quote);font-size:clamp(1rem,2.2vw,1.18rem);line-height:1.55;font-style:italic}
+.quote .attr{display:block;margin-top:.5rem;font-size:.82rem;font-weight:600;color:var(--qc,var(--accent))}
+.quote.empty p{font-family:var(--ui);font-style:normal;font-size:.9rem;color:var(--fg-dim);opacity:.7}
 .tops{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.top{display:grid;grid-template-columns:78px minmax(0,1fr);gap:1rem;align-items:start;
+.top{display:grid;grid-template-columns:84px minmax(0,1fr);gap:1rem;align-items:start;
   padding-top:1rem;border-top:2px solid var(--qc,var(--accent))}
-.top .cover-slot{margin:0;background:var(--bg-2)}
-.top .cover-fallback{font-size:.7rem;padding:.4rem;color:var(--fg-dim);--vein:color-mix(in srgb,var(--fg) 13%,transparent)}
-.top-who{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--qc);margin:0 0 .35rem}
+.top .cover-fallback{font-size:.7rem;padding:.4rem}
+.top-who{font-size:.82rem;font-weight:600;color:var(--qc);margin:0 0 .3rem}
 .top-title{font-weight:600;font-size:1.05rem;line-height:1.25;margin:0}
-.top-meta{font-family:var(--mono);font-size:.68rem;color:var(--fg-dim);margin:.35rem 0 0}
+.top-meta{font-size:.85rem;color:var(--fg-dim);margin:.3rem 0 0}
 .top .quote{margin-top:.7rem;border-left-width:2px;padding-left:.9rem}
 .top .quote p{font-size:.92rem}
+.empty-note{font-size:.92rem;color:var(--fg-dim);margin:0}
 
+/* ---------- editing a month ---------- */
 .field{display:block;margin-bottom:.85rem}
-.field > span{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--fg-dim);margin-bottom:.35rem}
+.field > span{display:block;font-size:.82rem;font-weight:500;color:var(--fg-dim);margin-bottom:.35rem}
 input[type=text],input[type=number],input[type=url],textarea,select{width:100%;background:var(--bg-2);
-  color:var(--fg);border:1px solid var(--rule);border-radius:var(--radius);padding:.55rem .7rem;
-  font-family:var(--body);font-size:.92rem}
-textarea{resize:vertical;min-height:4rem;font-style:italic}
+  color:var(--fg);border:1px solid var(--rule);border-radius:var(--r-s);padding:.55rem .7rem;
+  font-family:var(--ui);font-size:.95rem}
+textarea{resize:vertical;min-height:4rem;font-family:var(--quote);font-style:italic}
 input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
 .field.mine input,.field.mine textarea{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 7%,var(--bg-2))}
 .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.85rem}
-.edit-block{border:1px solid var(--rule);border-radius:var(--radius);padding:1.1rem;margin-bottom:1rem;
-  background:color-mix(in srgb,var(--bg) 94%,var(--fg))}
+.edit-block{border:1px solid var(--rule);border-radius:var(--r-l);padding:1.1rem;margin-bottom:1rem;
+  background:color-mix(in srgb,var(--veil) 55%,transparent)}
 .edit-block-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.9rem}
-.edit-block-head h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;
-  margin:0;color:var(--gold)}
+.edit-block-head h4{font-size:.95rem;font-weight:600;margin:0;color:var(--gold)}
 .cover-row{display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap}
 .cover-row .field{flex:1;min-width:180px;margin-bottom:0}
-.cover-picks{margin-top:.9rem;padding:.9rem;border:1px dashed var(--rule);border-radius:var(--radius)}
+.cover-picks{margin-top:.9rem;padding:.9rem;border:1px dashed var(--rule);border-radius:var(--r-s)}
 .picks-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.75rem;
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim)}
+  font-size:.82rem;color:var(--fg-dim)}
 .picks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:.6rem}
-.pick{padding:0;border:2px solid transparent;border-radius:2px;overflow:hidden;background:var(--bg-2);display:block;text-align:left}
+.pick{padding:0;border:2px solid transparent;border-radius:var(--r-s);overflow:hidden;background:var(--bg-2);display:block;text-align:left}
 .pick img{width:100%;aspect-ratio:2/3;object-fit:cover}
 .pick:hover{border-color:var(--fg-dim)}
 .pick.on{border-color:var(--gold)}
-.pick span{display:block;font-family:var(--mono);font-size:.5rem;line-height:1.35;padding:.3rem;
+.pick span{display:block;font-size:.64rem;line-height:1.35;padding:.3rem;
   color:var(--fg-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.link{color:var(--gold);text-decoration:underline;text-underline-offset:3px;font-family:var(--mono);
-  font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}
-.empty-note{font-family:var(--mono);font-size:.75rem;color:var(--fg-dim);margin:0}
 .qedit{display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.5rem}
 .qedit textarea{flex:1}
 .qedit button{margin-top:.15rem}
 
-/* view switch + list view */
-[hidden]{display:none!important}
-.viewbar{display:flex;align-items:center;gap:.4rem;margin:0 0 1rem;font-family:var(--mono);
-  font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim)}
+/* ---------- the row above the shelf: Months / List, Wrapped, More ---------- */
+.viewbar{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:0 0 1.5rem;
+  font-size:.85rem;color:var(--fg-dim)}
 .viewbar > span{margin-right:.3rem}
+.viewbar > .grow{flex:1;margin:0}
+.menu{position:relative}
+.menu > summary{list-style:none;display:inline-flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+.menu > summary::-webkit-details-marker{display:none}
+.menu > summary::after{content:"";border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:5px solid currentColor;opacity:.7}
+.menu[open] > summary{background:var(--bg-2);border-color:var(--fg-dim)}
+.menu-list{position:absolute;right:0;top:calc(100% + .4rem);z-index:20;min-width:13rem;padding:.35rem;
+  background:var(--bg-2);border:1px solid var(--rule);border-radius:var(--r-l);
+  box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.menu-list button{display:block;width:100%;text-align:left;padding:.65rem .8rem;border-radius:var(--r-s);
+  font-size:.9rem;font-weight:500;color:var(--fg)}
+.menu-list button:hover,.menu-list button:focus-visible{background:var(--bg-3)}
+
+/* ---------- reading now ---------- */
+.now{position:relative;isolation:isolate;overflow:hidden;margin:0 0 2rem;
+  border:1px solid var(--rule);border-radius:var(--r-l);background:var(--bg-2)}
+/* the backdrop: this month's cover(s), blurred until only their colours are left... */
+.now-wash{position:absolute;inset:-30%;z-index:-1;display:flex;filter:blur(60px) saturate(1.5);opacity:.62}
+.now-wash img{flex:1;min-width:0;max-width:none;height:100%;object-fit:cover}
+/* ...then toned down with the page colour so the text stays readable in any theme */
+.now::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(100deg,color-mix(in srgb,var(--bg) 86%,transparent),
+    color-mix(in srgb,var(--bg) 70%,transparent))}
+.now-in{padding:clamp(1.1rem,3vw,2rem)}
+.now-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.2rem;
+  font-size:.9rem;font-weight:600}
+.now-label{display:inline-flex;align-items:center;gap:.55rem;color:var(--gold)}
+.now-label::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.now-month{color:var(--fg);opacity:.75;font-weight:500}
+.now-books{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,21rem),1fr));gap:1.75rem 2.5rem}
+.now-book{display:grid;grid-template-columns:clamp(92px,15vw,160px) minmax(0,1fr);
+  gap:clamp(1rem,2.5vw,1.75rem);align-items:start}
+.now-book .cover-fallback{font-size:.8rem;padding:.5rem}
+.now-book .scoreline{margin-top:1.1rem;padding:0;border:none;gap:1rem 1.5rem}
+.now-book .score .val{font-size:1.8rem}
+.now-empty{font-family:var(--display);font-weight:600;text-transform:uppercase;
+  font-size:clamp(1.4rem,4vw,2.2rem);line-height:1;margin:0}
+.now-foot{display:flex;flex-wrap:wrap;align-items:center;gap:.9rem 1.5rem;margin-top:1.4rem;
+  padding-top:1.1rem;border-top:1px solid var(--rule)}
+.now-days{flex:1;min-width:12rem;font-size:.85rem;color:var(--fg-dim)}
+.now-days .bar{margin:0 0 .55rem;background:color-mix(in srgb,var(--fg) 16%,transparent)}
+.now-next{margin:.9rem 0 0;font-size:.88rem;color:var(--fg-dim)}
+.now-next b{color:var(--fg);font-weight:600}
+
+/* ---------- list view ---------- */
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);
-  border-radius:var(--radius)}
-table.books{width:100%;min-width:940px;border-collapse:collapse;font-size:.9rem}
+  border-radius:var(--r-l)}
+table.books{width:100%;min-width:940px;border-collapse:collapse;font-size:.92rem}
 .books th,.books td{border:1px solid var(--rule);padding:.5rem .7rem;text-align:left;vertical-align:middle}
 .books tr > :first-child{border-left:none}
 .books tr > :last-child{border-right:none}
 .books thead tr:first-child th{border-top:none}
 .books tbody:last-child tr:last-child td,.books tfoot tr:last-child td{border-bottom:none}
-.books thead th{background:var(--bg-2);padding:0;font-weight:700}
-.th-btn,.th-plain{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
-  font-weight:700;white-space:nowrap}
+.books thead th{background:var(--bg-2);padding:0;font-weight:600}
+.th-btn,.th-plain{font-size:.82rem;font-weight:600;white-space:nowrap}
 .th-btn{display:flex;align-items:center;justify-content:space-between;gap:.6rem;width:100%;
-  padding:.75rem .7rem;text-align:left}
-.books thead th.th-plain{padding:.75rem .7rem}
+  padding:.7rem .7rem;text-align:left}
+.books thead th.th-plain{padding:.7rem .7rem}
 .th-btn:hover .arrows i{opacity:.8}
 .arrows{display:inline-grid;gap:3px;flex:none;color:var(--fg)}
 .arrows i{display:block;width:0;height:0;border-left:4px solid transparent;
@@ -396,138 +467,121 @@ table.books{width:100%;min-width:940px;border-collapse:collapse;font-size:.9rem}
 .arrows .dn{border-top:6px solid currentColor}
 th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity:1;color:var(--gold)}
 .books thead .filters th{padding:.4rem .45rem;background:color-mix(in srgb,var(--bg-2) 55%,var(--bg))}
-.books .filters input,.books .filters select{padding:.35rem .45rem;font-family:var(--mono);
-  font-size:.68rem;font-style:normal;min-width:5.5rem}
+.books .filters input,.books .filters select{padding:.35rem .45rem;font-size:.82rem;min-width:5.5rem}
 .books .filters .on{border-color:var(--gold);color:var(--gold)}
 .books tbody tr{cursor:pointer;transition:background .12s}
 .books tbody tr:hover{background:var(--bg-2)}
 .books tbody tr.none{cursor:default;background:none}
-.books tbody tr.none td{padding:2rem 1rem;text-align:center;font-family:var(--mono);font-size:.75rem;
-  color:var(--fg-dim)}
+.books tbody tr.none td{padding:2rem 1rem;text-align:center;font-size:.9rem;color:var(--fg-dim)}
 .books .c-cover{width:66px;padding:.4rem .6rem}
-.books .cover-slot{margin:0;width:46px;background:var(--bg-2)}
-.books .cover-fallback{font-size:0;padding:0;--vein:color-mix(in srgb,var(--fg) 13%,transparent)}
+.books .cover-slot{width:46px;height:69px;aspect-ratio:auto;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.books .cover-fallback{font-size:0;padding:0}
 .books .lt{font-weight:600;line-height:1.25;margin:0}
-.books .la{font-family:var(--mono);font-size:.66rem;color:var(--fg-dim);margin:.2rem 0 0}
+.books .la{font-size:.8rem;color:var(--fg-dim);margin:.15rem 0 0}
 .books .c-book{min-width:12rem}
-.books .c-month{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
-  white-space:nowrap}
+.books .c-month{font-size:.88rem;white-space:nowrap}
 .books .mabbr{display:none}
-.books .num{font-family:var(--mono);font-size:.84rem;font-weight:700;text-align:right;white-space:nowrap}
+.books .num{font-size:.95rem;font-weight:700;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .books .num.none{color:var(--fg-dim);opacity:.5;font-weight:400}
-.books .c-type{font-family:var(--mono);font-size:.68rem;white-space:nowrap}
-.books .c-type small{display:block;font-size:.6rem;letter-spacing:.06em;margin-top:.15rem;color:var(--fg-dim)}
-.books .c-genres{font-family:var(--mono);font-size:.64rem;color:var(--fg-dim);line-height:1.5;min-width:8rem}
-.books tfoot td{background:var(--bg-2);font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--fg-dim)}
-.books tfoot td.num{font-size:.84rem;letter-spacing:0;color:var(--fg)}
+.books .c-type{font-size:.85rem;white-space:nowrap}
+.books .c-type small{display:block;font-size:.76rem;margin-top:.1rem;color:var(--fg-dim)}
+.books .c-genres{font-size:.8rem;color:var(--fg-dim);line-height:1.45;min-width:8rem}
+.books tfoot td{background:var(--bg-2);font-size:.82rem;color:var(--fg-dim)}
+.books tfoot td.num{font-size:.95rem;color:var(--fg)}
 .list-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;
-  margin-top:.9rem;font-family:var(--mono);font-size:.74rem;color:var(--fg-dim)}
+  margin-top:.9rem;font-size:.88rem;color:var(--fg-dim)}
 
-/* wrapped */
+/* ---------- wrapped ---------- */
 .big-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-.bignum{border:1px solid var(--rule);border-radius:var(--radius);padding:1.1rem}
+.bignum{border:1px solid var(--rule);border-radius:var(--r-l);padding:1.1rem}
 .bignum .n{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,6vw,3.4rem);
   line-height:.9;display:block;color:var(--gold)}
-.bignum .l{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--fg-dim);display:block;margin-top:.5rem}
+.bignum .l{font-size:.85rem;color:var(--fg-dim);display:block;margin-top:.5rem}
 .duel{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-.duel-card{border:1px solid var(--rule);border-radius:var(--radius);padding:1.1rem}
-.duel-card h5{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--gold);margin:0 0 .7rem}
+.duel-card{border:1px solid var(--rule);border-radius:var(--r-l);padding:1.1rem}
+.duel-card h5{font-size:.88rem;font-weight:600;color:var(--gold);margin:0 0 .7rem}
 .duel-card .bt{font-family:var(--display);font-weight:600;text-transform:uppercase;font-size:1.35rem;
   line-height:1;margin:0 0 .6rem}
-.duel-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.72rem;
-  padding:.25rem 0;border-bottom:1px solid var(--rule)}
+.duel-row{display:flex;justify-content:space-between;gap:1rem;font-size:.9rem;
+  padding:.3rem 0;border-bottom:1px solid var(--rule)}
 .duel-row:last-child{border-bottom:none}
 .bar{height:6px;border-radius:99px;background:var(--bg-2);overflow:hidden;margin-top:.3rem}
-.bar i{display:block;height:100%;background:var(--gold)}
-.genre-row{display:flex;align-items:center;gap:.8rem;padding:.4rem 0;border-bottom:1px solid var(--rule);
-  font-family:var(--mono);font-size:.72rem}
+.bar i{display:block;height:100%;background:var(--gold);border-radius:99px}
+.genre-row{display:flex;align-items:center;gap:.8rem;padding:.45rem 0;border-bottom:1px solid var(--rule);
+  font-size:.9rem}
 .genre-row .gn{flex:1}
 .genre-row .gc{color:var(--fg-dim)}
 
-/* roulette */
-.reel{position:relative;overflow:hidden;border:2px solid var(--gold);border-radius:var(--radius);
-  padding:5rem clamp(1.5rem,5vw,2.5rem) clamp(1.5rem,5vw,2.5rem);
-  text-align:center;margin-bottom:1.5rem;min-height:8rem;display:flex;flex-direction:column;
-  align-items:center;justify-content:flex-end;gap:.5rem}
-.dfly{position:absolute;top:10px;left:50%;width:76px;height:46px;margin-left:-38px;
-  color:var(--gold);opacity:.9;pointer-events:none;
-  transition:transform .5s cubic-bezier(.34,1.35,.5,1)}
-.reel.spinning .dfly{transition:transform .11s ease-out}
-.dfly ellipse,.dfly rect,.dfly path{fill:currentColor}
-.dfly .w{transform-box:view-box;transform-origin:50px 20px;
-  animation:flutter .085s infinite alternate ease-in-out;animation-play-state:paused}
-.reel.spinning .dfly .w{animation-play-state:running}
-@keyframes flutter{from{transform:scaleY(1)}to{transform:scaleY(.4)}}
-.reel .rt{font-family:var(--display);font-weight:800;text-transform:uppercase;
-  font-size:clamp(1.6rem,6vw,3rem);line-height:.95;margin:0}
-.reel .ra{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;color:var(--fg-dim);margin:0}
-.reel.spinning .rt{color:var(--gold)}
-.queue{display:grid;gap:.5rem;margin-bottom:1.25rem}
-.qrow{display:flex;align-items:center;gap:.75rem;padding:.6rem .8rem;border:1px solid var(--rule);
-  border-radius:var(--radius)}
-.qrow.hot{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,transparent)}
-.qrow .qt{flex:1;font-size:.95rem}
-.qrow .qa{font-family:var(--mono);font-size:.65rem;color:var(--fg-dim)}
-.qrow .qw{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--qc)}
-
-.panel{position:fixed;top:0;right:0;bottom:0;width:min(380px,100%);z-index:60;background:var(--bg);
+/* ---------- colors panel ---------- */
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(390px,100%);z-index:60;background:var(--bg);
   border-left:1px solid var(--rule);overflow-y:auto;padding:1.5rem 1.5rem 4rem;
   transform:translateX(101%);transition:transform .24s ease}
 .panel.open{transform:none;box-shadow:-24px 0 60px rgba(0,0,0,.45)}
 .panel h3{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:1.8rem;margin:0}
-.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
-.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:.5rem;margin-bottom:1.75rem}
-.preset{border:1px solid var(--rule);border-radius:var(--radius);padding:.55rem;text-align:left;
-  font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase}
-.preset:hover{border-color:var(--gold)}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.panel-sub{font-size:.85rem;font-weight:600;color:var(--fg-dim);margin:1.6rem 0 .6rem}
+/* the on/off switch for "change with the month" */
+.switch{display:flex;align-items:center;gap:.75rem;font-size:1rem;font-weight:600;cursor:pointer}
+.switch input{-webkit-appearance:none;appearance:none;flex:none;margin:0;width:44px;height:26px;border-radius:99px;
+  background:var(--bg-3);border:1px solid var(--rule);position:relative;cursor:pointer;transition:background .15s}
+.switch input::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--fg);transition:transform .15s}
+.switch input:checked{background:var(--accent);border-color:var(--accent)}
+.switch input:checked::after{transform:translateX(18px);background:var(--on-accent)}
+.panel-now{font-size:.88rem;line-height:1.5;color:var(--fg-dim);margin:.6rem 0 0}
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:.5rem}
+.preset{border:1px solid var(--rule);border-radius:var(--r-s);padding:.55rem;text-align:left;
+  font-size:.85rem;font-weight:600;line-height:1.3}
+.preset small{display:block;font-size:.76rem;font-weight:400;color:var(--fg-dim)}
+.preset:hover{border-color:var(--fg-dim)}
+.preset[aria-pressed=true]{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
 .swatches{display:flex;gap:3px;margin-bottom:.45rem}
-.swatches i{width:14px;height:14px;border-radius:1px;display:block}
-.color-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.55rem 0;
+.swatches i{width:14px;height:14px;border-radius:50%;display:block;border:1px solid rgba(128,128,128,.4)}
+.color-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.5rem 0;
   border-bottom:1px solid var(--rule)}
-.color-row label{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:var(--fg-dim)}
+.color-row label{font-size:.9rem;color:var(--fg-dim)}
 .color-row input[type=color]{width:44px;height:28px;padding:0;border:1px solid var(--rule);
-  border-radius:var(--radius);background:none;cursor:pointer}
-.panel-note{font-family:var(--mono);font-size:.65rem;line-height:1.7;color:var(--fg-dim);
+  border-radius:var(--r-s);background:none;cursor:pointer}
+.panel-note{font-size:.85rem;line-height:1.55;color:var(--fg-dim);
   margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--rule)}
-.toast{position:fixed;left:50%;bottom:1.5rem;transform:translate(-50%,140%);z-index:80;
-  background:var(--gold);color:#14100e;padding:.65rem 1.1rem;border-radius:var(--radius);
-  font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
-  transition:transform .25s ease;max-width:90vw;text-align:center}
-.toast.show{transform:translate(-50%,0)}
-@media (max-width:640px){
-  .grid{grid-template-columns:repeat(auto-fill,minmax(142px,1fr));gap:.8rem}
-  .card{padding-bottom:.75rem}
-  .card-head{padding:.55rem .6rem .45rem}
-  .card-month{font-size:1.15rem}
-  .card-kind{font-size:.5rem;letter-spacing:.1em}
-  .cover-slot{margin:.6rem .6rem .6rem}
-  .cover-stack{margin:.6rem}
-  .cover-stack .cover-fallback{font-size:.65rem;padding:.35rem}
-  .card-body{padding:0 .6rem}
-  .card-title{font-size:.85rem}
-  .card-author{font-size:.6rem}
-  .markrow{font-size:.6rem;padding:.18rem 0}
-  .stamp{font-size:.5rem;padding:.2rem .35rem;letter-spacing:.12em}
 
-  .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.toast{position:fixed;left:50%;bottom:calc(1.5rem + env(safe-area-inset-bottom));
+  transform:translate(-50%,1rem);opacity:0;visibility:hidden;pointer-events:none;z-index:80;
+  background:var(--gold);color:var(--on-gold);padding:.6rem 1.1rem;border-radius:99px;
+  font-size:.88rem;font-weight:600;
+  transition:transform .25s ease,opacity .25s ease,visibility 0s linear .25s;
+  max-width:90vw;text-align:center}
+.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible;transition-delay:0s}
+
+/* ---------- phones ---------- */
+@media (max-width:640px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.6rem .9rem}
+  .card{--gap:.55rem}
+  .card-month{font-size:1.2rem}
+  .card-kind{font-size:.68rem;left:.4rem;top:calc(1.5rem + var(--gap) + .4rem)}
+  .card-title{font-size:.9rem}
+  .card-author{font-size:.76rem}
+  .scores{font-size:.74rem;gap:.05rem .7rem}
+  .sc b{font-size:.9rem}
+  .cover-stack .cover-fallback{font-size:.65rem;padding:.35rem}
+
   .btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;
-    text-align:center;padding:.6rem .7rem;font-size:.62rem;letter-spacing:.1em}
-  .chip{min-height:38px;display:inline-flex;align-items:center;padding:.3rem .8rem}
+    text-align:center;padding:.55rem .85rem}
+  .chip{min-height:38px;display:inline-flex;align-items:center;padding:.3rem .85rem}
   .yr{width:40px;height:40px;font-size:1.1rem}
   .who-pick{margin-left:0;width:100%}
-  .statusbar{gap:.5rem .9rem;font-size:.6rem}
+  .viewbar > span:first-child{display:none}
+  .now-book .score .val{font-size:1.5rem}
+  .now-foot .btn{width:100%}
 
-  .masthead{padding:1.75rem 0 1.25rem}
-  .colophon{gap:.3rem 1rem;font-size:.65rem}
+  .masthead{padding:1.5rem 0 1.25rem}
+  .colophon{gap:.2rem 1rem;font-size:.85rem}
 
-  .sheet-inner{padding:.75rem 1rem 5rem}
-  .sheet-bar{padding:.7rem 0 .8rem;margin-bottom:1rem}
+  .sheet-inner{padding:.5rem 1rem 5rem}
+  .sheet-bar{margin-bottom:1.25rem}
   .bom{grid-template-columns:1fr;gap:1.25rem}
-  .bom .cover-slot{max-width:150px}
-  .section-label{margin:2rem 0 1rem;font-size:.6rem}
+  .bom .cover-slot{max-width:160px}
+  .section-label{margin:2rem 0 1rem}
   .scoreline{gap:1.1rem;margin-top:1.1rem}
   .score .val{font-size:1.6rem}
   .quote p{font-size:.98rem}
@@ -541,18 +595,24 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
   .books .filters input,.books .filters select{font-size:16px}
   /* list view on a phone: tighten everything so cover, title, month and both
      scores fit on screen; the remaining columns scroll sideways inside the box */
-  table.books{min-width:0;font-size:.85rem}
+  table.books{min-width:0;font-size:.86rem}
   .books th,.books td{padding:.4rem .45rem}
-  .th-btn,.th-plain{font-size:.56rem;letter-spacing:.08em}
-  .th-btn,.books thead th.th-plain{padding:.65rem .4rem}
+  .th-btn,.th-plain{font-size:.74rem}
+  .th-btn,.books thead th.th-plain{padding:.6rem .4rem}
   .th-btn{gap:.3rem}
   .books .c-cover{width:auto;padding:.35rem .4rem}
-  .books .cover-slot{width:34px}
+  .books .cover-slot{width:34px;height:51px}
   .books .c-book{min-width:7rem}
-  .books .lt{font-size:.82rem}
-  .books .la{font-size:.6rem}
+  .books .lt{font-size:.86rem}
+  .books .la{font-size:.74rem}
   .books thead .filters th{padding:.3rem .25rem}
-  .books .filters input,.books .filters select{min-width:0;padding:.3rem .2rem}
+  .books .filters input,.books .filters select{min-width:0;padding:.3rem .25rem}
+  .books .filters select{-webkit-appearance:none;appearance:none;padding-right:14px;
+    background-image:linear-gradient(45deg,transparent 50%,var(--fg-dim) 50%),
+      linear-gradient(135deg,var(--fg-dim) 50%,transparent 50%);
+    background-size:4px 4px;background-repeat:no-repeat;
+    background-position:right 7px top 54%,right 3px top 54%}
+  .books th[data-col="month"],.books th[data-col^="s:"]{min-width:4rem}
   .books .mfull{display:none}
   .books .mabbr{display:inline}
   .books .c-type,.books .c-genres{white-space:nowrap;min-width:0}
@@ -560,16 +620,12 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
   .big-grid{grid-template-columns:1fr 1fr;gap:.7rem}
   .bignum{padding:.85rem}
   .duel{grid-template-columns:1fr}
-  .reel{padding:4.25rem 1rem 1.25rem;min-height:7rem}
   .picks-grid{grid-template-columns:repeat(auto-fill,minmax(64px,1fr))}
   .panel{padding:1.25rem 1.25rem calc(3rem + env(safe-area-inset-bottom))}
 }
-@media (max-width:380px){
-  .grid{grid-template-columns:1fr 1fr}
-  .toolbar{grid-template-columns:1fr}
-}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;
-  transition-duration:.01ms!important}.card:hover{transform:none}
+  transition-duration:.01ms!important}
+  .card:hover > .cover-slot,.card:hover > .cover-stack,.card:hover > .card-kind{transform:none}
   .sky .df,.sky .df .w{animation:none!important}
   .sky .df.a{transform:translate3d(8vw,0,0)}
   .sky .df.b{transform:translate3d(34vw,0,0)}
@@ -598,23 +654,29 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
     </div>
     <h1 class="title" id="club-title"></h1>
     <div class="colophon" id="colophon"></div>
-    <div class="toolbar">
-      <button class="btn gold" id="btn-wrapped">Wrapped</button>
-      <button class="btn primary" id="btn-roulette">Next pick roulette</button>
-      <button class="btn" id="btn-covers">Fill in book details</button>
-      <button class="btn" id="btn-settings">Colors</button>
-      <button class="btn ghost" id="btn-export">Download backup</button>
-      <button class="btn ghost" id="btn-import">Restore backup</button>
-      <input type="file" id="file-input" accept="application/json,.json" hidden>
-    </div>
   </header>
+
+  <!-- this month's book(s); filled in by renderNow() -->
+  <section class="now" id="now" aria-label="Reading now" hidden></section>
 
   <main>
     <div class="viewbar" role="group" aria-label="Choose a view">
       <span>View</span>
       <button class="chip" data-layout="cards" aria-pressed="true">Months</button>
       <button class="chip" data-layout="list" aria-pressed="false">List</button>
+      <span class="grow"></span>
+      <button class="btn gold" id="btn-wrapped">Wrapped</button>
+      <details class="menu" id="more">
+        <summary class="btn">More</summary>
+        <div class="menu-list">
+          <button id="btn-covers">Fill in book details</button>
+          <button id="btn-settings">Colors</button>
+          <button id="btn-export">Download backup</button>
+          <button id="btn-import">Restore backup</button>
+        </div>
+      </details>
     </div>
+    <input type="file" id="file-input" accept="application/json,.json" hidden>
 
     <div class="grid" id="grid"></div>
 
@@ -635,6 +697,8 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
 </div>
 
 <div class="scrim" id="scrim"></div>
+<!-- the blurred-cover colour behind an open month; filled in by paintWash() -->
+<div class="sheet-wash" id="sheet-wash" aria-hidden="true"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true">
   <div class="sky sky-sheet" aria-hidden="true"><svg class="df b" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg><svg class="df d" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg><svg class="df a" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg><svg class="df c" viewBox="0 0 100 60" aria-hidden="true"><g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/></svg></div>
   <div class="sheet-inner" id="sheet-inner"></div>
@@ -642,11 +706,17 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
 
 <aside class="panel" id="panel" aria-label="Colour settings">
   <div class="panel-head"><h3>Colors</h3><button class="btn ghost" id="panel-close">Close</button></div>
+  <label class="switch"><input type="checkbox" id="auto-theme"><span>Change with the month</span></label>
+  <p class="panel-now" id="theme-now"></p>
+  <h4 class="panel-sub">Every month's colors</h4>
+  <div class="presets" id="month-presets"></div>
+  <h4 class="panel-sub">The originals</h4>
   <div class="presets" id="presets"></div>
+  <h4 class="panel-sub">Your own</h4>
   <div id="color-rows"></div>
-  <div class="color-row"><label for="radius">Corner radius</label>
+  <div class="color-row"><label for="radius">Corner roundness</label>
     <input type="range" id="radius" min="0" max="18" step="1" style="width:110px"></div>
-  <p class="panel-note">Colors are saved with this year's data, so whatever you pick is what she sees too.</p>
+  <p class="panel-note">Picking a set of colors, or changing one yourself, switches off "Change with the month" and keeps your choice until you turn it back on. Colors are saved with the year, so you both see the same thing.</p>
 </aside>
 
 <div class="toast" id="toast"></div>
@@ -660,7 +730,7 @@ const MONTH_NO = {}; MONTHS.forEach((n,i)=>MONTH_NO[n.toLowerCase()]=i+1);
 const ZODIAC = ['Rat','Ox','Tiger','Rabbit','Dragon','Snake','Horse','Goat','Monkey','Rooster','Dog','Pig'];
 const zodiacFor = y => ZODIAC[(((Number(y)-4)%12)+12)%12];
 
-const THEME_KEYS = [['--bg','Page'],['--fg','Text'],['--card','Card'],['--card-fg','Card text'],
+const THEME_KEYS = [['--bg','Page'],['--fg','Text'],['--card','Blank cover'],['--card-fg','Blank cover text'],
   ['--accent','Accent'],['--gold','Highlight'],['--reader-a','Reader 1'],['--reader-b','Reader 2']];
 const PRESETS = {
   'Lacquer':  {'--bg':'#16100e','--fg':'#f0e6d6','--card':'#efe3d0','--card-fg':'#1a1310','--accent':'#d6291e','--gold':'#e5a93c','--reader-a':'#d6291e','--reader-b':'#2e7d64','--radius':'2px'},
@@ -671,20 +741,40 @@ const PRESETS = {
   'Dragonfly':{'--bg':'#0d1b1a','--fg':'#e6f0ea','--card':'#e9efe8','--card-fg':'#0f1c1a','--accent':'#1f9c7a','--gold':'#e0a33a','--reader-a':'#e0653f','--reader-b':'#3d7fd6','--radius':'10px'}
 };
 
+/* One set of colours per calendar month, January first. The page uses the one for today's
+   month unless "Change with the month" is switched off in the Colors panel. To restyle a
+   month, change its colours here: bg = page, fg = text, card = blank-cover colour,
+   accent = buttons, gold = highlights, reader-a / reader-b = each of you. */
+const MONTH_THEMES = [
+  { name:'Winter',    colors:{'--bg':'#0b1622','--fg':'#e8f1f8','--card':'#dfe9f1','--card-fg':'#12202d','--accent':'#3d8fd6','--gold':'#b9e2f4','--reader-a':'#7cc4f0','--reader-b':'#c9a4f2','--radius':'10px'} },
+  { name:'Valentine', colors:{'--bg':'#1c0d14','--fg':'#fbe9ef','--card':'#fbe4ea','--card-fg':'#2a111a','--accent':'#e0456f','--gold':'#f5a8bd','--reader-a':'#ff7b93','--reader-b':'#c79bf5','--radius':'14px'} },
+  { name:'Clover',    colors:{'--bg':'#0c1a12','--fg':'#e9f4ea','--card':'#e6f1e4','--card-fg':'#102016','--accent':'#2fa55a','--gold':'#e8c552','--reader-a':'#63d08a','--reader-b':'#f0c24e','--radius':'8px'} },
+  { name:'Blossom',   colors:{'--bg':'#151424','--fg':'#f1ecf7','--card':'#f0e9f5','--card-fg':'#1c1830','--accent':'#b78be6','--gold':'#f4b6cf','--reader-a':'#f08fb4','--reader-b':'#8fb4f0','--radius':'14px'} },
+  { name:'Garden',    colors:{'--bg':'#10201a','--fg':'#edf5e6','--card':'#edf2df','--card-fg':'#14211a','--accent':'#e86a8f','--gold':'#f2d15c','--reader-a':'#f28aa6','--reader-b':'#7fd0a0','--radius':'12px'} },
+  { name:'Seaside',   colors:{'--bg':'#071b26','--fg':'#e6f4f7','--card':'#e3f1f2','--card-fg':'#0c2330','--accent':'#19a7b8','--gold':'#f7d45a','--reader-a':'#ffa36b','--reader-b':'#4fd2dd','--radius':'12px'} },
+  { name:'Sunset',    colors:{'--bg':'#1a1024','--fg':'#fbeee6','--card':'#fbe8dc','--card-fg':'#261433','--accent':'#f0603f','--gold':'#ffb648','--reader-a':'#ff7d5c','--reader-b':'#7fb0ff','--radius':'10px'} },
+  { name:'Sunflower', colors:{'--bg':'#16170d','--fg':'#f6f0dc','--card':'#f5ecd2','--card-fg':'#20200f','--accent':'#e09a1f','--gold':'#f2cf63','--reader-a':'#f08a3c','--reader-b':'#9fcf78','--radius':'8px'} },
+  { name:'Harvest',   colors:{'--bg':'#1a120e','--fg':'#f5eadb','--card':'#f1e4cf','--card-fg':'#23160f','--accent':'#c4412f','--gold':'#e0b659','--reader-a':'#f0745a','--reader-b':'#a9c873','--radius':'6px'} },
+  { name:'Halloween', colors:{'--bg':'#120b18','--fg':'#f3ebf7','--card':'#efe6d6','--card-fg':'#1a1022','--accent':'#f2761b','--gold':'#b98cff','--reader-a':'#ff8c3a','--reader-b':'#8fe36a','--radius':'4px'} },
+  { name:'Fall',      colors:{'--bg':'#1b1109','--fg':'#f6ead9','--card':'#f2e3cb','--card-fg':'#24160c','--accent':'#bd4c17','--gold':'#e3a83a','--reader-a':'#f08a45','--reader-b':'#a8ba74','--radius':'6px'} },
+  { name:'Christmas', colors:{'--bg':'#0b1a14','--fg':'#f4efe2','--card':'#f3ecdc','--card-fg':'#10231b','--accent':'#d12d38','--gold':'#e2b84a','--reader-a':'#f2605c','--reader-b':'#5fc893','--radius':'8px'} }
+];
+
 /* ================= state ================= */
 let DATA = null;
 let YEAR = Number(window.START_YEAR) || 2026;
-let view = null;              // null | 'month' | 'wrapped' | 'roulette'
+let view = null;              // null | 'month' | 'wrapped'
 let openMonth = null, editing = false, me = null;
 let FB = null, docRef = null, unsub = null, saveTimer = null;
 const LOCAL = {};             // year -> data, used when Firebase is off
-let spinning = false, rouletteHit = null;
 
 const $ = (s,r=document)=>r.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const member = id => DATA.members.find(m=>m.id===id) || {id:id,name:id,emoji:''};
 const memberLabel = id => { const m=member(id); return m.name + (m.emoji ? ' '+m.emoji : ''); };
 const readerColor = id => DATA.members.findIndex(m=>m.id===id)===1 ? 'var(--reader-b)' : 'var(--reader-a)';
+// the text colour that is readable on top of that reader's colour
+const readerOn = id => DATA.members.findIndex(m=>m.id===id)===1 ? 'var(--on-b)' : 'var(--on-a)';
 const fmtScore = n => (n===''||n==null||isNaN(n)) ? null : (Math.round(Number(n)*100)/100).toString();
 const num = n => (n==null||n===''||isNaN(n)) ? null : Number(n);
 
@@ -701,6 +791,7 @@ function blankYear(y, from){
     club: { name: base.club.name, year: String(y), zodiac: 'Year of the '+zodiacFor(y) },
     members: JSON.parse(JSON.stringify(base.members)),
     theme: Object.assign({}, base.theme),
+    themeMode: base.themeMode==='fixed' ? 'fixed' : 'auto',
     meta: { updatedBy:'', updatedAt:'' },
     backlog: [],
     months: MONTHS.map(n=>({ id:n.toLowerCase(), name:n, boms:[], top:[] }))
@@ -719,7 +810,7 @@ function tidyBom(b, members){
   b.author = b.author || '';
   b.cover = b.cover || '';
   b.pages = num(b.pages);
-  b.genres = Array.isArray(b.genres) ? b.genres : [];
+  b.genres = cleanGenres(Array.isArray(b.genres) ? b.genres : []);
   b.scores = b.scores || {};
   b.pickedBy = b.pickedBy || '';
   const q = b.quotes || {};
@@ -740,6 +831,8 @@ function migrate(d){
   d.members = d.members || JSON.parse(JSON.stringify(SEED.members));
   d.members.forEach(m=>{ if (m.emoji==null) m.emoji=''; });
   d.theme = Object.assign({}, PRESETS.Lacquer, d.theme||{});
+  // 'auto' = colours follow the calendar month (the default); 'fixed' = stay on d.theme
+  d.themeMode = d.themeMode==='fixed' ? 'fixed' : 'auto';
   d.meta = d.meta || {updatedBy:'',updatedAt:''};
   d.backlog = Array.isArray(d.backlog) ? d.backlog : [];
   d.backlog.forEach(b=>{ b.title=b.title||''; b.author=b.author||''; b.addedBy=b.addedBy||''; });
@@ -755,7 +848,7 @@ function migrate(d){
     m.top.forEach(b=>{
       b.cover = b.cover || '';
       b.pages = num(b.pages);
-      b.genres = Array.isArray(b.genres) ? b.genres : [];
+      b.genres = cleanGenres(Array.isArray(b.genres) ? b.genres : []);
       if (b.quote !== undefined){
         if (!Array.isArray(b.quotes)) b.quotes = b.quote ? [b.quote] : [];
         delete b.quote;
@@ -844,7 +937,7 @@ async function loadYear(y){
     afterLoad();
     unsub = fs.onSnapshot(docRef, s=>{
       if (!s.exists() || s.metadata.hasPendingWrites) return;
-      if (editing || spinning) return;
+      if (editing) return;
       const next = s.data();
       if (!next || !next.months) return;
       DATA = migrate(next);
@@ -893,7 +986,7 @@ function buildWhoPicker(){
   const el = $('#who-pick');
   el.innerHTML = '<span>You are</span>' + DATA.members.map(m =>
     '<button class="chip" data-me="'+esc(m.id)+'" aria-pressed="'+(me===m.id)+
-    '" style="--c:'+readerColor(m.id)+'">'+esc(memberLabel(m.id))+'</button>').join('');
+    '" style="--c:'+readerColor(m.id)+';--oc:'+readerOn(m.id)+'">'+esc(memberLabel(m.id))+'</button>').join('');
   el.querySelectorAll('[data-me]').forEach(b=>b.addEventListener('click',()=>{
     me = (me===b.dataset.me) ? null : b.dataset.me;
     buildWhoPicker(); if (view) renderSheet();
@@ -902,13 +995,36 @@ function buildWhoPicker(){
 
 /* ================= book lookup ================= */
 const lookupCache = new Map();
+/* The book lookup returns library "subjects", and plenty of those are not genres at all:
+   bestseller-list codes, reading levels, "Large type books" and so on. This keeps the
+   real ones, tidies their spelling, and returns at most three. */
+const GENRE_GENERIC = new Set(['fiction','general','nonfiction','non-fiction','juvenile fiction',
+  'young adult fiction','literary','literature','novel','novels','books','stories','adult']);
+const GENRE_JUNK = new RegExp([
+  '[:=_\\d()\\[\\]]',                       // codes like nyt:combined-print...=2021-10-03
+  'best\\s?sell', 'new york times', '\\bnyt\\b', 'award', 'staff pick',
+  'reading level', 'large (type|print)', 'accessible book', 'protected daisy', 'in library',
+  'open library', 'internet archive', 'overdrive', 'lending', 'collection', 'long now',
+  'open syllabus', 'textbook', 'study guide', 'specimen', 'criticism', 'translat', 'e-?book',
+  'fiction in\\b',                          // "Fiction in English"
+  '^(english|american|british|irish|scottish|canadian|australian|french|german|russian)\\b.*(literature|fiction|language)$'
+].join('|'), 'i');
+const GENRE_ALIAS = { 'dystopias':'Dystopian', 'love stories':'Romance', 'sci-fi':'Science Fiction' };
+function prettyGenre(t){
+  const low = t.toLowerCase().replace(/\s+/g,' ')
+    // "Fantasy fiction" and "Fantasy" are the same shelf
+    .replace(/^(fantasy|romance|horror|mystery|dystopian|suspense|thriller|adventure|gothic|crime)\s+fiction$/, '$1');
+  if (GENRE_ALIAS[low]) return GENRE_ALIAS[low];
+  return low.replace(/(^|[\s-])([a-z])/g, (m,a,b)=>a+b.toUpperCase())
+            .replace(/\s(And|Of|The|In|For|To)\s/g, m=>m.toLowerCase());
+}
 function cleanGenres(cats){
-  const drop = new Set(['fiction','general','nonfiction','juvenile fiction','young adult fiction','literary']);
   const out = [];
-  (cats||[]).forEach(c=>String(c).split('/').forEach(p=>{
+  (cats||[]).forEach(c=>String(c).split(/\s*(?:\/|,|;|--)\s*/).forEach(p=>{
     const t = p.trim();
-    if (!t || drop.has(t.toLowerCase()) || out.includes(t)) return;
-    out.push(t);
+    if (!t || t.length>28 || GENRE_JUNK.test(t) || GENRE_GENERIC.has(t.toLowerCase())) return;
+    const nice = prettyGenre(t);
+    if (!out.some(x=>x.toLowerCase()===nice.toLowerCase())) out.push(nice);
   }));
   return out.slice(0,3);
 }
@@ -937,7 +1053,7 @@ async function lookupBook(title, author){
       if (d.cover_i) addCover('https://covers.openlibrary.org/b/id/'+d.cover_i+'-L.jpg',
         [d.title,d.first_publish_year].filter(Boolean).join(' · '));
       if (!res.pages && d.number_of_pages_median) res.pages = d.number_of_pages_median;
-      if (!res.genres.length && d.subject) res.genres = cleanGenres(d.subject.slice(0,4));
+      if (!res.genres.length && d.subject) res.genres = cleanGenres(d.subject.slice(0,30));
     });
   } catch(e){}
   res.covers = res.covers.slice(0,12);
@@ -964,11 +1080,11 @@ async function enrichBooks(opts){
 }
 
 /* ================= grid ================= */
-function coverMarkup(book, cls){
+function coverMarkup(book, cls, emptyText){
   const t = esc(book && book.title || '');
   const img = book && book.cover
     ? '<img src="'+esc(book.cover)+'" alt="Cover of '+t+'" loading="lazy" onerror="this.style.display=\'none\'">' : '';
-  return '<div class="cover-slot '+(cls||'')+'"><div class="cover-fallback">'+(t||'No book yet')+'</div>'+img+'</div>';
+  return '<div class="cover-slot '+(cls||'')+'"><div class="cover-fallback">'+(t||esc(emptyText||'No book yet'))+'</div>'+img+'</div>';
 }
 
 /* two or three covers fanned out, for months with more than one shared book */
@@ -1000,69 +1116,56 @@ function render(){
   const today = new Date(), thisMonth = today.getMonth()+1;
   const sameYear = today.getFullYear() === YEAR;
 
+  // The shelf. Each month is just its cover (or fanned covers), with the month name above
+  // and the title and scores underneath - no box around it.
+  const pastYear = YEAR < today.getFullYear();
+  const scorePill = (v, who, color) =>
+    '<span class="sc'+(v===null?' none':'')+'"'+(color?' style="--c:'+color+'"':'')+'><b>'+
+    (v===null?'—':v)+'</b>'+esc(who)+'</span>';
+
   $('#grid').innerHTML = DATA.months.map(m=>{
-    const boms = m.boms || [];
-    const multi = boms.length > 1;
-    const feature = boms[0] || (m.top && m.top[0]) || null;
-    const hasScores = boms.length
+    const boms = m.boms || [], tops = m.top || [];
+    // what a card shows: the book(s) you read together, or failing that each person's top book
+    const shared = boms.length > 0;
+    const items = shared ? boms : tops;
+    const hasScores = shared
       ? boms.some(b=>DATA.members.some(x=>fmtScore((b.scores||{})[x.id])!==null))
-      : (m.top||[]).some(b=>fmtScore(b.score)!==null);
+      : tops.some(b=>fmtScore(b.score)!==null);
     const no = MONTH_NO[String(m.id).toLowerCase()]||0;
     const isNow = sameYear && no===thisMonth;
+    const isPast = pastYear || (sameYear && no && no<thisMonth);
 
-    let stamp = '';
-    if (!hasScores){
-      if (isNow) stamp = '<span class="stamp now">Reading now</span>';
-      else if (sameYear && no && no<thisMonth) stamp = '<span class="stamp past">Not scored</span>';
-      else stamp = '<span class="stamp">To read</span>';
-    }
+    // the small note beside the month name
+    const kind = isNow ? 'Reading now'
+      : !items.length ? ''
+      : !hasScores ? (isPast ? 'Not scored' : 'To read')
+      : !shared ? 'Top books'
+      : items.length>1 ? items.length+' books' : '';
 
-    // one score line per reader, for a shared book
-    const readerRows = b => DATA.members.map(x=>{
-      const v = fmtScore((b.scores||{})[x.id]);
-      return '<div class="markrow" style="--mc:'+readerColor(x.id)+'"><span class="who">'+
-        esc(memberLabel(x.id))+'</span><span class="val'+(v===null?' none':'')+'">'+
-        (v===null?'—':v)+'</span></div>';
+    const body = items.map(b=>{
+      const g = shared && items.length===1 ? fmtScore(b.goodreads) : null;
+      return '<div class="cbook"><p class="card-title">'+esc(b.title||'Untitled')+'</p>'+
+        (b.author?'<p class="card-author">'+esc(b.author)+'</p>':'')+
+        '<div class="scores">'+
+          (shared
+            ? DATA.members.map(x=>scorePill(fmtScore((b.scores||{})[x.id]), memberLabel(x.id), readerColor(x.id))).join('')
+            : scorePill(fmtScore(b.score), memberLabel(b.member), readerColor(b.member)))+
+          (g ? scorePill(g, 'Goodreads') : '')+
+        '</div></div>';
     }).join('');
 
-    let body = '';
-    if (multi){
-      // several shared books: a compact block per book (title + both scores)
-      body = boms.map(b=>'<div class="cbook"><p class="card-title">'+esc(b.title||'Untitled')+'</p>'+
-        '<div class="marks">'+readerRows(b)+'</div></div>').join('');
-    } else {
-      let rows = '';
-      if (boms.length){
-        const g = fmtScore(boms[0].goodreads);
-        rows = readerRows(boms[0]) + '<div class="markrow avg"><span class="who">Goodreads</span><span class="val'+
-          (g?'':' none')+'">'+(g||'—')+'</span></div>';
-      } else {
-        rows = (m.top||[]).map(b=>{
-          const v = fmtScore(b.score);
-          return '<div class="markrow" style="--mc:'+readerColor(b.member)+'"><span class="who">'+
-            esc(memberLabel(b.member))+'</span><span class="val'+(v===null?' none':'')+'">'+
-            (v===null?'—':v)+'</span></div>';
-        }).join('');
-      }
-      body = '<p class="card-title">'+esc(feature?feature.title:'Nothing picked yet')+'</p>'+
-        (feature&&feature.author?'<p class="card-author">'+esc(feature.author)+'</p>':'')+
-        '<div class="marks">'+rows+'</div>';
-    }
-
-    const kind = isNow ? 'This month' : multi ? boms.length+' books'
-      : boms.length ? 'Book of the month' : 'Top books';
-
-    return '<button class="card '+(hasScores?'':'pending')+(isNow?' now':'')+'" data-month="'+esc(m.id)+
-      '" aria-label="Open '+esc(m.name)+(multi?', '+boms.length+' books':'')+(isNow?', reading now':'')+'">'+stamp+
-      '<div class="card-head"><span class="card-month">'+esc(m.name)+'</span>'+
-      '<span class="card-kind">'+kind+'</span></div>'+
-      (multi ? coverStack(boms) : coverMarkup(feature))+
-      '<div class="card-body">'+body+'</div></button>';
+    return '<button class="card'+(isNow?' is-now':'')+(items.length?'':' empty')+(hasScores?'':' pending')+
+      '" data-month="'+esc(m.id)+'" aria-label="Open '+esc(m.name)+
+      (items.length>1?', '+items.length+' books':'')+(isNow?', reading now':'')+'">'+
+      '<div class="card-top"><span class="card-month">'+esc(m.name)+'</span></div>'+
+      (kind?'<span class="card-kind">'+kind+'</span>':'')+
+      (items.length>1 ? coverStack(items) : coverMarkup(items[0]||null, '', 'Nothing picked yet'))+
+      (body?'<div class="card-body">'+body+'</div>':'')+'</button>';
   }).join('');
 
   $('#grid').querySelectorAll('.card').forEach(c=>
     c.addEventListener('click',()=>openSheet('month', c.dataset.month)));
-  paintLayout(); renderList();
+  paintLayout(); renderList(); renderNow();
   paintLastEdit();
 }
 
@@ -1076,8 +1179,10 @@ try { if (localStorage.getItem('bookclub-layout')==='list') layout = 'list'; } c
 // f = the current filter values, keyed by column
 const LIST = { sort:'month', dir:1, f:{}, sig:'' };
 
+// value, label, and a shorter label for phones
 const SCORE_FILTERS = [['','All'],['any','Scored'],['none','Not scored'],
-  ['4.5','4.5 and up'],['4','4 and up'],['3','3 and up'],['lt3','Under 3']];
+  ['4.5','4.5 and up','4.5+'],['4','4 and up','4+'],['3','3 and up','3+'],['lt3','Under 3','<3']];
+const isNarrow = () => window.matchMedia('(max-width:640px)').matches;
 function scorePass(v, f){
   if (!f) return true;
   if (f==='none') return v==null;
@@ -1171,14 +1276,15 @@ function listCompare(a, b){
 // typing in the search box never loses your cursor.
 function buildListHead(){
   const cols = listColumns(), f = LIST.f;
+  const narrow = isNarrow();     // phone: shorter labels so they fit the small boxes
   const opt = (v,l,cur)=>'<option value="'+esc(v)+'"'+((cur||'')===v?' selected':'')+'>'+esc(l)+'</option>';
   const filterCell = c => {
     if (c.key==='title') return '<input type="text" data-lf="q" value="'+esc(f.q||'')+
       '" placeholder="Search" title="Searches title, author and genre" aria-label="Search title, author or genre">';
     if (c.key==='month') return '<select data-lf="month" aria-label="Filter by month">'+
-      opt('','All',f.month)+DATA.months.map(m=>opt(m.id,m.name,f.month)).join('')+'</select>';
+      opt('','All',f.month)+DATA.months.map(m=>opt(m.id, narrow ? String(m.name).slice(0,3) : m.name, f.month)).join('')+'</select>';
     if (c.score) return '<select data-lf="'+esc(c.key)+'" aria-label="Filter by '+esc(c.label)+' score">'+
-      SCORE_FILTERS.map(([v,l])=>opt(v,l,f[c.key])).join('')+'</select>';
+      SCORE_FILTERS.map(([v,l,short])=>opt(v, narrow && short ? short : l, f[c.key])).join('')+'</select>';
     if (c.key==='type') return '<select data-lf="type" aria-label="Filter by type">'+
       opt('','All',f.type)+opt('together','Read together',f.type)+opt('top','Top books',f.type)+
       DATA.members.map(x=>opt('top:'+x.id, x.name+"'s top books", f.type)).join('')+'</select>';
@@ -1258,7 +1364,7 @@ function paintList(){
 function renderList(){
   if (!DATA) return;
   const sig = YEAR+'|'+DATA.members.map(m=>m.id+'/'+m.name+'/'+m.emoji).join(',')+
-    '|'+DATA.months.map(m=>m.id).join(',');
+    '|'+DATA.months.map(m=>m.id).join(',')+'|'+isNarrow();
   if (LIST.sig !== sig){ LIST.sig = sig; buildListHead(); }
   paintList();
 }
@@ -1293,10 +1399,62 @@ $('#books-body').addEventListener('keydown', e=>{
 });
 $('#list-clear').addEventListener('click', clearListFilters);
 
+/* ================= reading now ================= */
+// The block under the title: this month's shared book(s), both scores, and how much
+// of the month is left. Only shown when you are looking at the current year.
+function renderNow(){
+  const el = $('#now'), today = new Date();
+  const idx = DATA.months.findIndex(m => MONTH_NO[String(m.id).toLowerCase()] === today.getMonth()+1);
+  if (today.getFullYear() !== YEAR || idx < 0){ el.hidden = true; el.innerHTML = ''; return; }
+
+  const m = DATA.months[idx];
+  const books = (m.boms||[]).filter(b=>b.title);
+  const days = new Date(YEAR, today.getMonth()+1, 0).getDate();   // day 0 of next month = last day of this one
+  const day = today.getDate(), left = days - day;
+  const leftText = left===0 ? 'Last day of '+m.name
+    : left+' day'+(left===1?'':'s')+' left in '+m.name;
+
+  // next month's pick, if there is one, as a quiet line at the bottom
+  const nm = DATA.months[idx+1];
+  const upNext = nm ? (nm.boms||[]).filter(b=>b.title).map(b=>b.title) : [];
+
+  const washes = books.filter(b=>b.cover).slice(0,3);
+  el.innerHTML =
+    (washes.length ? '<div class="now-wash" aria-hidden="true">'+washes.map(b=>
+      '<img src="'+esc(b.cover)+'" alt="" onerror="this.remove()">').join('')+'</div>' : '')+
+    '<div class="now-in">'+
+      '<div class="now-head"><span class="now-label">Reading now</span>'+
+        '<span class="now-month">'+esc(m.name)+' '+YEAR+'</span></div>'+
+      (books.length
+        ? '<div class="now-books">'+books.map(b=>
+            '<article class="now-book">'+coverMarkup(b)+'<div>'+
+              '<h2 class="book-title">'+esc(b.title)+'</h2>'+
+              (b.author?'<p class="book-author">'+esc(b.author)+'</p>':'')+
+              bookTags(b)+scoreLine(b)+
+            '</div></article>').join('')+'</div>'
+        : '<p class="now-empty">Nothing picked for '+esc(m.name)+' yet</p>')+
+      '<div class="now-foot">'+
+        '<div class="now-days"><div class="bar" role="img" aria-label="Day '+day+' of '+days+'">'+
+          '<i style="width:'+Math.round(day/days*100)+'%"></i></div>'+esc(leftText)+'</div>'+
+        '<button class="btn primary" data-open-month="'+esc(m.id)+'"'+(books.length?'':' data-edit="1"')+'>'+
+          (books.length ? 'Open '+esc(m.name) : 'Pick a book')+'</button>'+
+      '</div>'+
+      (upNext.length ? '<p class="now-next">Up next in '+esc(nm.name)+': <b>'+
+        upNext.map(esc).join('</b> and <b>')+'</b></p>' : '')+
+    '</div>';
+  el.hidden = false;
+}
+$('#now').addEventListener('click', e=>{
+  const b = e.target.closest('[data-open-month]');
+  if (!b) return;
+  openSheet('month', b.dataset.openMonth);
+  if (b.dataset.edit){ editing = true; renderSheet(); }   // nothing picked yet: go straight to editing
+});
+
 /* ================= sheet ================= */
 function openSheet(kind, id){
-  view = kind; openMonth = id||null; editing = false; rouletteHit = null;
-  $('#sheet').classList.add('open'); $('#scrim').classList.add('open');
+  view = kind; openMonth = id||null; editing = false;
+  $('#sheet').classList.add('open'); $('#scrim').classList.add('open'); $('#scrim').classList.remove('thin');
   document.body.classList.add('locked');
   renderSheet();
   const f = $('#sheet-inner [data-act="close"]'); if (f) f.focus();
@@ -1306,22 +1464,38 @@ function closeSheet(){
     const m = DATA.months.find(x=>x.id===openMonth);
     if (m){ commitFields(m); queueSave(); }
   }
-  view = null; openMonth = null; editing = false; spinning = false;
-  $('#sheet').classList.remove('open'); $('#scrim').classList.remove('open');
+  view = null; openMonth = null; editing = false;
+  paintWash([]);
+  $('#sheet').classList.remove('open'); $('#scrim').classList.remove('open','thin');
   document.body.classList.remove('locked');
   render();
 }
 
 function renderSheet(){
   if (view==='month') return renderMonthSheet();
+  paintWash([]);
   if (view==='wrapped') return renderWrapped();
-  if (view==='roulette') return renderRoulette();
+}
+
+/* The colour behind an open month: its covers, blurred until only their colours are left
+   (see .sheet-wash in the styles). Rebuilt only when the covers change, so it doesn't
+   flicker while you type. */
+function paintWash(covers){
+  const el = $('#sheet-wash'), sig = (covers||[]).join('|');
+  if (el.dataset.sig !== sig){
+    el.dataset.sig = sig;
+    el.innerHTML = sig ? '<div class="imgs">'+covers.map(c=>
+      '<img src="'+esc(c)+'" alt="" onerror="this.remove()">').join('')+'</div>' : '';
+  }
+  el.classList.toggle('on', !!sig);
 }
 
 /* ---------- month sheet ---------- */
 function renderMonthSheet(){
   const m = DATA.months.find(x=>x.id===openMonth);
   if (!m) return;
+  const shown = (m.boms||[]).length ? m.boms : (m.top||[]);
+  paintWash(shown.map(b=>b.cover).filter(Boolean).slice(0,3));
   const label = editing ? 'Done' : (me ? 'Add '+esc(member(me).name)+"'s scores" : 'Edit this month');
   $('#sheet-inner').innerHTML =
     '<div class="sheet-bar"><button class="btn ghost" data-act="close">← All months</button>'+
@@ -1341,27 +1515,34 @@ function quoteGroup(list, who, color){
     (i===list.length-1 ? '<span class="attr">'+esc(who)+'</span>' : '')+'</div>').join('') +'</div>';
 }
 
+function bookTags(b){
+  if (!(b.pages || (b.genres||[]).length || b.pickedBy)) return '';
+  return '<div class="tags">'+
+    (b.pickedBy?'<span class="tag" style="color:'+readerColor(b.pickedBy)+
+      ';border-color:'+readerColor(b.pickedBy)+'">'+esc(member(b.pickedBy).name)+"'s pick</span>":'')+
+    (b.pages?'<span class="tag">'+b.pages+' pages</span>':'')+
+    (b.genres||[]).map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div>';
+}
+function scoreLine(b){
+  const s=b.scores||{}, g=fmtScore(b.goodreads);
+  return '<div class="scoreline">'+
+    DATA.members.map(x=>{
+      const v=fmtScore(s[x.id]);
+      return '<div class="score '+(v===null?'empty':'')+'"><span class="lab" style="color:'+
+        readerColor(x.id)+'">'+esc(memberLabel(x.id))+'</span><span class="val">'+
+        (v===null?'—':v)+'<small>/5</small></span></div>';
+    }).join('')+
+    '<div class="score '+(g?'':'empty')+'"><span class="lab">Goodreads</span>'+
+    '<span class="val">'+(g||'—')+'<small>/5</small></span></div>'+
+  '</div>';
+}
 function bomRead(b){
-  const s=b.scores||{}, q=b.quotes||{}, g=fmtScore(b.goodreads);
+  const q=b.quotes||{};
   return '<div class="bom">'+coverMarkup(b)+'<div>'+
     '<h3 class="book-title">'+esc(b.title)+'</h3>'+
     (b.author?'<p class="book-author">'+esc(b.author)+'</p>':'')+
-    ((b.pages||b.genres.length||b.pickedBy)
-      ? '<div class="tags">'+
-        (b.pickedBy?'<span class="tag" style="color:'+readerColor(b.pickedBy)+
-          ';border-color:'+readerColor(b.pickedBy)+'">'+esc(member(b.pickedBy).name)+"'s pick</span>":'')+
-        (b.pages?'<span class="tag">'+b.pages+' pages</span>':'')+
-        b.genres.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div>' : '')+
-    '<div class="scoreline">'+
-      DATA.members.map(x=>{
-        const v=fmtScore(s[x.id]);
-        return '<div class="score '+(v===null?'empty':'')+'"><span class="lab" style="color:'+
-          readerColor(x.id)+'">'+esc(memberLabel(x.id))+'</span><span class="val">'+
-          (v===null?'—':v)+'<small>/5</small></span></div>';
-      }).join('')+
-      '<div class="score '+(g?'':'empty')+'"><span class="lab">Goodreads</span>'+
-      '<span class="val">'+(g||'—')+'<small>/5</small></span></div>'+
-    '</div><div class="quotes">'+
+    bookTags(b)+scoreLine(b)+
+    '<div class="quotes">'+
       DATA.members.map(x=>quoteGroup(q[x.id], memberLabel(x.id), readerColor(x.id))).join('')+
     '</div></div></div>';
 }
@@ -1739,139 +1920,6 @@ function renderWrapped(){
   $('#sheet').scrollTop = 0;
 }
 
-/* ================= roulette ================= */
-const DFLY = '<svg class="dfly" id="dfly" viewBox="0 0 100 60" aria-hidden="true">'+
-  '<g class="w">'+
-    '<path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/>'+
-    '<path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/>'+
-    '<path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/>'+
-    '<path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/>'+
-  '</g>'+
-  '<ellipse cx="50" cy="20" rx="4.5" ry="5"/>'+
-  '<rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/>'+
-  '</svg>';
-
-function renderRoulette(){
-  const q = DATA.backlog || [];
-  let html = '<div class="sheet-bar"><button class="btn ghost" data-act="close">← All months</button></div>'+
-    '<h2 class="sheet-month">Next pick</h2>';
-
-  html += '<div class="section-label">The wheel</div>';
-  if (q.length < 2){
-    html += '<div class="reel"><p class="rt">Need 2+</p><p class="ra">Add some books below first</p></div>';
-  } else {
-    const hit = rouletteHit!=null ? q[rouletteHit] : null;
-    html += '<div class="reel" id="reel">'+DFLY+'<p class="rt" id="reel-title">'+
-      (hit?esc(hit.title):'Ready')+'</p><p class="ra" id="reel-author">'+
-      (hit?esc([hit.author, hit.addedBy?('suggested by '+member(hit.addedBy).name):''].filter(Boolean).join(' · ')):
-        q.length+' books in the pile')+'</p></div>'+
-      '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem">'+
-      '<button class="btn gold" data-act="spin">'+(rouletteHit!=null?'Spin again':'Spin')+'</button>'+
-      (rouletteHit!=null
-        ? '<select id="assign-month" style="max-width:200px">'+
-          DATA.months.map(m=>{
-            const n = (m.boms||[]).length;
-            return '<option value="'+esc(m.id)+'">'+esc(m.name)+
-              (n ? ' (has '+n+' book'+(n>1?'s':'')+')' : '')+'</option>';
-          }).join('')+'</select>'+
-          '<button class="btn primary" data-act="assign">Make it the pick</button>'
-        : '')+'</div>';
-  }
-
-  html += '<div class="section-label">The pile ('+q.length+')</div>';
-  html += '<div class="queue">'+ (q.length ? q.map((b,i)=>
-    '<div class="qrow'+(rouletteHit===i?' hot':'')+'" style="--qc:'+(b.addedBy?readerColor(b.addedBy):'var(--fg-dim)')+'">'+
-    '<span class="qt">'+esc(b.title)+(b.author?' <span class="qa">'+esc(b.author)+'</span>':'')+'</span>'+
-    (b.addedBy?'<span class="qw">'+esc(member(b.addedBy).name)+'</span>':'')+
-    '<button class="btn ghost" data-delq="'+i+'">×</button></div>').join('')
-    : '<p class="empty-note">Nothing in the pile yet.</p>') +'</div>';
-
-  html += '<div class="edit-block"><div class="edit-block-head"><h4>Add to the pile</h4></div>'+
-    '<div class="row">'+
-    '<label class="field"><span>Title</span><input type="text" id="q-title" placeholder="Book title"></label>'+
-    '<label class="field"><span>Author</span><input type="text" id="q-author" placeholder="Optional"></label>'+
-    '<label class="field"><span>Suggested by</span><select id="q-who">'+
-      '<option value="">Nobody in particular</option>'+
-      DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(me===x.id?' selected':'')+'>'+
-        esc(memberLabel(x.id))+'</option>').join('')+
-    '</select></label></div>'+
-    '<button class="btn" data-act="addq">Add it</button></div>';
-
-  $('#sheet-inner').innerHTML = html;
-  wireRoulette();
-  $('#sheet').scrollTop = 0;
-}
-
-function wireRoulette(){
-  const root = $('#sheet-inner');
-  root.querySelectorAll('[data-act]').forEach(btn=>btn.addEventListener('click',()=>{
-    const act = btn.dataset.act;
-    if (act==='close') return closeSheet();
-    if (act==='addq'){
-      const t = $('#q-title').value.trim();
-      if (!t) return toast('Give it a title');
-      DATA.backlog.push({ title:t, author:$('#q-author').value.trim(),
-        addedBy:$('#q-who').value || '' , cover:'' });
-      rouletteHit = null; queueSave(); renderRoulette(); toast('Added to the pile');
-    }
-    if (act==='spin') spin();
-    if (act==='assign'){
-      const monthId = $('#assign-month').value;
-      const m = DATA.months.find(x=>x.id===monthId);
-      const b = DATA.backlog[rouletteHit];
-      if (!m || !b) return;
-      // added to the month's list, so a month that already has a book keeps it
-      const had = (m.boms = m.boms||[]).length;
-      m.boms.push(newBom({ title:b.title, author:b.author||'', cover:b.cover||'', pickedBy:b.addedBy||'' }));
-      DATA.backlog.splice(rouletteHit,1);
-      rouletteHit = null;
-      queueSave(); render(); renderRoulette();
-      toast(had ? b.title+' added to '+m.name : b.title+' is now '+m.name+"'s pick");
-      enrichBooks();
-    }
-  }));
-  root.querySelectorAll('[data-delq]').forEach(btn=>btn.addEventListener('click',()=>{
-    DATA.backlog.splice(Number(btn.dataset.delq),1);
-    rouletteHit = null; queueSave(); renderRoulette();
-  }));
-}
-
-function spin(){
-  const q = DATA.backlog||[];
-  if (q.length<2 || spinning) return;
-  const target = Math.floor(Math.random()*q.length);
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduce){ rouletteHit = target; renderRoulette(); return; }
-
-  spinning = true;
-  const reel = $('#reel'), t = $('#reel-title'), a = $('#reel-author'), d = $('#dfly');
-  reel.classList.add('spinning');
-  a.textContent = 'spinning…';
-  const dart = () => {
-    if (!d) return;
-    const x = (Math.random()*2-1) * (reel.clientWidth/2 - 60);
-    const y = Math.random()*22 - 4;
-    const r = (Math.random()*2-1) * 16;
-    d.style.transform = 'translate('+x.toFixed(0)+'px,'+y.toFixed(0)+'px) rotate('+r.toFixed(0)+'deg)';
-  };
-  let i = 0, delay = 55;
-  const tick = () => {
-    t.textContent = q[i % q.length].title;
-    dart();
-    i++;
-    delay = delay * 1.13;
-    if (delay < 340){ setTimeout(tick, delay); }
-    else {
-      spinning = false;
-      rouletteHit = target;
-      reel.classList.remove('spinning');
-      if (d) d.style.transform = 'translate(0,0) rotate(0deg)';
-      setTimeout(renderRoulette, 480);
-    }
-  };
-  tick();
-}
-
 /* ================= shared sheet wiring ================= */
 function wireSimpleSheet(){
   $('#sheet-inner').querySelectorAll('[data-act]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -1883,59 +1931,132 @@ function wireSimpleSheet(){
 $('#scrim').addEventListener('click',()=>{ closeSheet(); closePanel(); });
 document.addEventListener('keydown',e=>{
   if (e.key!=='Escape') return;
+  if ($('#more').open){ $('#more').open = false; return; }
   if ($('#panel').classList.contains('open')) return closePanel();
   if (view) closeSheet();
 });
 
 /* ================= theme ================= */
-function applyTheme(){
-  Object.entries((DATA&&DATA.theme)||{}).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));
+let themeMonth = -1;      // which month's colours are on screen right now (0 = January)
+
+// The colours in force: this month's set, unless the switch in the Colors panel is off.
+function activeTheme(){
+  if (DATA && DATA.themeMode==='fixed' && DATA.theme) return DATA.theme;
+  return MONTH_THEMES[new Date().getMonth()].colors;
 }
+
+// Button text has to stay readable whatever colour sits behind it, including colours you
+// pick yourself. This measures how light a colour is and answers "dark text or white?".
+function luminance(hex){
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(hex||'').trim());
+  if (!m) return 0;
+  const n = parseInt(m[1],16);
+  const lin = v => { v/=255; return v<=.03928 ? v/12.92 : Math.pow((v+.055)/1.055, 2.4); };
+  return .2126*lin(n>>16&255) + .7152*lin(n>>8&255) + .0722*lin(n&255);
+}
+function onColor(hex){
+  const L = luminance(hex), ink = '#14100e';
+  return (1.05/(L+.05)) >= ((L+.05)/(luminance(ink)+.05)) ? '#ffffff' : ink;
+}
+
+function applyTheme(){
+  const t = activeTheme(), root = document.documentElement.style;
+  Object.entries(t).forEach(([k,v])=>root.setProperty(k,v));
+  root.setProperty('--on-accent', onColor(t['--accent']));
+  root.setProperty('--on-gold',   onColor(t['--gold']));
+  root.setProperty('--on-a',      onColor(t['--reader-a']));
+  root.setProperty('--on-b',      onColor(t['--reader-b']));
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', t['--bg']);
+  themeMonth = new Date().getMonth();
+}
+
 function buildPanel(){
   if ($('#presets').dataset.built) return;
   $('#presets').dataset.built = '1';
+  const swatches = t => '<span class="swatches">'+['--bg','--accent','--gold','--reader-b'].map(k=>
+    '<i style="background:'+t[k]+'"></i>').join('')+'</span>';
+  $('#month-presets').innerHTML = MONTH_THEMES.map((t,i)=>
+    '<button class="preset" data-month-theme="'+i+'" aria-pressed="false">'+swatches(t.colors)+
+    esc(MONTHS[i])+'<small>'+esc(t.name)+'</small></button>').join('');
   $('#presets').innerHTML = Object.entries(PRESETS).map(([n,t])=>
-    '<button class="preset" data-preset="'+esc(n)+'"><span class="swatches">'+
-    '<i style="background:'+t['--bg']+'"></i><i style="background:'+t['--card']+'"></i>'+
-    '<i style="background:'+t['--accent']+'"></i><i style="background:'+t['--gold']+'"></i>'+
-    '</span>'+esc(n)+'</button>').join('');
-  $('#presets').querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
-    DATA.theme = Object.assign({}, PRESETS[b.dataset.preset]);
-    applyTheme(); syncPanelInputs(); render(); if(view) renderSheet(); queueSave();
-  }));
-  $('#color-rows').innerHTML = THEME_KEYS.map(([k,l])=>
-    '<div class="color-row"><label for="c'+k+'">'+esc(l)+'</label>'+
-    '<input type="color" id="c'+k+'" data-var="'+k+'"></div>').join('');
+    '<button class="preset" data-preset="'+esc(n)+'" aria-pressed="false">'+swatches(t)+esc(n)+'</button>').join('');
+
+  const refresh = save => { applyTheme(); syncPanelInputs(); render(); if(view) renderSheet(); if(save) queueSave(); };
+  // choosing any set pins it: the switch goes off and the colours stay put
+  const pin = colors => { DATA.theme = Object.assign({}, colors); DATA.themeMode = 'fixed'; refresh(true); };
+  $('#month-presets').querySelectorAll('[data-month-theme]').forEach(b=>b.addEventListener('click',()=>
+    pin(MONTH_THEMES[Number(b.dataset.monthTheme)].colors)));
+  $('#presets').querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>
+    pin(PRESETS[b.dataset.preset])));
+  $('#auto-theme').addEventListener('change', e=>{
+    DATA.themeMode = e.target.checked ? 'auto' : 'fixed';
+    refresh(true);
+  });
+
+  // changing one colour yourself starts from whatever is showing, then pins the result
+  const startOwn = () => {
+    if (DATA.themeMode!=='fixed'){ DATA.theme = Object.assign({}, activeTheme()); DATA.themeMode = 'fixed'; }
+  };
+  $('#color-rows').innerHTML = THEME_KEYS.map(([k,l],i)=>{
+    const who = i>=6 && DATA.members[i-6] ? DATA.members[i-6].name : l;
+    return '<div class="color-row"><label for="c'+k+'">'+esc(who)+'</label>'+
+      '<input type="color" id="c'+k+'" data-var="'+k+'"></div>';
+  }).join('');
   $('#color-rows').querySelectorAll('input[type=color]').forEach(inp=>{
     inp.addEventListener('input',()=>{
+      startOwn();
       DATA.theme[inp.dataset.var]=inp.value;
-      applyTheme(); render(); if(view) renderSheet();
+      applyTheme(); paintPanelState(); render(); if(view) renderSheet();
     });
     inp.addEventListener('change', queueSave);
   });
-  $('#radius').addEventListener('input',e=>{ DATA.theme['--radius']=e.target.value+'px'; applyTheme(); });
+  $('#radius').addEventListener('input',e=>{
+    startOwn(); DATA.theme['--radius']=e.target.value+'px'; applyTheme(); paintPanelState();
+  });
   $('#radius').addEventListener('change', queueSave);
 }
+
+// the switch, the sentence under it, and which set is outlined
+function paintPanelState(){
+  const t = activeTheme(), auto = DATA.themeMode!=='fixed', mi = new Date().getMonth();
+  $('#auto-theme').checked = auto;
+  $('#theme-now').textContent = auto
+    ? 'On. Showing '+MONTHS[mi]+"'s colors ("+MONTH_THEMES[mi].name+'); they switch by themselves on the 1st of each month.'
+    : 'Off. The site stays on the colors below until you turn this back on.';
+  const same = (a,b) => THEME_KEYS.every(([k])=>String(a[k]).toLowerCase()===String(b[k]).toLowerCase());
+  document.querySelectorAll('[data-month-theme]').forEach(b=>{
+    const i = Number(b.dataset.monthTheme);
+    b.setAttribute('aria-pressed', String(auto ? i===mi : same(t, MONTH_THEMES[i].colors)));
+  });
+  document.querySelectorAll('[data-preset]').forEach(b=>
+    b.setAttribute('aria-pressed', String(!auto && same(t, PRESETS[b.dataset.preset]))));
+}
 function syncPanelInputs(){
-  if (!DATA) return;
+  if (!DATA || !$('#presets').dataset.built) return;
+  const t = activeTheme();
   THEME_KEYS.forEach(([k])=>{
     const i=$('#color-rows input[data-var="'+k+'"]');
-    if (i && DATA.theme[k]) i.value=DATA.theme[k];
+    if (i && t[k]) i.value=t[k];
   });
-  $('#radius').value = parseInt(DATA.theme['--radius']||'2',10);
+  $('#radius').value = parseInt(t['--radius']||'2',10);
+  paintPanelState();
 }
 function closePanel(){
   $('#panel').classList.remove('open');
-  if(!view) $('#scrim').classList.remove('open');
+  if(!view) $('#scrim').classList.remove('open','thin');
 }
 $('#btn-settings').addEventListener('click',()=>{
-  $('#panel').classList.add('open'); $('#scrim').classList.add('open'); $('#panel-close').focus();
+  // "thin" makes the backdrop see-through, so you can watch the page change as you pick
+  $('#panel').classList.add('open'); $('#scrim').classList.add('open','thin'); $('#panel-close').focus();
 });
 $('#panel-close').addEventListener('click', closePanel);
 
 /* ================= toolbar ================= */
+const moreMenu = $('#more');
+moreMenu.addEventListener('click', e=>{ if (e.target.closest('.menu-list button')) moreMenu.open = false; });
+document.addEventListener('click', e=>{ if (moreMenu.open && !moreMenu.contains(e.target)) moreMenu.open = false; });
 $('#btn-wrapped').addEventListener('click',()=>openSheet('wrapped'));
-$('#btn-roulette').addEventListener('click',()=>openSheet('roulette'));
 $('#btn-covers').addEventListener('click',()=>enrichBooks({announce:true}));
 $('#yr-prev').addEventListener('click',()=>loadYear(YEAR-1));
 $('#yr-next').addEventListener('click',()=>loadYear(YEAR+1));
@@ -1963,9 +2084,14 @@ $('#file-input').addEventListener('change',e=>{
 
 /* ================= boot ================= */
 (function boot(){
-  document.documentElement.style.setProperty('--bg', PRESETS.Lacquer['--bg']);
+  applyTheme();                 // this month's colours, before the data has even loaded
   initSync();
-  setInterval(()=>{ if(DATA) paintLastEdit(); }, 60000);
+  setInterval(()=>{
+    if (!DATA) return;
+    paintLastEdit();
+    // left open over midnight on the last day of a month: switch to the new month's colours
+    if (themeMonth !== new Date().getMonth()){ applyTheme(); syncPanelInputs(); render(); }
+  }, 60000);
 })();
 </script>
 </body>
