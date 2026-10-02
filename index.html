@@ -226,6 +226,7 @@ h1.title em{font-style:normal;color:var(--accent)}
   grid-template-columns:repeat(auto-fill,minmax(215px,1fr));margin-top:.5rem}
 .card{position:relative;text-align:left;width:100%;background:var(--card);color:var(--card-fg);
   border-radius:var(--radius);padding:0 0 1rem;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-start; /* keep content at the top */
   transition:transform .18s ease,box-shadow .18s ease}
 .card:hover,.card:focus-visible{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--accent)}
 .card-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;
@@ -234,7 +235,7 @@ h1.title em{font-style:normal;color:var(--accent)}
 .card-kind{font-family:var(--mono);font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;color:var(--card-dim)}
 .cover-slot{position:relative;margin:1rem .9rem .85rem;aspect-ratio:2/3;
   background:color-mix(in srgb,var(--card-fg) 8%,transparent);border-radius:1px;overflow:hidden}
-.cover-slot img{width:100%;height:100%;object-fit:cover}
+.cover-slot img{position:relative;width:100%;height:100%;object-fit:cover}
 .cover-fallback{position:absolute;inset:0;display:flex;align-items:flex-end;padding:.75rem;
   font-family:var(--display);font-weight:600;text-transform:uppercase;font-size:1rem;line-height:1.05;
   color:var(--card-dim);--vein:color-mix(in srgb,var(--card-fg) 11%,transparent);
@@ -264,6 +265,27 @@ h1.title em{font-style:normal;color:var(--accent)}
 .stamp.now{border-color:var(--accent);color:var(--accent);transform:rotate(-4deg);opacity:1}
 .stamp.past{border-color:var(--card-dim);color:var(--card-dim);opacity:.7}
 
+/* a month with more than one shared book: fanned covers + a block per book */
+.cover-stack{position:relative;margin:1rem .9rem .85rem;aspect-ratio:2/3}
+.cover-stack .cover-slot{position:absolute;margin:0;width:70%;
+  background:color-mix(in srgb,var(--card-fg) 8%,var(--card));
+  box-shadow:0 0 0 2px var(--card),0 4px 10px rgba(0,0,0,.28)}
+.cover-stack .cover-slot:nth-child(1){left:0;top:0;z-index:3}
+.cover-stack .cover-slot:nth-child(2){right:0;bottom:0;z-index:2}
+.cover-stack.n3 .cover-slot{width:60%}
+.cover-stack.n3 .cover-slot:nth-child(2){right:20%;bottom:20%}
+.cover-stack.n3 .cover-slot:nth-child(3){right:0;bottom:0;z-index:1}
+.cover-stack .cover-fallback{font-size:.8rem;padding:.5rem}
+.cover-stack .more{position:absolute;right:.35rem;bottom:.35rem;z-index:4;font-family:var(--mono);
+  font-size:.6rem;font-weight:700;padding:.15rem .4rem;border-radius:99px;
+  background:var(--card-fg);color:var(--card)}
+.card.pending .cover-stack{opacity:.55}
+.card.pending .cover-stack .cover-slot{opacity:1}
+.card.now.pending .cover-stack{opacity:1}
+.cbook + .cbook{margin-top:.7rem;padding-top:.7rem;
+  border-top:1px solid color-mix(in srgb,var(--card-fg) 18%,transparent)}
+.cbook .marks{margin-top:.35rem}
+
 .scrim{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 82%,#000);
   backdrop-filter:blur(3px);z-index:40;display:none}
 .scrim.open{display:block}
@@ -279,6 +301,7 @@ h1.title em{font-style:normal;color:var(--accent)}
   color:var(--gold);display:flex;align-items:center;gap:.9rem;margin:2.75rem 0 1.25rem}
 .section-label::after{content:"";flex:1;height:1px;background:var(--rule)}
 .bom{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:clamp(1.25rem,4vw,2.5rem);align-items:start}
+.bom + .bom{margin-top:2.5rem;padding-top:2.5rem;border-top:1px solid var(--rule)}
 .bom .cover-slot{margin:0;background:var(--bg-2)}
 .bom .cover-fallback{color:var(--fg-dim);--vein:color-mix(in srgb,var(--fg) 13%,transparent)}
 .book-title{font-family:var(--display);font-weight:600;text-transform:uppercase;
@@ -345,6 +368,61 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
 .qedit{display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.5rem}
 .qedit textarea{flex:1}
 .qedit button{margin-top:.15rem}
+
+/* view switch + list view */
+[hidden]{display:none!important}
+.viewbar{display:flex;align-items:center;gap:.4rem;margin:0 0 1rem;font-family:var(--mono);
+  font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim)}
+.viewbar > span{margin-right:.3rem}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);
+  border-radius:var(--radius)}
+table.books{width:100%;min-width:940px;border-collapse:collapse;font-size:.9rem}
+.books th,.books td{border:1px solid var(--rule);padding:.5rem .7rem;text-align:left;vertical-align:middle}
+.books tr > :first-child{border-left:none}
+.books tr > :last-child{border-right:none}
+.books thead tr:first-child th{border-top:none}
+.books tbody:last-child tr:last-child td,.books tfoot tr:last-child td{border-bottom:none}
+.books thead th{background:var(--bg-2);padding:0;font-weight:700}
+.th-btn,.th-plain{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;white-space:nowrap}
+.th-btn{display:flex;align-items:center;justify-content:space-between;gap:.6rem;width:100%;
+  padding:.75rem .7rem;text-align:left}
+.books thead th.th-plain{padding:.75rem .7rem}
+.th-btn:hover .arrows i{opacity:.8}
+.arrows{display:inline-grid;gap:3px;flex:none;color:var(--fg)}
+.arrows i{display:block;width:0;height:0;border-left:4px solid transparent;
+  border-right:4px solid transparent;opacity:.3}
+.arrows .up{border-bottom:6px solid currentColor}
+.arrows .dn{border-top:6px solid currentColor}
+th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity:1;color:var(--gold)}
+.books thead .filters th{padding:.4rem .45rem;background:color-mix(in srgb,var(--bg-2) 55%,var(--bg))}
+.books .filters input,.books .filters select{padding:.35rem .45rem;font-family:var(--mono);
+  font-size:.68rem;font-style:normal;min-width:5.5rem}
+.books .filters .on{border-color:var(--gold);color:var(--gold)}
+.books tbody tr{cursor:pointer;transition:background .12s}
+.books tbody tr:hover{background:var(--bg-2)}
+.books tbody tr.none{cursor:default;background:none}
+.books tbody tr.none td{padding:2rem 1rem;text-align:center;font-family:var(--mono);font-size:.75rem;
+  color:var(--fg-dim)}
+.books .c-cover{width:66px;padding:.4rem .6rem}
+.books .cover-slot{margin:0;width:46px;background:var(--bg-2)}
+.books .cover-fallback{font-size:0;padding:0;--vein:color-mix(in srgb,var(--fg) 13%,transparent)}
+.books .lt{font-weight:600;line-height:1.25;margin:0}
+.books .la{font-family:var(--mono);font-size:.66rem;color:var(--fg-dim);margin:.2rem 0 0}
+.books .c-book{min-width:12rem}
+.books .c-month{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  white-space:nowrap}
+.books .mabbr{display:none}
+.books .num{font-family:var(--mono);font-size:.84rem;font-weight:700;text-align:right;white-space:nowrap}
+.books .num.none{color:var(--fg-dim);opacity:.5;font-weight:400}
+.books .c-type{font-family:var(--mono);font-size:.68rem;white-space:nowrap}
+.books .c-type small{display:block;font-size:.6rem;letter-spacing:.06em;margin-top:.15rem;color:var(--fg-dim)}
+.books .c-genres{font-family:var(--mono);font-size:.64rem;color:var(--fg-dim);line-height:1.5;min-width:8rem}
+.books tfoot td{background:var(--bg-2);font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--fg-dim)}
+.books tfoot td.num{font-size:.84rem;letter-spacing:0;color:var(--fg)}
+.list-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;
+  margin-top:.9rem;font-family:var(--mono);font-size:.74rem;color:var(--fg-dim)}
 
 /* wrapped */
 .big-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
@@ -426,6 +504,8 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
   .card-month{font-size:1.15rem}
   .card-kind{font-size:.5rem;letter-spacing:.1em}
   .cover-slot{margin:.6rem .6rem .6rem}
+  .cover-stack{margin:.6rem}
+  .cover-stack .cover-fallback{font-size:.65rem;padding:.35rem}
   .card-body{padding:0 .6rem}
   .card-title{font-size:.85rem}
   .card-author{font-size:.6rem}
@@ -457,7 +537,25 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
   .cover-row .btn{flex:1}
 
   /* 16px stops iOS zooming the page when a field is focused */
-  input[type=text],input[type=number],input[type=url],textarea,select{font-size:16px}
+  input[type=text],input[type=number],input[type=url],textarea,select,
+  .books .filters input,.books .filters select{font-size:16px}
+  /* list view on a phone: tighten everything so cover, title, month and both
+     scores fit on screen; the remaining columns scroll sideways inside the box */
+  table.books{min-width:0;font-size:.85rem}
+  .books th,.books td{padding:.4rem .45rem}
+  .th-btn,.th-plain{font-size:.56rem;letter-spacing:.08em}
+  .th-btn,.books thead th.th-plain{padding:.65rem .4rem}
+  .th-btn{gap:.3rem}
+  .books .c-cover{width:auto;padding:.35rem .4rem}
+  .books .cover-slot{width:34px}
+  .books .c-book{min-width:7rem}
+  .books .lt{font-size:.82rem}
+  .books .la{font-size:.6rem}
+  .books thead .filters th{padding:.3rem .25rem}
+  .books .filters input,.books .filters select{min-width:0;padding:.3rem .2rem}
+  .books .mfull{display:none}
+  .books .mabbr{display:inline}
+  .books .c-type,.books .c-genres{white-space:nowrap;min-width:0}
 
   .big-grid{grid-template-columns:1fr 1fr;gap:.7rem}
   .bignum{padding:.85rem}
@@ -511,7 +609,29 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
     </div>
   </header>
 
-  <main><div class="grid" id="grid"></div></main>
+  <main>
+    <div class="viewbar" role="group" aria-label="Choose a view">
+      <span>View</span>
+      <button class="chip" data-layout="cards" aria-pressed="true">Months</button>
+      <button class="chip" data-layout="list" aria-pressed="false">List</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <section class="listview" id="listview" aria-label="Every book as a list" hidden>
+      <div class="table-scroll">
+        <table class="books">
+          <thead id="books-head"></thead>
+          <tbody id="books-body"></tbody>
+          <tfoot id="books-foot"></tfoot>
+        </table>
+      </div>
+      <div class="list-foot">
+        <span id="list-count"></span>
+        <button class="link" id="list-clear" hidden>Clear filters</button>
+      </div>
+    </section>
+  </main>
 </div>
 
 <div class="scrim" id="scrim"></div>
@@ -583,11 +703,36 @@ function blankYear(y, from){
     theme: Object.assign({}, base.theme),
     meta: { updatedBy:'', updatedAt:'' },
     backlog: [],
-    months: MONTHS.map(n=>({ id:n.toLowerCase(), name:n, bom:null, top:[] }))
+    months: MONTHS.map(n=>({ id:n.toLowerCase(), name:n, boms:[], top:[] }))
   };
 }
 
-/* upgrades old documents in place: single quotes -> arrays, missing fields */
+/* A shared book ("read together"). A month keeps a LIST of these in m.boms,
+   so one month can hold one book, two, or as many as you got through. */
+function newBom(init){
+  return Object.assign({ title:'', author:'', goodreads:null, cover:'', pages:null, genres:[],
+    pickedBy:'', scores:{}, quotes:Object.fromEntries(DATA.members.map(x=>[x.id,[]])) }, init||{});
+}
+const bookKey = b => (String(b.title||'')+'|'+String(b.author||'')).trim().toLowerCase();
+function tidyBom(b, members){
+  b.title = b.title || '';
+  b.author = b.author || '';
+  b.cover = b.cover || '';
+  b.pages = num(b.pages);
+  b.genres = Array.isArray(b.genres) ? b.genres : [];
+  b.scores = b.scores || {};
+  b.pickedBy = b.pickedBy || '';
+  const q = b.quotes || {};
+  b.quotes = {};
+  members.forEach(x=>{
+    const v = q[x.id];
+    b.quotes[x.id] = Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []);
+  });
+  return b;
+}
+
+/* upgrades old documents in place: single quotes -> arrays, missing fields,
+   one book of the month (m.bom) -> a list of them (m.boms) */
 function migrate(d){
   if (!d) return d;
   d.club = d.club || {name:'Book Club', year:String(YEAR), zodiac:'Year of the '+zodiacFor(YEAR)};
@@ -601,19 +746,12 @@ function migrate(d){
   d.months = d.months || [];
   d.months.forEach(m=>{
     m.top = Array.isArray(m.top) ? m.top : [];
-    if (m.bom){
-      m.bom.cover = m.bom.cover || '';
-      m.bom.pages = num(m.bom.pages);
-      m.bom.genres = Array.isArray(m.bom.genres) ? m.bom.genres : [];
-      m.bom.scores = m.bom.scores || {};
-      m.bom.pickedBy = m.bom.pickedBy || '';
-      const q = m.bom.quotes || {};
-      m.bom.quotes = {};
-      d.members.forEach(x=>{
-        const v = q[x.id];
-        m.bom.quotes[x.id] = Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []);
-      });
-    }
+    // Older saves, old backups and the seed above store a single book in m.bom.
+    // Fold it into the list, then drop the old field so there is one source of truth.
+    const list = Array.isArray(m.boms) ? m.boms.filter(b=>b && typeof b==='object') : [];
+    if (m.bom && typeof m.bom==='object' && !list.some(b=>bookKey(b)===bookKey(m.bom))) list.push(m.bom);
+    delete m.bom;
+    m.boms = list.map(b=>tidyBom(b, d.members));
     m.top.forEach(b=>{
       b.cover = b.cover || '';
       b.pages = num(b.pages);
@@ -631,7 +769,10 @@ function migrate(d){
 
 function allBooks(d){
   const src = d || DATA, out = [];
-  (src.months||[]).forEach(m=>{ if(m.bom) out.push(m.bom); (m.top||[]).forEach(b=>out.push(b)); });
+  (src.months||[]).forEach(m=>{
+    (m.boms || (m.bom ? [m.bom] : [])).forEach(b=>out.push(b));
+    (m.top||[]).forEach(b=>out.push(b));
+  });
   return out;
 }
 
@@ -830,6 +971,13 @@ function coverMarkup(book, cls){
   return '<div class="cover-slot '+(cls||'')+'"><div class="cover-fallback">'+(t||'No book yet')+'</div>'+img+'</div>';
 }
 
+/* two or three covers fanned out, for months with more than one shared book */
+function coverStack(books){
+  const shown = books.slice(0,3);
+  return '<div class="cover-stack n'+shown.length+'">'+shown.map(b=>coverMarkup(b)).join('')+
+    (books.length>3 ? '<span class="more">+'+(books.length-3)+'</span>' : '')+'</div>';
+}
+
 function render(){
   if (!DATA) return;
   $('#club-title').innerHTML = esc(DATA.club.name).replace(/(\S+)$/,'<em>$1</em>');
@@ -837,7 +985,7 @@ function render(){
   $('#yr-prev').disabled = YEAR <= Number(window.START_YEAR);
 
   const scored = allBooks().filter(b=>b.title);
-  const bits = ['<span><b>'+DATA.months.filter(m=>m.bom||(m.top||[]).length).length+'</b> months filled in</span>',
+  const bits = ['<span><b>'+DATA.months.filter(m=>(m.boms||[]).length||(m.top||[]).length).length+'</b> months filled in</span>',
                 '<span><b>'+scored.length+'</b> books logged</span>'];
   DATA.members.forEach(m=>{
     const vals = allBooks().flatMap(b => b.scores
@@ -853,10 +1001,11 @@ function render(){
   const sameYear = today.getFullYear() === YEAR;
 
   $('#grid').innerHTML = DATA.months.map(m=>{
-    const feature = m.bom || (m.top && m.top[0]) || null;
-    const sc = m.bom ? (m.bom.scores||{}) : {};
-    const hasScores = m.bom
-      ? DATA.members.some(x=>fmtScore(sc[x.id])!==null)
+    const boms = m.boms || [];
+    const multi = boms.length > 1;
+    const feature = boms[0] || (m.top && m.top[0]) || null;
+    const hasScores = boms.length
+      ? boms.some(b=>DATA.members.some(x=>fmtScore((b.scores||{})[x.id])!==null))
       : (m.top||[]).some(b=>fmtScore(b.score)!==null);
     const no = MONTH_NO[String(m.id).toLowerCase()]||0;
     const isNow = sameYear && no===thisMonth;
@@ -868,40 +1017,281 @@ function render(){
       else stamp = '<span class="stamp">To read</span>';
     }
 
-    let rows = '';
-    if (m.bom){
-      rows = DATA.members.map(x=>{
-        const v = fmtScore(sc[x.id]);
-        return '<div class="markrow" style="--mc:'+readerColor(x.id)+'"><span class="who">'+
-          esc(memberLabel(x.id))+'</span><span class="val'+(v===null?' none':'')+'">'+
-          (v===null?'—':v)+'</span></div>';
-      }).join('');
-      const g = fmtScore(m.bom.goodreads);
-      rows += '<div class="markrow avg"><span class="who">Goodreads</span><span class="val'+
-        (g?'':' none')+'">'+(g||'—')+'</span></div>';
+    // one score line per reader, for a shared book
+    const readerRows = b => DATA.members.map(x=>{
+      const v = fmtScore((b.scores||{})[x.id]);
+      return '<div class="markrow" style="--mc:'+readerColor(x.id)+'"><span class="who">'+
+        esc(memberLabel(x.id))+'</span><span class="val'+(v===null?' none':'')+'">'+
+        (v===null?'—':v)+'</span></div>';
+    }).join('');
+
+    let body = '';
+    if (multi){
+      // several shared books: a compact block per book (title + both scores)
+      body = boms.map(b=>'<div class="cbook"><p class="card-title">'+esc(b.title||'Untitled')+'</p>'+
+        '<div class="marks">'+readerRows(b)+'</div></div>').join('');
     } else {
-      rows = (m.top||[]).map(b=>{
-        const v = fmtScore(b.score);
-        return '<div class="markrow" style="--mc:'+readerColor(b.member)+'"><span class="who">'+
-          esc(memberLabel(b.member))+'</span><span class="val'+(v===null?' none':'')+'">'+
-          (v===null?'—':v)+'</span></div>';
-      }).join('');
+      let rows = '';
+      if (boms.length){
+        const g = fmtScore(boms[0].goodreads);
+        rows = readerRows(boms[0]) + '<div class="markrow avg"><span class="who">Goodreads</span><span class="val'+
+          (g?'':' none')+'">'+(g||'—')+'</span></div>';
+      } else {
+        rows = (m.top||[]).map(b=>{
+          const v = fmtScore(b.score);
+          return '<div class="markrow" style="--mc:'+readerColor(b.member)+'"><span class="who">'+
+            esc(memberLabel(b.member))+'</span><span class="val'+(v===null?' none':'')+'">'+
+            (v===null?'—':v)+'</span></div>';
+        }).join('');
+      }
+      body = '<p class="card-title">'+esc(feature?feature.title:'Nothing picked yet')+'</p>'+
+        (feature&&feature.author?'<p class="card-author">'+esc(feature.author)+'</p>':'')+
+        '<div class="marks">'+rows+'</div>';
     }
 
+    const kind = isNow ? 'This month' : multi ? boms.length+' books'
+      : boms.length ? 'Book of the month' : 'Top books';
+
     return '<button class="card '+(hasScores?'':'pending')+(isNow?' now':'')+'" data-month="'+esc(m.id)+
-      '" aria-label="Open '+esc(m.name)+(isNow?', reading now':'')+'">'+stamp+
+      '" aria-label="Open '+esc(m.name)+(multi?', '+boms.length+' books':'')+(isNow?', reading now':'')+'">'+stamp+
       '<div class="card-head"><span class="card-month">'+esc(m.name)+'</span>'+
-      '<span class="card-kind">'+(isNow?'This month':(m.bom?'Book of the month':'Top books'))+'</span></div>'+
-      coverMarkup(feature)+
-      '<div class="card-body"><p class="card-title">'+esc(feature?feature.title:'Nothing picked yet')+'</p>'+
-      (feature&&feature.author?'<p class="card-author">'+esc(feature.author)+'</p>':'')+
-      '<div class="marks">'+rows+'</div></div></button>';
+      '<span class="card-kind">'+kind+'</span></div>'+
+      (multi ? coverStack(boms) : coverMarkup(feature))+
+      '<div class="card-body">'+body+'</div></button>';
   }).join('');
 
   $('#grid').querySelectorAll('.card').forEach(c=>
     c.addEventListener('click',()=>openSheet('month', c.dataset.month)));
+  paintLayout(); renderList();
   paintLastEdit();
 }
+
+/* ================= list view ================= */
+// Which view is showing: 'cards' (the month grid) or 'list' (one row per book).
+// Remembered per browser, so each of you keeps whichever you prefer.
+let layout = 'cards';
+try { if (localStorage.getItem('bookclub-layout')==='list') layout = 'list'; } catch(e){}
+
+// sort = the column being sorted, dir = 1 (A-Z, low-high) or -1 (high-low),
+// f = the current filter values, keyed by column
+const LIST = { sort:'month', dir:1, f:{}, sig:'' };
+
+const SCORE_FILTERS = [['','All'],['any','Scored'],['none','Not scored'],
+  ['4.5','4.5 and up'],['4','4 and up'],['3','3 and up'],['lt3','Under 3']];
+function scorePass(v, f){
+  if (!f) return true;
+  if (f==='none') return v==null;
+  if (v==null) return false;
+  if (f==='any') return true;
+  if (f==='lt3') return v<3;
+  return v >= Number(f);
+}
+
+function setLayout(next){
+  layout = next==='list' ? 'list' : 'cards';
+  try { localStorage.setItem('bookclub-layout', layout); } catch(e){}
+  paintLayout();
+}
+function paintLayout(){
+  $('#grid').hidden = layout!=='cards';
+  $('#listview').hidden = layout!=='list';
+  document.querySelectorAll('[data-layout]').forEach(b=>
+    b.setAttribute('aria-pressed', String(b.dataset.layout===layout)));
+}
+
+// The columns, left to right. One score column per reader, so it follows DATA.members.
+// dir is which way a column sorts on the first click (scores start high-to-low).
+function listColumns(){
+  return [
+    {key:'cover', label:'Cover'},
+    {key:'title', label:'Book', sort:true, dir:1},
+    {key:'month', label:'Month', sort:true, dir:1},
+    ...DATA.members.map(x=>({key:'s:'+x.id, label:memberLabel(x.id), sort:true, dir:-1, score:true})),
+    {key:'gr', label:'Goodreads', sort:true, dir:-1, score:true},
+    {key:'pages', label:'Pages', sort:true, dir:-1},
+    {key:'type', label:'Type', sort:true, dir:1},
+    {key:'genres', label:'Genres'}
+  ];
+}
+
+// Flattens the year into one row per book: shared books first, then each
+// person's top books (those only have a score in their own column).
+function listRows(){
+  const out = [];
+  DATA.months.forEach((m,mi)=>{
+    const monthNo = MONTH_NO[String(m.id).toLowerCase()] || (mi+1);
+    const add = row => out.push(Object.assign(row, {monthId:m.id, month:m.name, monthNo:monthNo}));
+    (m.boms||[]).forEach((b,i)=>{
+      if (!b.title) return;
+      const scores = {};
+      DATA.members.forEach(x=>{ scores[x.id] = num((b.scores||{})[x.id]); });
+      add({ book:b, type:'together', typeLabel:'Read together', order:i, scores:scores,
+        sub: b.pickedBy ? member(b.pickedBy).name+"'s pick" : '',
+        subColor: b.pickedBy ? readerColor(b.pickedBy) : '',
+        gr:num(b.goodreads), pages:num(b.pages) });
+    });
+    (m.top||[]).forEach((b,i)=>{
+      if (!b.title) return;
+      const scores = {};
+      DATA.members.forEach(x=>{ scores[x.id] = x.id===b.member ? num(b.score) : null; });
+      add({ book:b, type:'top:'+b.member, typeLabel:'Top book', order:100+i, scores:scores,
+        sub: member(b.member).name, subColor: readerColor(b.member),
+        gr:null, pages:num(b.pages) });
+    });
+  });
+  // "hay" is the text the search box looks through
+  out.forEach(r=>{ r.hay = [r.book.title, r.book.author].concat(r.book.genres||[]).join(' ').toLowerCase(); });
+  return out;
+}
+
+function listValue(r, key){
+  if (key==='title') return String(r.book.title||'').toLowerCase();
+  if (key==='month') return r.monthNo;
+  if (key==='gr') return r.gr;
+  if (key==='pages') return r.pages || null;
+  if (key==='type') return r.type;
+  if (key.slice(0,2)==='s:') return r.scores[key.slice(2)];
+  return null;
+}
+function listCompare(a, b){
+  const x = listValue(a, LIST.sort), y = listValue(b, LIST.sort);
+  let r = 0;
+  if (x==null || y==null){
+    // blanks always sink to the bottom, whichever way you sort
+    if (x==null && y!=null) return 1;
+    if (y==null && x!=null) return -1;
+  } else {
+    r = (typeof x==='string' ? x.localeCompare(y) : x-y) * LIST.dir;
+  }
+  // ties fall back to calendar order
+  return r || (a.monthNo-b.monthNo) || (a.order-b.order);
+}
+
+// Header + filter row. Only rebuilt when the year or the readers change, so
+// typing in the search box never loses your cursor.
+function buildListHead(){
+  const cols = listColumns(), f = LIST.f;
+  const opt = (v,l,cur)=>'<option value="'+esc(v)+'"'+((cur||'')===v?' selected':'')+'>'+esc(l)+'</option>';
+  const filterCell = c => {
+    if (c.key==='title') return '<input type="text" data-lf="q" value="'+esc(f.q||'')+
+      '" placeholder="Search" title="Searches title, author and genre" aria-label="Search title, author or genre">';
+    if (c.key==='month') return '<select data-lf="month" aria-label="Filter by month">'+
+      opt('','All',f.month)+DATA.months.map(m=>opt(m.id,m.name,f.month)).join('')+'</select>';
+    if (c.score) return '<select data-lf="'+esc(c.key)+'" aria-label="Filter by '+esc(c.label)+' score">'+
+      SCORE_FILTERS.map(([v,l])=>opt(v,l,f[c.key])).join('')+'</select>';
+    if (c.key==='type') return '<select data-lf="type" aria-label="Filter by type">'+
+      opt('','All',f.type)+opt('together','Read together',f.type)+opt('top','Top books',f.type)+
+      DATA.members.map(x=>opt('top:'+x.id, x.name+"'s top books", f.type)).join('')+'</select>';
+    return '';
+  };
+  $('#books-head').innerHTML =
+    '<tr>'+cols.map(c=> c.sort
+      ? '<th scope="col" data-col="'+esc(c.key)+'"><button class="th-btn" data-sort="'+esc(c.key)+
+        '" data-dir="'+c.dir+'">'+esc(c.label)+
+        '<span class="arrows" aria-hidden="true"><i class="up"></i><i class="dn"></i></span></button></th>'
+      : '<th scope="col" class="th-plain">'+esc(c.label)+'</th>').join('')+'</tr>'+
+    '<tr class="filters">'+cols.map(c=>'<th>'+filterCell(c)+'</th>').join('')+'</tr>';
+}
+
+// Rows, the averages line and the "Showing x of y" count. Runs on every sort/filter change.
+function paintList(){
+  const cols = listColumns(), f = LIST.f, members = DATA.members;
+  $('#books-head').querySelectorAll('th[data-col]').forEach(th=>{
+    if (th.dataset.col===LIST.sort) th.setAttribute('aria-sort', LIST.dir>0 ? 'ascending' : 'descending');
+    else th.removeAttribute('aria-sort');
+  });
+  $('#books-head').querySelectorAll('[data-lf]').forEach(el=>el.classList.toggle('on', !!el.value));
+
+  const all = listRows();
+  const q = String(f.q||'').trim().toLowerCase();
+  const rows = all.filter(r=>{
+    if (q && !r.hay.includes(q)) return false;
+    if (f.month && r.monthId!==f.month) return false;
+    if (f.type==='top' ? r.type==='together' : (f.type && r.type!==f.type)) return false;
+    if (!scorePass(r.gr, f.gr)) return false;
+    return members.every(x=>scorePass(r.scores[x.id], f['s:'+x.id]));
+  }).sort(listCompare);
+
+  const numCell = (v, color) => {
+    const t = fmtScore(v);
+    return '<td class="num'+(t===null?' none':'')+'"'+(t!==null&&color?' style="color:'+color+'"':'')+'>'+
+      (t===null?'—':t)+'</td>';
+  };
+  const filtering = Object.values(f).some(v=>String(v||'').trim());
+
+  $('#books-body').innerHTML = rows.length ? rows.map(r=>
+    '<tr tabindex="0" data-month="'+esc(r.monthId)+'">'+
+    '<td class="c-cover">'+coverMarkup(r.book)+'</td>'+
+    '<td class="c-book"><p class="lt">'+esc(r.book.title)+'</p>'+
+      (r.book.author?'<p class="la">'+esc(r.book.author)+'</p>':'')+'</td>'+
+    '<td class="c-month"><span class="mfull">'+esc(r.month)+'</span>'+
+      '<span class="mabbr" aria-hidden="true">'+esc(String(r.month).slice(0,3))+'</span></td>'+
+    members.map(x=>numCell(r.scores[x.id], readerColor(x.id))).join('')+
+    numCell(r.gr)+
+    '<td class="num'+(r.pages?'':' none')+'">'+(r.pages ? r.pages.toLocaleString() : '—')+'</td>'+
+    '<td class="c-type">'+esc(r.typeLabel)+
+      (r.sub?'<small style="color:'+r.subColor+'">'+esc(r.sub)+'</small>':'')+'</td>'+
+    '<td class="c-genres">'+esc((r.book.genres||[]).join(', '))+'</td></tr>').join('')
+    : '<tr class="none"><td colspan="'+cols.length+'">'+(all.length
+        ? 'No books match those filters. <button class="link" data-clear-list="1">Clear filters</button>'
+        : 'No books logged for '+YEAR+' yet.')+'</td></tr>';
+
+  // averages for whatever is showing, e.g. filter to October and see how October went
+  const avg = vals => { const v = vals.filter(n=>n!=null);
+    return v.length ? v.reduce((a,c)=>a+c,0)/v.length : null; };
+  const pages = rows.reduce((a,r)=>a+(r.pages||0),0);
+  $('#books-foot').innerHTML = rows.length
+    ? '<tr><td colspan="3">Average of the '+rows.length+' shown</td>'+
+      members.map(x=>numCell(avg(rows.map(r=>r.scores[x.id])), readerColor(x.id))).join('')+
+      numCell(avg(rows.map(r=>r.gr)))+
+      '<td class="num'+(pages?'':' none')+'">'+(pages ? pages.toLocaleString() : '—')+'</td>'+
+      '<td colspan="2">'+(pages?'pages in total':'')+'</td></tr>'
+    : '';
+
+  const word = n => n+' book'+(n===1?'':'s');
+  $('#list-count').textContent = rows.length===all.length
+    ? 'Showing all '+word(all.length)+' from '+YEAR
+    : 'Showing '+rows.length+' of '+word(all.length)+' from '+YEAR;
+  $('#list-clear').hidden = !filtering;
+}
+
+function renderList(){
+  if (!DATA) return;
+  const sig = YEAR+'|'+DATA.members.map(m=>m.id+'/'+m.name+'/'+m.emoji).join(',')+
+    '|'+DATA.months.map(m=>m.id).join(',');
+  if (LIST.sig !== sig){ LIST.sig = sig; buildListHead(); }
+  paintList();
+}
+function clearListFilters(){ LIST.f = {}; LIST.sig = ''; renderList(); }
+
+// One set of listeners on the table rather than one per cell, so they survive re-renders.
+document.querySelectorAll('[data-layout]').forEach(b=>
+  b.addEventListener('click',()=>setLayout(b.dataset.layout)));
+$('#books-head').addEventListener('click', e=>{
+  const b = e.target.closest('[data-sort]');
+  if (!b) return;
+  if (LIST.sort===b.dataset.sort) LIST.dir = -LIST.dir;          // same column: flip direction
+  else { LIST.sort = b.dataset.sort; LIST.dir = Number(b.dataset.dir)||1; }
+  paintList();
+});
+['input','change'].forEach(ev=>$('#books-head').addEventListener(ev, e=>{
+  const el = e.target.closest('[data-lf]');
+  if (!el) return;
+  LIST.f[el.dataset.lf] = el.value;
+  paintList();
+}));
+$('#books-body').addEventListener('click', e=>{
+  if (e.target.closest('[data-clear-list]')) return clearListFilters();
+  const tr = e.target.closest('tr[data-month]');
+  if (tr) openSheet('month', tr.dataset.month);
+});
+$('#books-body').addEventListener('keydown', e=>{
+  if (e.key!=='Enter' && e.key!==' ') return;
+  const tr = e.target.closest('tr[data-month]');
+  if (!tr) return;
+  e.preventDefault(); openSheet('month', tr.dataset.month);
+});
+$('#list-clear').addEventListener('click', clearListFilters);
 
 /* ================= sheet ================= */
 function openSheet(kind, id){
@@ -951,31 +1341,38 @@ function quoteGroup(list, who, color){
     (i===list.length-1 ? '<span class="attr">'+esc(who)+'</span>' : '')+'</div>').join('') +'</div>';
 }
 
+function bomRead(b){
+  const s=b.scores||{}, q=b.quotes||{}, g=fmtScore(b.goodreads);
+  return '<div class="bom">'+coverMarkup(b)+'<div>'+
+    '<h3 class="book-title">'+esc(b.title)+'</h3>'+
+    (b.author?'<p class="book-author">'+esc(b.author)+'</p>':'')+
+    ((b.pages||b.genres.length||b.pickedBy)
+      ? '<div class="tags">'+
+        (b.pickedBy?'<span class="tag" style="color:'+readerColor(b.pickedBy)+
+          ';border-color:'+readerColor(b.pickedBy)+'">'+esc(member(b.pickedBy).name)+"'s pick</span>":'')+
+        (b.pages?'<span class="tag">'+b.pages+' pages</span>':'')+
+        b.genres.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div>' : '')+
+    '<div class="scoreline">'+
+      DATA.members.map(x=>{
+        const v=fmtScore(s[x.id]);
+        return '<div class="score '+(v===null?'empty':'')+'"><span class="lab" style="color:'+
+          readerColor(x.id)+'">'+esc(memberLabel(x.id))+'</span><span class="val">'+
+          (v===null?'—':v)+'<small>/5</small></span></div>';
+      }).join('')+
+      '<div class="score '+(g?'':'empty')+'"><span class="lab">Goodreads</span>'+
+      '<span class="val">'+(g||'—')+'<small>/5</small></span></div>'+
+    '</div><div class="quotes">'+
+      DATA.members.map(x=>quoteGroup(q[x.id], memberLabel(x.id), readerColor(x.id))).join('')+
+    '</div></div></div>';
+}
+
 function readView(m){
+  const boms = m.boms || [];
   let html='';
-  if (m.bom){
-    const s=m.bom.scores||{}, q=m.bom.quotes||{}, g=fmtScore(m.bom.goodreads);
-    html += '<div class="section-label">Book of the month</div><div class="bom">'+coverMarkup(m.bom)+'<div>'+
-      '<h3 class="book-title">'+esc(m.bom.title)+'</h3>'+
-      (m.bom.author?'<p class="book-author">'+esc(m.bom.author)+'</p>':'')+
-      ((m.bom.pages||m.bom.genres.length||m.bom.pickedBy)
-        ? '<div class="tags">'+
-          (m.bom.pickedBy?'<span class="tag" style="color:'+readerColor(m.bom.pickedBy)+
-            ';border-color:'+readerColor(m.bom.pickedBy)+'">'+esc(member(m.bom.pickedBy).name)+"'s pick</span>":'')+
-          (m.bom.pages?'<span class="tag">'+m.bom.pages+' pages</span>':'')+
-          m.bom.genres.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div>' : '')+
-      '<div class="scoreline">'+
-        DATA.members.map(x=>{
-          const v=fmtScore(s[x.id]);
-          return '<div class="score '+(v===null?'empty':'')+'"><span class="lab" style="color:'+
-            readerColor(x.id)+'">'+esc(memberLabel(x.id))+'</span><span class="val">'+
-            (v===null?'—':v)+'<small>/5</small></span></div>';
-        }).join('')+
-        '<div class="score '+(g?'':'empty')+'"><span class="lab">Goodreads</span>'+
-        '<span class="val">'+(g||'—')+'<small>/5</small></span></div>'+
-      '</div><div class="quotes">'+
-        DATA.members.map(x=>quoteGroup(q[x.id], memberLabel(x.id), readerColor(x.id))).join('')+
-      '</div></div></div>';
+  if (boms.length){
+    html += '<div class="section-label">'+
+      (boms.length>1 ? boms.length+' books of the month' : 'Book of the month')+'</div>'+
+      boms.map(bomRead).join('');
   }
   html += '<div class="section-label">Top books of the month</div>';
   if (!(m.top||[]).length){
@@ -1015,30 +1412,36 @@ function quoteEditor(path, list, label, mine){
 }
 
 function editView(m){
-  let html = '<div class="section-label">Book of the month</div>';
-  if (!m.bom){
-    html += '<p class="empty-note" style="margin-bottom:1rem">No book of the month for '+esc(m.name)+'.</p>'+
-      '<button class="btn" data-act="add-bom">Add book of the month</button>';
-  } else {
-    const s=m.bom.scores||{}, q=m.bom.quotes||{};
-    html += '<div class="edit-block"><div class="edit-block-head"><h4>Pick</h4>'+
-      '<button class="link" data-act="remove-bom">Remove</button></div><div class="row">'+
-      '<label class="field"><span>Title</span><input type="text" data-f="bom.title" value="'+esc(m.bom.title)+'"></label>'+
-      '<label class="field"><span>Author</span><input type="text" data-f="bom.author" value="'+esc(m.bom.author||'')+'"></label>'+
-      '<label class="field"><span>Goodreads average</span><input type="number" step="0.01" min="0" max="5" data-f="bom.goodreads" value="'+esc(m.bom.goodreads==null?'':m.bom.goodreads)+'"></label>'+
-      '<label class="field"><span>Pages</span><input type="number" step="1" min="0" data-f="bom.pages" value="'+esc(m.bom.pages==null?'':m.bom.pages)+'"></label>'+
-      '<label class="field"><span>Whose pick</span><select data-f="bom.pickedBy">'+
+  const boms = m.boms || [];
+  let html = '<div class="section-label">'+(boms.length>1?'Books of the month':'Book of the month')+'</div>';
+  if (!boms.length)
+    html += '<p class="empty-note" style="margin-bottom:1rem">No book of the month for '+esc(m.name)+'.</p>';
+
+  // one edit block per shared book; field paths look like boms.0.title, boms.1.scores.mia
+  html += boms.map((b,i)=>{
+    const p='boms.'+i, s=b.scores||{}, q=b.quotes||{};
+    return '<div class="edit-block"><div class="edit-block-head"><h4>'+
+      (boms.length>1 ? 'Book '+(i+1)+' of '+boms.length : 'Pick')+'</h4>'+
+      '<button class="link" data-act="remove-bom" data-i="'+i+'">Remove</button></div><div class="row">'+
+      '<label class="field"><span>Title</span><input type="text" data-f="'+p+'.title" value="'+esc(b.title)+'"></label>'+
+      '<label class="field"><span>Author</span><input type="text" data-f="'+p+'.author" value="'+esc(b.author||'')+'"></label>'+
+      '<label class="field"><span>Goodreads average</span><input type="number" step="0.01" min="0" max="5" data-f="'+p+'.goodreads" value="'+esc(b.goodreads==null?'':b.goodreads)+'"></label>'+
+      '<label class="field"><span>Pages</span><input type="number" step="1" min="0" data-f="'+p+'.pages" value="'+esc(b.pages==null?'':b.pages)+'"></label>'+
+      '<label class="field"><span>Whose pick</span><select data-f="'+p+'.pickedBy">'+
         '<option value="">Not recorded</option>'+
-        DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(m.bom.pickedBy===x.id?' selected':'')+'>'+
+        DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(b.pickedBy===x.id?' selected':'')+'>'+
           esc(memberLabel(x.id))+'</option>').join('')+'</select></label>'+
-      '</div>'+coverField('bom', m.bom)+'<div class="row" style="margin-top:.85rem">'+
+      '</div>'+coverField(p, b)+'<div class="row" style="margin-top:.85rem">'+
       DATA.members.map(x=>'<label class="field'+mineCls(x.id)+'"><span style="color:'+readerColor(x.id)+'">'+
-        esc(memberLabel(x.id))+"'s score"+(me===x.id?' (you)':'')+'</span><input type="number" step="0.25" min="0" max="5" data-f="bom.scores.'+
+        esc(memberLabel(x.id))+"'s score"+(me===x.id?' (you)':'')+'</span><input type="number" step="0.25" min="0" max="5" data-f="'+p+'.scores.'+
         x.id+'" value="'+esc(s[x.id]==null?'':s[x.id])+'"></label>').join('')+'</div>'+
-      DATA.members.map(x=>quoteEditor('bom.quotes.'+x.id, q[x.id],
+      DATA.members.map(x=>quoteEditor(p+'.quotes.'+x.id, q[x.id],
         memberLabel(x.id)+"'s quotes"+(me===x.id?' (you)':''), me===x.id)).join('')+
       '</div>';
-  }
+  }).join('');
+
+  html += '<button class="btn" data-act="add-bom">'+
+    (boms.length ? 'Add another book for '+esc(m.name) : 'Add book of the month')+'</button>';
 
   html += '<div class="section-label">Top books of the month</div>';
   html += (m.top||[]).map((b,i)=>
@@ -1078,8 +1481,11 @@ function commitFields(m){
     setPath(m, el.dataset.f, v);
   });
   // drop empty quotes
-  if (m.bom) DATA.members.forEach(x=>{
-    m.bom.quotes[x.id] = (m.bom.quotes[x.id]||[]).map(s=>String(s||'').trim()).filter(Boolean);
+  (m.boms||[]).forEach(b=>{
+    b.quotes = b.quotes || {};
+    DATA.members.forEach(x=>{
+      b.quotes[x.id] = (b.quotes[x.id]||[]).map(s=>String(s||'').trim()).filter(Boolean);
+    });
   });
   (m.top||[]).forEach(b=>{ b.quotes = (b.quotes||[]).map(s=>String(s||'').trim()).filter(Boolean); });
 }
@@ -1091,13 +1497,18 @@ function wireMonthSheet(m){
     if (editing && act!=='close') commitFields(m);
     if (act==='close') return closeSheet();
     if (act==='toggle-edit'){ editing=!editing; if(!editing) queueSave(); }
-    if (act==='add-bom') m.bom = {title:'',author:'',goodreads:null,cover:'',pages:null,genres:[],
-      pickedBy: me||'', scores:{}, quotes:Object.fromEntries(DATA.members.map(x=>[x.id,[]]))};
-    if (act==='remove-bom') m.bom = null;
+    if (act==='add-bom') (m.boms=m.boms||[]).push(newBom({pickedBy: me||''}));
+    if (act==='remove-bom') m.boms.splice(Number(btn.dataset.i),1);
     if (act==='add-top') (m.top=m.top||[]).push({member: me||DATA.members[0].id, title:'', author:'',
       score:null, cover:'', pages:null, genres:[], quotes:[]});
     if (act==='remove-top') m.top.splice(Number(btn.dataset.i),1);
     render(); renderSheet();
+    // a freshly added book: jump to it instead of leaving you at the top of the page
+    if (act==='add-bom' || act==='add-top'){
+      const path = act==='add-bom' ? 'boms.'+(m.boms.length-1) : 'top.'+(m.top.length-1);
+      const input = root.querySelector('[data-f="'+path+'.title"]');
+      if (input){ input.scrollIntoView({block:'center'}); input.focus({preventScroll:true}); }
+    }
   }));
 
   root.querySelectorAll('[data-addq]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -1156,42 +1567,40 @@ function statsFor(){
   });
 
   DATA.months.forEach(m=>{
-    if (m.bom){
-      const sc = m.bom.scores||{};
+    (m.boms||[]).forEach(bom=>{
+      const sc = bom.scores||{};
       const vals = DATA.members.map(x=>num(sc[x.id]));
-      const anyScored = vals.some(v=>v!=null);
-      if (anyScored){
-        s.books++;
-        if (m.bom.pages) s.pages += m.bom.pages;
-        (m.bom.genres||[]).forEach(g=>{
-          s.genres[g] = s.genres[g] || {n:0, sum:0, c:0};
-          s.genres[g].n++;
-          vals.forEach(v=>{ if(v!=null){ s.genres[g].sum+=v; s.genres[g].c++; } });
-        });
-        DATA.members.forEach((x,i)=>{
-          const v = vals[i];
-          if (v==null) return;
-          const mm = s.byMember[x.id];
-          mm.scores.push(v); mm.count++;
-          if (m.bom.pages) mm.pages += m.bom.pages;
-          if (!mm.best || v>mm.best.score) mm.best = {title:m.bom.title, score:v};
-        });
-        if (m.bom.pickedBy && s.picks[m.bom.pickedBy]){
-          const got = vals.filter(v=>v!=null);
-          const room = got.reduce((a,c)=>a+c,0)/got.length;
-          const pk = s.picks[m.bom.pickedBy];
-          pk.n++; pk.room.push(room);
-          const entry = {title:m.bom.title, month:m.name, room:room};
-          if (!pk.best  || room > pk.best.room)  pk.best  = entry;
-          if (!pk.worst || room < pk.worst.room) pk.worst = entry;
-        }
-        if (vals.length===2 && vals[0]!=null && vals[1]!=null){
-          s.gaps.push({title:m.bom.title, month:m.name, a:vals[0], b:vals[1], gap:Math.abs(vals[0]-vals[1])});
-          const gr = num(m.bom.goodreads);
-          if (gr!=null) s.grDelta.push(((vals[0]+vals[1])/2) - gr);
-        }
+      if (!vals.some(v=>v!=null)) return;          // nobody has scored this one yet
+      s.books++;
+      if (bom.pages) s.pages += bom.pages;
+      (bom.genres||[]).forEach(g=>{
+        s.genres[g] = s.genres[g] || {n:0, sum:0, c:0};
+        s.genres[g].n++;
+        vals.forEach(v=>{ if(v!=null){ s.genres[g].sum+=v; s.genres[g].c++; } });
+      });
+      DATA.members.forEach((x,i)=>{
+        const v = vals[i];
+        if (v==null) return;
+        const mm = s.byMember[x.id];
+        mm.scores.push(v); mm.count++;
+        if (bom.pages) mm.pages += bom.pages;
+        if (!mm.best || v>mm.best.score) mm.best = {title:bom.title, score:v};
+      });
+      if (bom.pickedBy && s.picks[bom.pickedBy]){
+        const got = vals.filter(v=>v!=null);
+        const room = got.reduce((a,c)=>a+c,0)/got.length;
+        const pk = s.picks[bom.pickedBy];
+        pk.n++; pk.room.push(room);
+        const entry = {title:bom.title, month:m.name, room:room};
+        if (!pk.best  || room > pk.best.room)  pk.best  = entry;
+        if (!pk.worst || room < pk.worst.room) pk.worst = entry;
       }
-    }
+      if (vals.length===2 && vals[0]!=null && vals[1]!=null){
+        s.gaps.push({title:bom.title, month:m.name, a:vals[0], b:vals[1], gap:Math.abs(vals[0]-vals[1])});
+        const gr = num(bom.goodreads);
+        if (gr!=null) s.grDelta.push(((vals[0]+vals[1])/2) - gr);
+      }
+    });
     (m.top||[]).forEach(b=>{
       const v = num(b.score);
       if (v==null || !b.title) return;
@@ -1360,8 +1769,11 @@ function renderRoulette(){
       '<button class="btn gold" data-act="spin">'+(rouletteHit!=null?'Spin again':'Spin')+'</button>'+
       (rouletteHit!=null
         ? '<select id="assign-month" style="max-width:200px">'+
-          DATA.months.map(m=>'<option value="'+esc(m.id)+'"'+(m.bom?'':' ')+'>'+esc(m.name)+
-          (m.bom?' (taken)':'')+'</option>').join('')+'</select>'+
+          DATA.months.map(m=>{
+            const n = (m.boms||[]).length;
+            return '<option value="'+esc(m.id)+'">'+esc(m.name)+
+              (n ? ' (has '+n+' book'+(n>1?'s':'')+')' : '')+'</option>';
+          }).join('')+'</select>'+
           '<button class="btn primary" data-act="assign">Make it the pick</button>'
         : '')+'</div>';
   }
@@ -1408,13 +1820,13 @@ function wireRoulette(){
       const m = DATA.months.find(x=>x.id===monthId);
       const b = DATA.backlog[rouletteHit];
       if (!m || !b) return;
-      m.bom = { title:b.title, author:b.author||'', goodreads:null, cover:b.cover||'',
-        pages:null, genres:[], pickedBy: b.addedBy||'', scores:{},
-        quotes:Object.fromEntries(DATA.members.map(x=>[x.id,[]])) };
+      // added to the month's list, so a month that already has a book keeps it
+      const had = (m.boms = m.boms||[]).length;
+      m.boms.push(newBom({ title:b.title, author:b.author||'', cover:b.cover||'', pickedBy:b.addedBy||'' }));
       DATA.backlog.splice(rouletteHit,1);
       rouletteHit = null;
       queueSave(); render(); renderRoulette();
-      toast(b.title+' is now '+m.name+"'s pick");
+      toast(had ? b.title+' added to '+m.name : b.title+' is now '+m.name+"'s pick");
       enrichBooks();
     }
   }));
