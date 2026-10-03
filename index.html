@@ -221,6 +221,15 @@ img{display:block;max-width:100%}
   75% {transform:translate3d(80vw,-10px,0) rotate(-4deg)}
   100%{transform:translate3d(calc(100vw + 130px),0,0) rotate(5deg)}
 }
+/* the same journey the other way; scaleX(-1) turns the shape round so dachshunds still walk forwards */
+.sky .fl.rev{animation-name:drift-back}
+@keyframes drift-back{
+  0%  {transform:translate3d(calc(100vw + 130px),0,0) rotate(-6deg) scaleX(-1)}
+  25% {transform:translate3d(72vw,14px,0) rotate(5deg) scaleX(-1)}
+  50% {transform:translate3d(46vw,-16px,0) rotate(-8deg) scaleX(-1)}
+  75% {transform:translate3d(20vw,10px,0) rotate(4deg) scaleX(-1)}
+  100%{transform:translate3d(-130px,0,0) rotate(-5deg) scaleX(-1)}
+}
 @keyframes hoverwing{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.7)}}
 @keyframes flap{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.62)}}
 @keyframes wag{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(9deg)}}
@@ -443,6 +452,9 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
 .tbr-row .cover-fallback,.plan-row .cover-fallback{font-size:0;padding:0}
 .tbr-who{display:flex;flex-wrap:wrap;gap:0 .7rem;margin:.15rem 0 0;font-size:.78rem}
 .tbr-who b{font-weight:600}
+/* the small picture beside "Steven's pick" / "Mia's pick"; it takes the colour of the words next to it */
+.pick-ico{display:inline-block;height:1.1em;width:auto;margin-right:.35em;vertical-align:-.19em;fill:currentColor}
+.pick-ico.wide{height:.84em;vertical-align:-.07em}
 .tbr-who span{color:var(--fg-dim)}
 .tbr-edit-btn{padding:.45rem .6rem;border-radius:var(--r-s);font-size:.84rem;font-weight:600;color:var(--fg-dim)}
 .tbr-edit-btn:hover,.tbr-edit-btn[aria-expanded=true]{color:var(--fg);background:var(--bg-2)}
@@ -615,7 +627,7 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
   .yr{width:40px;height:40px;font-size:1.1rem}
   .who-pick{margin-left:0;width:100%}
   .viewbar > span:first-child{display:none}
-  .sky .fl.hide-s{display:none}                 /* a small screen gets seven shapes instead of ten */
+  .sky .fl.hide-s{display:none}                 /* a small screen gets ten shapes instead of sixteen */
   #btn-wrapped{display:none}
   .menu-list button.only-phone{display:block}
   .tbr-add{grid-template-columns:1fr 1fr;padding:.85rem}
@@ -851,6 +863,15 @@ const MUTUAL = 'mutual';
 const pickLabel = id => id===MUTUAL ? 'Mutual pick'
   : (id && DATA.members.some(m=>m.id===id)) ? member(id).name+"'s pick" : '';
 const pickColor = id => id===MUTUAL ? 'var(--gold)' : readerColor(id);
+// The little picture beside "Steven's pick" / "Mia's pick". Keyed by each reader's id;
+// the names on the right are drawings from SHAPES further down.
+const PICK_ICONS = { steven:'sickle', mia:'dachshund' };
+function pickIcon(id){
+  const name = PICK_ICONS[id], sh = name && SHAPES[name];
+  if (!sh) return '';
+  return '<svg class="pick-ico'+(name==='dachshund'?' wide':'')+'" data-ico="'+name+'" viewBox="'+sh[0]+
+    '" aria-hidden="true">'+sh[2]+'</svg>';
+}
 const pickOptions = (current, blankLabel) =>
   (blankLabel ? '<option value="">'+esc(blankLabel)+'</option>' : '')+
   '<option value="'+MUTUAL+'"'+(current===MUTUAL?' selected':'')+'>Mutual</option>'+
@@ -1374,7 +1395,7 @@ function renderTbr(){
 function tbrMeta(t){
   const lab = pickLabel(t.addedBy);
   if (!lab && !t.pages) return '';
-  return '<p class="tbr-who">'+(lab?'<b style="color:'+pickColor(t.addedBy)+'">'+esc(lab)+'</b>':'')+
+  return '<p class="tbr-who">'+(lab?'<b style="color:'+pickColor(t.addedBy)+'">'+pickIcon(t.addedBy)+esc(lab)+'</b>':'')+
     (t.pages?'<span>'+t.pages+' pages</span>':'')+'</p>';
 }
 
@@ -1655,7 +1676,7 @@ function listRows(){
       const scores = {};
       DATA.members.forEach(x=>{ scores[x.id] = num((b.scores||{})[x.id]); });
       add({ book:b, type:'together', typeLabel:'Read together', order:i, scores:scores,
-        sub: pickLabel(b.pickedBy),
+        sub: pickLabel(b.pickedBy), subIcon: pickIcon(b.pickedBy),
         subColor: pickLabel(b.pickedBy) ? pickColor(b.pickedBy) : '',
         gr:num(b.goodreads), pages:num(b.pages) });
     });
@@ -1760,7 +1781,7 @@ function paintList(){
     numCell(r.gr)+
     '<td class="num'+(r.pages?'':' none')+'">'+(r.pages ? r.pages.toLocaleString() : '—')+'</td>'+
     '<td class="c-type">'+esc(r.typeLabel)+
-      (r.sub?'<small style="color:'+r.subColor+'">'+esc(r.sub)+'</small>':'')+'</td>'+
+      (r.sub?'<small style="color:'+r.subColor+'">'+(r.subIcon||'')+esc(r.sub)+'</small>':'')+'</td>'+
     '<td class="c-genres">'+esc((r.book.genres||[]).join(', '))+'</td></tr>').join('')
     : '<tr class="none"><td colspan="'+cols.length+'">'+(all.length
         ? 'No books match those filters. <button class="link" data-clear-list="1">Clear filters</button>'
@@ -1953,7 +1974,7 @@ function bookTags(b){
   if (!(b.pages || (b.genres||[]).length || b.pickedBy)) return '';
   return '<div class="tags">'+
     (pickLabel(b.pickedBy)?'<span class="tag" style="color:'+pickColor(b.pickedBy)+
-      ';border-color:'+pickColor(b.pickedBy)+'">'+esc(pickLabel(b.pickedBy))+'</span>':'')+
+      ';border-color:'+pickColor(b.pickedBy)+'">'+pickIcon(b.pickedBy)+esc(pickLabel(b.pickedBy))+'</span>':'')+
     (b.pages?'<span class="tag">'+b.pages+' pages</span>':'')+
     (b.genres||[]).map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div>';
 }
@@ -2329,7 +2350,7 @@ function renderWrapped(){
             ' points higher across the room.')+'</p></div>';
     }
     html += '<div class="duel">'+ pickers.map(x=>
-      pickCard(esc(memberLabel(x.id))+"'s picks", readerColor(x.id), s.picks[x.id])).join('')+
+      pickCard(pickIcon(x.id)+esc(memberLabel(x.id))+"'s picks", readerColor(x.id), s.picks[x.id])).join('')+
       (s.mutual.n ? pickCard('Mutual picks', 'var(--gold)', s.mutual) : '')+'</div>';
   } else {
     html += '<div class="section-label">Who picks better</div>'+
@@ -2389,6 +2410,8 @@ document.addEventListener('keydown',e=>{
 const SHAPES = {
   dragonfly: ['0 0 100 60', 1, '<g class="w"><path d="M47 28 C20 18 6 22 4 29 C3 35 16 37 47 32 Z"/><path d="M53 28 C80 18 94 22 96 29 C97 35 84 37 53 32 Z"/><path d="M47 34 C24 30 12 35 11 41 C10 46 22 46 47 38 Z"/><path d="M53 34 C76 30 88 35 89 41 C90 46 78 46 53 38 Z"/></g><ellipse cx="50" cy="20" rx="4.5" ry="5"/><rect x="47.8" y="24" width="4.4" height="34" rx="2.2"/>'],
   dachshund: ['0 0 128 66', 1.4, '<path class="wag" d="M26 30 Q13 27 8 11" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M30 24 H84 L92 14 Q104 4 110 14 L123 19 Q127 23 122 27 L106 29 Q104 40 96 44 H30 A10 10 0 0 1 30 24 Z"/><ellipse cx="95" cy="25" rx="6" ry="13" transform="rotate(16 95 25)" style="stroke:var(--bg);stroke-width:2.4"/><circle cx="107" cy="16" r="1.9" style="fill:var(--bg)"/><rect x="30" y="38" width="7.5" height="19" rx="3.7"/><rect x="39.5" y="38" width="7.5" height="16" rx="3.7"/><rect x="78" y="38" width="7.5" height="19" rx="3.7"/><rect x="87.5" y="38" width="7.5" height="16" rx="3.7"/><rect x="30" y="53" width="11.5" height="5" rx="2.5"/><rect x="78" y="53" width="11.5" height="5" rx="2.5"/>'],
+  // not a background shape: the hammer and sickle shown beside "Steven's pick"
+  sickle:    ['0 0 100 100', 0.8, '<path d="M47.0 12.4A36 36 0 1 1 29.8 76.4A33.4 33.4 0 1 0 47.0 12.4Z"/><path d="M30.8 75.4L17 91" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"/><path d="M33 33L86 88" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/><rect x="-17" y="-9" width="34" height="18" rx="2.5" transform="translate(27 27) rotate(-45)"/>'],
   snowflake: ['0 0 100 100', 0.8, '<g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(0 50 50)"><path d="M50 50V9M50 24L39 13M50 24L61 13M50 38L43 31M50 38L57 31"/></g><g transform="rotate(60 50 50)"><path d="M50 50V9M50 24L39 13M50 24L61 13M50 38L43 31M50 38L57 31"/></g><g transform="rotate(120 50 50)"><path d="M50 50V9M50 24L39 13M50 24L61 13M50 38L43 31M50 38L57 31"/></g><g transform="rotate(180 50 50)"><path d="M50 50V9M50 24L39 13M50 24L61 13M50 38L43 31M50 38L57 31"/></g><g transform="rotate(240 50 50)"><path d="M50 50V9M50 24L39 13M50 24L61 13M50 38L43 31M50 38L57 31"/></g><g transform="rotate(300 50 50)"><path d="M50 50V9M50 24L39 13M50 24L61 13M50 38L43 31M50 38L57 31"/></g></g>'],
   mitten:    ['0 0 100 100', 0.75, '<path d="M26 40 a22 22 0 0 1 44 0 V70 H26 Z"/><ellipse cx="74" cy="50" rx="9" ry="15" transform="rotate(28 74 50)"/><rect x="22" y="75" width="52" height="16" rx="5"/>'],
   heart:     ['0 0 100 100', 0.75, '<path d="M50 86 C20 62 8 46 8 32 A21 21 0 0 1 50 26 A21 21 0 0 1 92 32 C92 46 80 62 50 86 Z"/>'],
@@ -2421,30 +2444,41 @@ const MONTH_SHAPES = [
   ['tulip','butterfly'], ['starfish','sailboat'], ['sun','popsicle'], ['sunflower','melon'],
   ['apple','pencil'], ['ghost','pumpkin'], ['leaf','acorn'], ['candycane','tree']
 ];
-// Where the shapes go: ten places on the main page, six behind an open month.
+// Where the shapes go: sixteen places on the main page, nine behind an open month.
 // k says what goes there: 'df' dragonfly, 'dog' dachshund, 't0' / 't1' the month's two shapes.
-// Seven of the ten are dragonflies and dachshunds (70%) and three are themed (30%).
-// top = how far down the screen (%), w = size, op = how faint, dur = seconds to cross,
-// delay = head start, x = where it sits if motion is switched off, s:1 = left out on phones.
+// Eleven of the sixteen are dragonflies and dachshunds (about 70%) and five are themed (about 30%).
+// top = how far down the screen (%), w = size, op = how bold (0 invisible, 1 solid),
+// dur = seconds to cross, delay = head start, r:1 = travels right-to-left instead,
+// x = where it sits if motion is switched off, s:1 = left out on phones.
+// To make the background busier or calmer: add or remove lines, or raise or lower the op values.
 const SKY_PAGE = [
-  {k:'df',  top:5,  w:54, op:.15, dur:58, delay:0,   x:8},
-  {k:'dog', top:14, w:48, op:.13, dur:88, delay:-40, x:60},
-  {k:'t0',  top:23, w:58, op:.15, dur:70, delay:-22, x:30},
-  {k:'df',  top:33, w:34, op:.10, dur:82, delay:-30, x:78, s:1},
-  {k:'dog', top:42, w:58, op:.14, dur:64, delay:-8,  x:16, s:1},
-  {k:'t1',  top:52, w:54, op:.14, dur:76, delay:-55, x:48},
-  {k:'df',  top:61, w:68, op:.13, dur:47, delay:-14, x:84},
-  {k:'dog', top:70, w:42, op:.12, dur:95, delay:-70, x:36},
-  {k:'t0',  top:80, w:48, op:.13, dur:84, delay:-48, x:68, s:1},
-  {k:'df',  top:89, w:58, op:.14, dur:63, delay:-38, x:22}
+  {k:'df',  top:3,  w:56, op:.24, dur:58, delay:0,   x:8},
+  {k:'dog', top:9,  w:50, op:.22, dur:86, delay:-40, x:60, r:1},
+  {k:'t0',  top:15, w:58, op:.24, dur:70, delay:-22, x:30},
+  {k:'df',  top:21, w:36, op:.18, dur:80, delay:-30, x:78, r:1, s:1},
+  {k:'dog', top:27, w:60, op:.23, dur:64, delay:-8,  x:16, s:1},
+  {k:'t1',  top:33, w:54, op:.22, dur:76, delay:-55, x:48, r:1},
+  {k:'df',  top:39, w:70, op:.22, dur:47, delay:-14, x:86},
+  {k:'dog', top:45, w:44, op:.20, dur:94, delay:-70, x:36},
+  {k:'t0',  top:51, w:46, op:.21, dur:82, delay:-48, x:68, r:1, s:1},
+  {k:'df',  top:57, w:48, op:.22, dur:66, delay:-36, x:24, r:1},
+  {k:'t1',  top:63, w:60, op:.23, dur:60, delay:-27, x:54, s:1},
+  {k:'dog', top:69, w:54, op:.22, dur:74, delay:-61, x:6,  r:1, s:1},
+  {k:'df',  top:75, w:40, op:.19, dur:90, delay:-18, x:90, s:1},
+  {k:'t0',  top:81, w:52, op:.22, dur:68, delay:-44, x:42},
+  {k:'dog', top:87, w:48, op:.21, dur:84, delay:-12, x:72, r:1},
+  {k:'df',  top:93, w:60, op:.23, dur:54, delay:-33, x:20}
 ];
 const SKY_SHEET = [
-  {k:'df',  top:8,  w:44, op:.14, dur:71, delay:-52, x:12},
-  {k:'t0',  top:24, w:52, op:.14, dur:80, delay:-18, x:70},
-  {k:'dog', top:40, w:50, op:.13, dur:92, delay:-64, x:34},
-  {k:'df',  top:57, w:60, op:.13, dur:56, delay:-6,  x:82},
-  {k:'t1',  top:73, w:48, op:.13, dur:74, delay:-41, x:20},
-  {k:'dog', top:88, w:44, op:.12, dur:86, delay:-28, x:56}
+  {k:'df',  top:6,  w:46, op:.22, dur:71, delay:-52, x:12},
+  {k:'t0',  top:17, w:52, op:.22, dur:80, delay:-18, x:70, r:1},
+  {k:'dog', top:28, w:52, op:.21, dur:92, delay:-64, x:34},
+  {k:'df',  top:39, w:62, op:.21, dur:56, delay:-6,  x:82, r:1},
+  {k:'t1',  top:50, w:48, op:.21, dur:74, delay:-41, x:20},
+  {k:'dog', top:61, w:46, op:.20, dur:86, delay:-28, x:56, r:1},
+  {k:'df',  top:72, w:38, op:.19, dur:66, delay:-47, x:44},
+  {k:'t0',  top:83, w:44, op:.20, dur:78, delay:-9,  x:88},
+  {k:'dog', top:93, w:50, op:.21, dur:60, delay:-35, x:8,  r:1}
 ];
 
 // Which month's shapes to use: the month whose colours are showing. If you have pinned a
@@ -2465,7 +2499,7 @@ function buildSky(){
   const names = { df:'dragonfly', dog:'dachshund', t0:MONTH_SHAPES[m][0], t1:MONTH_SHAPES[m][1] };
   const draw = slots => slots.map(sl=>{
     const sh = SHAPES[names[sl.k]];
-    return '<svg class="fl'+(sl.k[0]==='t'?' themed':'')+(sl.s?' hide-s':'')+'" data-shape="'+names[sl.k]+
+    return '<svg class="fl'+(sl.k[0]==='t'?' themed':'')+(sl.r?' rev':'')+(sl.s?' hide-s':'')+'" data-shape="'+names[sl.k]+
       '" viewBox="'+sh[0]+'" aria-hidden="true" style="--top:'+sl.top+'%;--w:'+Math.round(sl.w*sh[1])+'px;--op:'+sl.op+
       ';--dur:'+sl.dur+'s;--delay:'+sl.delay+'s;--x:'+sl.x+'vw">'+sh[2]+'</svg>';
   }).join('');
