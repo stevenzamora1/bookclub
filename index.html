@@ -45,6 +45,9 @@
      6. Copy the six values into FIREBASE below
 
      Each year lives in its own document: bookclub/2026, bookclub/2027...
+     The TBR list is not tied to a year, so it has a document of its own:
+     bookclub/tbr. (Its "months" field is only there because the rules above
+     refuse any document without one; the list itself is in "items".)
      ============================================================= -->
 <script>
 window.FIREBASE = {
@@ -414,6 +417,39 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
   font-size:.9rem;font-weight:500;color:var(--fg)}
 .menu-list button:hover,.menu-list button:focus-visible{background:var(--bg-3)}
 
+/* ---------- TBR ---------- */
+.chip .count{display:inline-block;margin-left:.4rem;min-width:1.25rem;padding:0 .35rem;border-radius:99px;
+  font-size:.72rem;font-weight:700;line-height:1.25rem;text-align:center;background:var(--bg-3);color:var(--fg)}
+.chip[aria-pressed=true] .count{background:color-mix(in srgb,currentColor 22%,transparent);color:inherit}
+.menu-list button.only-phone{display:none}
+.btn[disabled]{opacity:.4;cursor:default}
+.btn.primary[disabled]:hover{filter:none}
+.tbr-add{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,1.1fr) auto;
+  gap:.75rem;align-items:end;padding:1rem;margin-bottom:2rem;border:1px solid var(--rule);
+  border-radius:var(--r-l);background:var(--bg-2)}
+.tbr-add .field{margin:0}
+/* books are grouped by the month they are pencilled in for, in calendar order */
+.tbr-group{margin-bottom:2.25rem}
+.tbr-month{display:flex;align-items:center;gap:.6rem;margin:0;font-family:var(--display);font-weight:800;
+  text-transform:uppercase;font-size:1.45rem;line-height:1.1}
+.tbr-month i{flex:none;width:10px;height:10px;border-radius:50%}   /* dot in that month's own colour */
+.tbr-month span{color:var(--fg-dim);font-weight:600}
+.tbr-note{margin:.2rem 0 0;font-size:.85rem;color:var(--fg-dim)}
+.tbr-row,.plan-row{display:grid;gap:.9rem;align-items:center;padding:.75rem 0;border-bottom:1px solid var(--rule)}
+.tbr-row{grid-template-columns:52px minmax(0,1fr) minmax(9rem,12rem) auto 2.2rem}
+.plan-row{grid-template-columns:52px minmax(0,1fr) auto}
+.tbr-row .cover-slot,.plan-row .cover-slot{box-shadow:0 8px 16px -10px rgba(0,0,0,.7)}
+.tbr-row .cover-fallback,.plan-row .cover-fallback{font-size:0;padding:0}
+.tbr-who{margin:.15rem 0 0;font-size:.78rem;font-weight:600}
+.tbr-del{width:2.2rem;height:2.2rem;border-radius:99px;color:var(--fg-dim);font-size:1.2rem;line-height:1;justify-self:end}
+.tbr-del:hover{background:var(--bg-2);color:var(--fg)}
+/* first tap on the x turns it into "Remove?"; a second tap removes the book */
+.tbr-del.armed{width:auto;padding:0 .7rem;font-size:.8rem;font-weight:600;white-space:nowrap;
+  background:var(--accent);color:var(--on-accent)}
+/* a month with nothing confirmed, but something on the TBR pencilled in: a faded cover */
+.card.planned > .cover-slot,.card.planned > .cover-stack{opacity:.45}
+.card.planned .card-title{color:var(--fg-dim)}
+
 /* ---------- reading now ---------- */
 .now{position:relative;isolation:isolate;overflow:hidden;margin:0 0 2rem;
   border:1px solid var(--rule);border-radius:var(--r-l);background:var(--bg-2)}
@@ -571,6 +607,18 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
   .yr{width:40px;height:40px;font-size:1.1rem}
   .who-pick{margin-left:0;width:100%}
   .viewbar > span:first-child{display:none}
+  #btn-wrapped{display:none}
+  .menu-list button.only-phone{display:block}
+  .tbr-add{grid-template-columns:1fr 1fr;padding:.85rem}
+  .tbr-add .field:first-child{grid-column:1 / -1}
+  /* a TBR row on a phone: cover on the left, title on top, month + Add book underneath */
+  .tbr-row{grid-template-columns:46px minmax(0,1fr) auto 2.2rem;gap:.5rem .7rem}
+  .tbr-row .cover-slot{grid-column:1;grid-row:1 / 3;align-self:start}
+  .tbr-row .tbr-book{grid-column:2 / 4;grid-row:1}
+  .tbr-row .tbr-del{grid-column:4;grid-row:1}
+  .tbr-row .tbr-plan{grid-column:2;grid-row:2}
+  .tbr-row [data-tbr-add]{grid-column:3 / 5;grid-row:2}
+  .plan-row{grid-template-columns:46px minmax(0,1fr) auto;gap:.7rem}
   .now-book .score .val{font-size:1.5rem}
   .now-foot .btn{width:100%}
 
@@ -664,11 +712,14 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
       <span>View</span>
       <button class="chip" data-layout="cards" aria-pressed="true">Months</button>
       <button class="chip" data-layout="list" aria-pressed="false">List</button>
+      <button class="chip" data-layout="tbr" aria-pressed="false">TBR<span class="count" id="tbr-count" hidden></span></button>
       <span class="grow"></span>
       <button class="btn gold" id="btn-wrapped">Wrapped</button>
       <details class="menu" id="more">
         <summary class="btn">More</summary>
         <div class="menu-list">
+          <!-- on a phone there is no room for a separate Wrapped button, so it lives in here -->
+          <button id="btn-wrapped-m" class="only-phone">Wrapped</button>
           <button id="btn-covers">Fill in book details</button>
           <button id="btn-settings">Colors</button>
           <button id="btn-export">Download backup</button>
@@ -692,6 +743,18 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
         <span id="list-count"></span>
         <button class="link" id="list-clear" hidden>Clear filters</button>
       </div>
+    </section>
+
+    <!-- TBR: books you might read. The rows are filled in by renderTbr() -->
+    <section class="tbr" id="tbrview" aria-label="To be read" hidden>
+      <form class="tbr-add" id="tbr-form" autocomplete="off">
+        <label class="field"><span>Title</span><input type="text" id="tbr-title" placeholder="A book you might read"></label>
+        <label class="field"><span>Author</span><input type="text" id="tbr-author" placeholder="Optional"></label>
+        <label class="field"><span>Month</span><select id="tbr-month"></select></label>
+        <label class="field"><span>Suggested by</span><select id="tbr-who"></select></label>
+        <button class="btn primary" type="submit">Add to TBR</button>
+      </form>
+      <div id="tbr-list"></div>
     </section>
   </main>
 </div>
@@ -902,6 +965,7 @@ async function initSync(){
 
     FB = { fs: fs, db: fs.getFirestore(application) };
     await loadYear(YEAR);
+    watchTbr();
   } catch(e){
     setStatus('err','Could not reach Firebase — edits stay on this device');
     LOCAL[YEAR] = migrate(JSON.parse(JSON.stringify(SEED)));
@@ -989,7 +1053,7 @@ function buildWhoPicker(){
     '" style="--c:'+readerColor(m.id)+';--oc:'+readerOn(m.id)+'">'+esc(memberLabel(m.id))+'</button>').join('');
   el.querySelectorAll('[data-me]').forEach(b=>b.addEventListener('click',()=>{
     me = (me===b.dataset.me) ? null : b.dataset.me;
-    buildWhoPicker(); if (view) renderSheet();
+    buildWhoPicker(); renderTbr(); if (view) renderSheet();
   }));
 }
 
@@ -1063,21 +1127,238 @@ async function lookupBook(title, author){
 
 async function enrichBooks(opts){
   const announce = opts && opts.announce;
-  const todo = allBooks().filter(b=>b.title && (!b.cover || b.pages==null || !b.genres.length));
+  const tbrItems = TBR.items.slice();
+  const todo = allBooks().concat(tbrItems).filter(b=>b.title && (!b.cover || b.pages==null || !b.genres.length));
   if (!todo.length){ if(announce) toast('Every book already has cover, pages and genres'); return; }
   if (announce) toast('Looking up '+todo.length+' book'+(todo.length>1?'s':'')+'…');
-  let changed = 0;
+  let changed = 0, tbrChanged = false;
   for (const b of todo){
     const info = await lookupBook(b.title, b.author);
     let hit = false;
     if (!b.cover && info.covers.length){ b.cover = info.covers[0].url; hit = true; }
     if (b.pages==null && info.pages){ b.pages = info.pages; hit = true; }
     if (!b.genres.length && info.genres.length){ b.genres = info.genres; hit = true; }
-    if (hit){ changed++; render(); if (view) renderSheet(); }
+    if (hit){ changed++; if (tbrItems.includes(b)) tbrChanged = true; render(); if (view) renderSheet(); }
   }
   if (changed) queueSave();
+  if (tbrChanged) saveTbr();
   if (announce) toast(changed ? 'Filled in '+changed+' book'+(changed>1?'s':'') : 'Nothing new found');
 }
+
+/* ================= TBR (to be read) ================= */
+// Books you might read. Each one can be pencilled in for a month ("2026-10", "2027-02" ...).
+// Pressing "Add book" on a row is the confirmation: the book moves out of this list and into
+// that month as a book you are reading together.
+let TBR = { items: [] };
+let tbrRef = null;                         // where the list is saved (bookclub/tbr)
+const tbrBusy = new Set();                 // rows whose "Add book" is still saving (stops double taps)
+
+const planKey   = (year, monthNo) => year+'-'+String(monthNo).padStart(2,'0');
+const planParts = key => {
+  const m = /^(\d{4})-(\d{2})$/.exec(key||'');
+  return m && Number(m[2])>=1 && Number(m[2])<=12 ? { year:Number(m[1]), no:Number(m[2]) } : null;
+};
+const planLabel  = key => { const p = planParts(key); return p ? MONTHS[p.no-1]+' '+p.year : 'No month yet'; };
+const plannedFor = (year, monthNo) => TBR.items.filter(t=>t.plan===planKey(year, monthNo));
+const newId = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+// whatever comes back from storage, make sure every item has every field
+function tidyTbr(d){
+  const items = d && Array.isArray(d.items) ? d.items : [];
+  return { items: items.filter(t=>t && t.title).map(t=>({
+    id: String(t.id || newId()),
+    title: String(t.title), author: String(t.author||''), addedBy: String(t.addedBy||''),
+    plan: planParts(t.plan) ? t.plan : '',
+    cover: String(t.cover||''), pages: num(t.pages),
+    genres: cleanGenres(Array.isArray(t.genres) ? t.genres : []),
+    addedAt: String(t.addedAt||'')
+  })) };
+}
+
+// keep the list in step with the other person: whenever the saved copy changes, redraw
+function watchTbr(){
+  if (!FB) return;
+  tbrRef = FB.fs.doc(FB.db, window.COLLECTION, 'tbr');
+  FB.fs.onSnapshot(tbrRef, snap=>{
+    if (snap.metadata.hasPendingWrites) return;
+    TBR = tidyTbr(snap.exists() ? snap.data() : null);
+    if (DATA){ render(); if (view==='month' && !editing) renderSheet(); }
+  }, ()=>{});
+}
+async function saveTbr(){
+  render(); if (view==='month' && !editing) renderSheet();
+  if (!FB || !tbrRef) return;
+  setStatus('saving','Saving');
+  try {
+    // "months" is only here because the security rules refuse a document without one
+    await FB.fs.setDoc(tbrRef, { months:['tbr'], items: TBR.items,
+      meta:{ updatedBy: me||'', updatedAt: new Date().toISOString() } });
+    setStatus('live','All changes saved');
+  } catch(e){ setStatus('err','Save failed — check your connection'); }
+}
+
+async function addTbr(){
+  const title = $('#tbr-title').value.trim();
+  if (!title){ toast('Give it a title'); $('#tbr-title').focus(); return; }
+  const item = { id:newId(), title:title, author:$('#tbr-author').value.trim(),
+    addedBy:$('#tbr-who').value||'', plan: planParts($('#tbr-month').value) ? $('#tbr-month').value : '',
+    cover:'', pages:null, genres:[], addedAt:new Date().toISOString() };
+  TBR.items.push(item);
+  $('#tbr-title').value = ''; $('#tbr-author').value = ''; $('#tbr-title').focus();
+  saveTbr(); toast(item.title+' is on the TBR');
+
+  // find its cover in the background, so the list looks like a shelf rather than a spreadsheet
+  const info = await lookupBook(item.title, item.author);
+  const live = TBR.items.find(t=>t.id===item.id);        // it may have been removed meanwhile
+  if (!live) return;
+  let hit = false;
+  if (!live.cover && info.covers.length){ live.cover = info.covers[0].url; hit = true; }
+  if (live.pages==null && info.pages){ live.pages = info.pages; hit = true; }
+  if (!live.genres.length && info.genres.length){ live.genres = info.genres; hit = true; }
+  if (hit) saveTbr();
+}
+function setTbrPlan(id, plan){
+  const t = TBR.items.find(x=>x.id===id);
+  if (!t) return;
+  t.plan = planParts(plan) ? plan : '';
+  saveTbr();
+}
+function removeTbr(id){
+  const i = TBR.items.findIndex(x=>x.id===id);
+  if (i<0) return;
+  const gone = TBR.items.splice(i,1)[0];
+  saveTbr(); toast(gone.title+' removed from the TBR');
+}
+
+// put a book into a month of a year's data, making the month if that year does not have it yet
+function putBook(d, monthNo, book){
+  let m = d.months.find(x=>MONTH_NO[String(x.id).toLowerCase()]===monthNo);
+  if (!m){
+    m = { id:MONTHS[monthNo-1].toLowerCase(), name:MONTHS[monthNo-1], boms:[], top:[] };
+    d.months.push(m);
+    d.months.sort((a,b)=>(MONTH_NO[String(a.id).toLowerCase()]||99)-(MONTH_NO[String(b.id).toLowerCase()]||99));
+  }
+  (m.boms = m.boms||[]).push(newBom(book));
+}
+async function addBookToMonth(year, monthNo, book){
+  if (year === YEAR){ putBook(DATA, monthNo, book); queueSave(); return; }      // the year on screen
+  if (!FB){                                                                     // not syncing
+    if (!LOCAL[year]) LOCAL[year] = migrate(blankYear(year, DATA));
+    putBook(LOCAL[year], monthNo, book); return;
+  }
+  // a different year from the one on screen: open that year's saved data, add the book, save it back
+  const ref = FB.fs.doc(FB.db, window.COLLECTION, String(year));
+  const snap = await FB.fs.getDoc(ref);
+  const d = snap.exists() ? migrate(snap.data()) : migrate(blankYear(year, DATA));
+  putBook(d, monthNo, book);
+  d.meta = { updatedBy: me||'', updatedAt: new Date().toISOString() };
+  await FB.fs.setDoc(ref, d);
+}
+
+// "Add book": the confirmation. Moves the book from the TBR into its month.
+async function confirmTbr(id){
+  const t = TBR.items.find(x=>x.id===id), p = t && planParts(t.plan);
+  if (!t || tbrBusy.has(id)) return;
+  if (!p) return toast('Pick a month first');
+  tbrBusy.add(id);
+  try {
+    await addBookToMonth(p.year, p.no, { title:t.title, author:t.author, cover:t.cover,
+      pages:t.pages, genres:t.genres.slice(), pickedBy:t.addedBy });
+  } catch(e){
+    tbrBusy.delete(id);
+    return toast('Could not add it — check your connection');
+  }
+  tbrBusy.delete(id);
+  const i = TBR.items.findIndex(x=>x.id===id);
+  if (i>=0) TBR.items.splice(i,1);
+  saveTbr();
+  toast(t.title+' added to '+planLabel(t.plan));
+}
+
+// the choices in a month dropdown: this month and the 17 after it (so next year is covered),
+// plus whatever a book already has, even if that month has since passed
+function monthOptions(current){
+  const now = new Date(), keys = [];
+  for (let i=0;i<18;i++){
+    const d = new Date(now.getFullYear(), now.getMonth()+i, 1);
+    keys.push(planKey(d.getFullYear(), d.getMonth()+1));
+  }
+  if (current && !keys.includes(current)) keys.unshift(current);
+  return '<option value="">No month yet</option>'+keys.map(k=>
+    '<option value="'+k+'"'+(k===current?' selected':'')+'>'+esc(planLabel(k))+'</option>').join('');
+}
+
+function renderTbr(){
+  const n = TBR.items.length;
+  $('#tbr-count').textContent = n || '';
+  $('#tbr-count').hidden = !n;
+
+  // the two dropdowns in the "add" form; only rebuilt when the month or the readers change,
+  // so whatever you had selected stays selected
+  const now = new Date(), nowKey = planKey(now.getFullYear(), now.getMonth()+1);
+  const mSel = $('#tbr-month'), wSel = $('#tbr-who');
+  const sig = nowKey+'|'+DATA.members.map(x=>x.id+'/'+x.name+'/'+x.emoji).join(',');
+  if (mSel.dataset.sig !== sig){
+    mSel.dataset.sig = sig;
+    mSel.innerHTML = monthOptions(planParts(mSel.value) ? mSel.value : '');
+    const keep = wSel.value;
+    wSel.innerHTML = '<option value="">Nobody in particular</option>'+DATA.members.map(x=>
+      '<option value="'+esc(x.id)+'">'+esc(memberLabel(x.id))+'</option>').join('');
+    wSel.value = keep; wSel.dataset.me = '';
+  }
+  if (me && wSel.dataset.me !== me){ wSel.value = me; wSel.dataset.me = me; }   // default to whoever "You are"
+
+  if (!n){
+    $('#tbr-list').innerHTML = '<p class="empty-note">Nothing on the TBR yet. Add a book above, give it a month '+
+      'whenever you have a plan, and press Add book on its row once you are sure.</p>';
+    return;
+  }
+  // one group per month, in calendar order, with the undecided ones last
+  const keys = [...new Set(TBR.items.map(t=>t.plan))].sort((a,b)=>
+    ((a===''?1:0)-(b===''?1:0)) || a.localeCompare(b));
+  $('#tbr-list').innerHTML = keys.map(k=>{
+    const p = planParts(k), rows = TBR.items.filter(t=>t.plan===k);
+    let note = '';
+    if (!p) note = 'Not pencilled in for a month yet.';
+    else if (k < nowKey) note = 'This month has already passed.';
+    else if (p.year === YEAR){
+      const m = DATA.months.find(x=>MONTH_NO[String(x.id).toLowerCase()]===p.no);
+      const have = m ? (m.boms||[]).filter(b=>b.title).map(b=>b.title) : [];
+      if (have.length) note = 'Already reading '+have.join(' and ')+' that month.';
+    }
+    return '<section class="tbr-group"><h3 class="tbr-month"><i style="background:'+
+      (p ? MONTH_THEMES[p.no-1].colors['--accent'] : 'var(--fg-dim)')+'"></i>'+
+      (p ? esc(MONTHS[p.no-1])+' <span>'+p.year+'</span>' : 'No month yet')+'</h3>'+
+      (note ? '<p class="tbr-note">'+esc(note)+'</p>' : '')+
+      rows.map(t=>'<div class="tbr-row" data-id="'+esc(t.id)+'">'+coverMarkup(t)+
+        '<div class="tbr-book"><p class="card-title">'+esc(t.title)+'</p>'+
+          (t.author?'<p class="card-author">'+esc(t.author)+'</p>':'')+
+          (t.addedBy?'<p class="tbr-who" style="color:'+readerColor(t.addedBy)+'">'+
+            esc(member(t.addedBy).name)+"'s suggestion</p>":'')+'</div>'+
+        '<select class="tbr-plan" data-tbr-plan aria-label="Month for '+esc(t.title)+'">'+monthOptions(t.plan)+'</select>'+
+        '<button class="btn primary" data-tbr-add'+(planParts(t.plan)
+          ? ' aria-label="Add '+esc(t.title)+' to '+esc(planLabel(t.plan))+'"'
+          : ' disabled title="Pick a month first"')+'>Add book</button>'+
+        '<button class="tbr-del" data-tbr-del aria-label="Remove '+esc(t.title)+' from the TBR">×</button>'+
+      '</div>').join('')+'</section>';
+  }).join('');
+}
+
+$('#tbr-form').addEventListener('submit', e=>{ e.preventDefault(); addTbr(); });
+$('#tbr-list').addEventListener('change', e=>{
+  const sel = e.target.closest('[data-tbr-plan]');
+  if (sel) setTbrPlan(sel.closest('[data-id]').dataset.id, sel.value);
+});
+$('#tbr-list').addEventListener('click', e=>{
+  const row = e.target.closest('[data-id]');
+  if (!row) return;
+  if (e.target.closest('[data-tbr-add]')) return confirmTbr(row.dataset.id);
+  const del = e.target.closest('[data-tbr-del]');
+  if (!del) return;
+  if (del.classList.contains('armed')) return removeTbr(row.dataset.id);
+  del.classList.add('armed'); del.textContent = 'Remove?';
+  setTimeout(()=>{ if (del.isConnected){ del.classList.remove('armed'); del.textContent = '×'; } }, 3000);
+});
 
 /* ================= grid ================= */
 function coverMarkup(book, cls, emptyText){
@@ -1135,8 +1416,12 @@ function render(){
     const isNow = sameYear && no===thisMonth;
     const isPast = pastYear || (sameYear && no && no<thisMonth);
 
-    // the small note beside the month name
+    // nothing confirmed for this month, but something on the TBR is pencilled in for it
+    const planned = items.length ? [] : plannedFor(YEAR, no);
+
+    // the small badge on the cover
     const kind = isNow ? 'Reading now'
+      : planned.length ? 'Planned'
       : !items.length ? ''
       : !hasScores ? (isPast ? 'Not scored' : 'To read')
       : !shared ? 'Top books'
@@ -1152,28 +1437,32 @@ function render(){
             : scorePill(fmtScore(b.score), memberLabel(b.member), readerColor(b.member)))+
           (g ? scorePill(g, 'Goodreads') : '')+
         '</div></div>';
-    }).join('');
+    }).join('') || planned.map(t=>
+      '<div class="cbook"><p class="card-title">'+esc(t.title)+'</p>'+
+      (t.author?'<p class="card-author">'+esc(t.author)+'</p>':'')+
+      '<div class="scores"><span class="sc">On the TBR</span></div></div>').join('');
+    const covers = items.length ? items : planned;
 
-    return '<button class="card'+(isNow?' is-now':'')+(items.length?'':' empty')+(hasScores?'':' pending')+
+    return '<button class="card'+(isNow?' is-now':'')+(items.length?'':(planned.length?' planned':' empty'))+(hasScores?'':' pending')+
       '" data-month="'+esc(m.id)+'" aria-label="Open '+esc(m.name)+
       (items.length>1?', '+items.length+' books':'')+(isNow?', reading now':'')+'">'+
       '<div class="card-top"><span class="card-month">'+esc(m.name)+'</span></div>'+
       (kind?'<span class="card-kind">'+kind+'</span>':'')+
-      (items.length>1 ? coverStack(items) : coverMarkup(items[0]||null, '', 'Nothing picked yet'))+
+      (covers.length>1 ? coverStack(covers) : coverMarkup(covers[0]||null, '', 'Nothing picked yet'))+
       (body?'<div class="card-body">'+body+'</div>':'')+'</button>';
   }).join('');
 
   $('#grid').querySelectorAll('.card').forEach(c=>
     c.addEventListener('click',()=>openSheet('month', c.dataset.month)));
-  paintLayout(); renderList(); renderNow();
+  paintLayout(); renderList(); renderNow(); renderTbr();
   paintLastEdit();
 }
 
 /* ================= list view ================= */
-// Which view is showing: 'cards' (the month grid) or 'list' (one row per book).
+// Which view is showing: 'cards' (the month grid), 'list' (one row per book) or 'tbr'.
 // Remembered per browser, so each of you keeps whichever you prefer.
 let layout = 'cards';
-try { if (localStorage.getItem('bookclub-layout')==='list') layout = 'list'; } catch(e){}
+try { const saved = localStorage.getItem('bookclub-layout'); if (saved==='list' || saved==='tbr') layout = saved; } catch(e){}
 
 // sort = the column being sorted, dir = 1 (A-Z, low-high) or -1 (high-low),
 // f = the current filter values, keyed by column
@@ -1193,13 +1482,14 @@ function scorePass(v, f){
 }
 
 function setLayout(next){
-  layout = next==='list' ? 'list' : 'cards';
+  layout = (next==='list' || next==='tbr') ? next : 'cards';
   try { localStorage.setItem('bookclub-layout', layout); } catch(e){}
   paintLayout();
 }
 function paintLayout(){
   $('#grid').hidden = layout!=='cards';
   $('#listview').hidden = layout!=='list';
+  $('#tbrview').hidden = layout!=='tbr';
   document.querySelectorAll('[data-layout]').forEach(b=>
     b.setAttribute('aria-pressed', String(b.dataset.layout===layout)));
 }
@@ -1417,6 +1707,11 @@ function renderNow(){
   // next month's pick, if there is one, as a quiet line at the bottom
   const nm = DATA.months[idx+1];
   const upNext = nm ? (nm.boms||[]).filter(b=>b.title).map(b=>b.title) : [];
+  // nothing confirmed? then show what the TBR has pencilled in (December looks ahead to January)
+  const thisNo = today.getMonth()+1;
+  const nx = thisNo===12 ? { year:YEAR+1, no:1 } : { year:YEAR, no:thisNo+1 };
+  const plannedNext = upNext.length ? [] : plannedFor(nx.year, nx.no).map(t=>t.title);
+  const plannedNow = books.length ? [] : plannedFor(YEAR, thisNo).map(t=>t.title);
 
   const washes = books.filter(b=>b.cover).slice(0,3);
   el.innerHTML =
@@ -1432,15 +1727,19 @@ function renderNow(){
               (b.author?'<p class="book-author">'+esc(b.author)+'</p>':'')+
               bookTags(b)+scoreLine(b)+
             '</div></article>').join('')+'</div>'
-        : '<p class="now-empty">Nothing picked for '+esc(m.name)+' yet</p>')+
+        : '<p class="now-empty">Nothing picked for '+esc(m.name)+' yet</p>'+
+          (plannedNow.length ? '<p class="now-next">On the TBR for '+esc(m.name)+': <b>'+
+            plannedNow.map(esc).join('</b> and <b>')+'</b></p>' : ''))+
       '<div class="now-foot">'+
         '<div class="now-days"><div class="bar" role="img" aria-label="Day '+day+' of '+days+'">'+
           '<i style="width:'+Math.round(day/days*100)+'%"></i></div>'+esc(leftText)+'</div>'+
-        '<button class="btn primary" data-open-month="'+esc(m.id)+'"'+(books.length?'':' data-edit="1"')+'>'+
-          (books.length ? 'Open '+esc(m.name) : 'Pick a book')+'</button>'+
+        '<button class="btn primary" data-open-month="'+esc(m.id)+'"'+((books.length||plannedNow.length)?'':' data-edit="1"')+'>'+
+          ((books.length||plannedNow.length) ? 'Open '+esc(m.name) : 'Pick a book')+'</button>'+
       '</div>'+
       (upNext.length ? '<p class="now-next">Up next in '+esc(nm.name)+': <b>'+
-        upNext.map(esc).join('</b> and <b>')+'</b></p>' : '')+
+        upNext.map(esc).join('</b> and <b>')+'</b></p>'
+       : plannedNext.length ? '<p class="now-next">On the TBR for '+esc(MONTHS[nx.no-1])+': <b>'+
+        plannedNext.map(esc).join('</b> and <b>')+'</b></p>' : '')+
     '</div>';
   el.hidden = false;
 }
@@ -1494,7 +1793,8 @@ function paintWash(covers){
 function renderMonthSheet(){
   const m = DATA.months.find(x=>x.id===openMonth);
   if (!m) return;
-  const shown = (m.boms||[]).length ? m.boms : (m.top||[]);
+  const shown = (m.boms||[]).length ? m.boms : (m.top||[]).length ? m.top
+    : plannedFor(YEAR, MONTH_NO[String(m.id).toLowerCase()]||0);
   paintWash(shown.map(b=>b.cover).filter(Boolean).slice(0,3));
   const label = editing ? 'Done' : (me ? 'Add '+esc(member(me).name)+"'s scores" : 'Edit this month');
   $('#sheet-inner').innerHTML =
@@ -1554,6 +1854,16 @@ function readView(m){
     html += '<div class="section-label">'+
       (boms.length>1 ? boms.length+' books of the month' : 'Book of the month')+'</div>'+
       boms.map(bomRead).join('');
+  }
+  const planned = plannedFor(YEAR, MONTH_NO[String(m.id).toLowerCase()]||0);
+  if (planned.length){
+    html += '<div class="section-label">Planned from the TBR</div>'+planned.map(t=>
+      '<div class="plan-row">'+coverMarkup(t)+
+      '<div class="tbr-book"><p class="card-title">'+esc(t.title)+'</p>'+
+        (t.author?'<p class="card-author">'+esc(t.author)+'</p>':'')+
+        (t.addedBy?'<p class="tbr-who" style="color:'+readerColor(t.addedBy)+'">'+
+          esc(member(t.addedBy).name)+"'s suggestion</p>":'')+'</div>'+
+      '<button class="btn primary" data-act="tbr-add" data-id="'+esc(t.id)+'">Add book</button></div>').join('');
   }
   html += '<div class="section-label">Top books of the month</div>';
   if (!(m.top||[]).length){
@@ -1675,6 +1985,7 @@ function wireMonthSheet(m){
   const root = $('#sheet-inner');
   root.querySelectorAll('[data-act]').forEach(btn=>btn.addEventListener('click',()=>{
     const act = btn.dataset.act;
+    if (act==='tbr-add') return confirmTbr(btn.dataset.id);     // redraws the page itself when done
     if (editing && act!=='close') commitFields(m);
     if (act==='close') return closeSheet();
     if (act==='toggle-edit'){ editing=!editing; if(!editing) queueSave(); }
@@ -2057,12 +2368,14 @@ const moreMenu = $('#more');
 moreMenu.addEventListener('click', e=>{ if (e.target.closest('.menu-list button')) moreMenu.open = false; });
 document.addEventListener('click', e=>{ if (moreMenu.open && !moreMenu.contains(e.target)) moreMenu.open = false; });
 $('#btn-wrapped').addEventListener('click',()=>openSheet('wrapped'));
+$('#btn-wrapped-m').addEventListener('click',()=>openSheet('wrapped'));
 $('#btn-covers').addEventListener('click',()=>enrichBooks({announce:true}));
 $('#yr-prev').addEventListener('click',()=>loadYear(YEAR-1));
 $('#yr-next').addEventListener('click',()=>loadYear(YEAR+1));
 
 $('#btn-export').addEventListener('click',()=>{
-  const blob = new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
+  // the year's data, plus a copy of the TBR for safe keeping
+  const blob = new Blob([JSON.stringify(Object.assign({}, DATA, {tbr: TBR.items}),null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob); a.download='bookclub-'+YEAR+'-backup.json'; a.click();
   URL.revokeObjectURL(a.href); toast('Backup downloaded');
@@ -2075,7 +2388,11 @@ $('#file-input').addEventListener('change',e=>{
     try{
       const next=JSON.parse(r.result);
       if(!next.months) throw new Error('bad file');
+      // the TBR copy is not part of a year, so take it out before the year is restored;
+      // it is only put back if the TBR is empty right now (so a restore never wipes newer plans)
+      const savedTbr = next.tbr; delete next.tbr;
       DATA = migrate(next);
+      if (Array.isArray(savedTbr) && savedTbr.length && !TBR.items.length){ TBR = tidyTbr({items:savedTbr}); saveTbr(); }
       applyTheme(); syncPanelInputs(); render(); queueSave(); toast('Backup restored');
     }catch(err){ toast("That file isn't book club JSON"); }
   };
