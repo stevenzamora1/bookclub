@@ -424,7 +424,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
 .menu-list button.only-phone{display:none}
 .btn[disabled]{opacity:.4;cursor:default}
 .btn.primary[disabled]:hover{filter:none}
-.tbr-add{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,1.1fr) auto;
+.tbr-add{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) minmax(0,.75fr) minmax(0,1.25fr) minmax(0,1.1fr) auto;
   gap:.75rem;align-items:end;padding:1rem;margin-bottom:2rem;border:1px solid var(--rule);
   border-radius:var(--r-l);background:var(--bg-2)}
 .tbr-add .field{margin:0}
@@ -436,11 +436,18 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
 .tbr-month span{color:var(--fg-dim);font-weight:600}
 .tbr-note{margin:.2rem 0 0;font-size:.85rem;color:var(--fg-dim)}
 .tbr-row,.plan-row{display:grid;gap:.9rem;align-items:center;padding:.75rem 0;border-bottom:1px solid var(--rule)}
-.tbr-row{grid-template-columns:52px minmax(0,1fr) minmax(9rem,12rem) auto 2.2rem}
+.tbr-row{grid-template-columns:52px minmax(0,1fr) minmax(9rem,12rem) auto auto 2.2rem}
 .plan-row{grid-template-columns:52px minmax(0,1fr) auto}
 .tbr-row .cover-slot,.plan-row .cover-slot{box-shadow:0 8px 16px -10px rgba(0,0,0,.7)}
 .tbr-row .cover-fallback,.plan-row .cover-fallback{font-size:0;padding:0}
-.tbr-who{margin:.15rem 0 0;font-size:.78rem;font-weight:600}
+.tbr-who{display:flex;flex-wrap:wrap;gap:0 .7rem;margin:.15rem 0 0;font-size:.78rem}
+.tbr-who b{font-weight:600}
+.tbr-who span{color:var(--fg-dim)}
+.tbr-edit-btn{padding:.45rem .6rem;border-radius:var(--r-s);font-size:.84rem;font-weight:600;color:var(--fg-dim)}
+.tbr-edit-btn:hover,.tbr-edit-btn[aria-expanded=true]{color:var(--fg);background:var(--bg-2)}
+.tbr-row.editing{border-bottom-color:transparent}
+.tbr-editor{margin:.15rem 0 1.1rem}
+.tbr-editor-foot{display:flex;gap:.5rem;margin-top:1rem}
 .tbr-del{width:2.2rem;height:2.2rem;border-radius:99px;color:var(--fg-dim);font-size:1.2rem;line-height:1;justify-self:end}
 .tbr-del:hover{background:var(--bg-2);color:var(--fg)}
 /* first tap on the x turns it into "Remove?"; a second tap removes the book */
@@ -610,14 +617,16 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
   #btn-wrapped{display:none}
   .menu-list button.only-phone{display:block}
   .tbr-add{grid-template-columns:1fr 1fr;padding:.85rem}
-  .tbr-add .field:first-child{grid-column:1 / -1}
+  .tbr-add .field:first-child,.tbr-add .btn{grid-column:1 / -1}
   /* a TBR row on a phone: cover on the left, title on top, month + Add book underneath */
-  .tbr-row{grid-template-columns:46px minmax(0,1fr) auto 2.2rem;gap:.5rem .7rem}
+  .tbr-row{grid-template-columns:46px minmax(0,1fr) auto 2.2rem;gap:.5rem .6rem}
   .tbr-row .cover-slot{grid-column:1;grid-row:1 / 3;align-self:start}
-  .tbr-row .tbr-book{grid-column:2 / 4;grid-row:1}
+  .tbr-row .tbr-book{grid-column:2;grid-row:1}
+  .tbr-row .tbr-edit-btn{grid-column:3;grid-row:1;justify-self:end}
   .tbr-row .tbr-del{grid-column:4;grid-row:1}
   .tbr-row .tbr-plan{grid-column:2;grid-row:2}
   .tbr-row [data-tbr-add]{grid-column:3 / 5;grid-row:2}
+  .tbr-editor-foot .btn{flex:1}
   .plan-row{grid-template-columns:46px minmax(0,1fr) auto;gap:.7rem}
   .now-book .score .val{font-size:1.5rem}
   .now-foot .btn{width:100%}
@@ -750,6 +759,7 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
       <form class="tbr-add" id="tbr-form" autocomplete="off">
         <label class="field"><span>Title</span><input type="text" id="tbr-title" placeholder="A book you might read"></label>
         <label class="field"><span>Author</span><input type="text" id="tbr-author" placeholder="Optional"></label>
+        <label class="field"><span>Pages</span><input type="number" id="tbr-pages" min="0" step="1" placeholder="Optional"></label>
         <label class="field"><span>Month</span><select id="tbr-month"></select></label>
         <label class="field"><span>Suggested by</span><select id="tbr-who"></select></label>
         <button class="btn primary" type="submit">Add to TBR</button>
@@ -836,6 +846,17 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 const member = id => DATA.members.find(m=>m.id===id) || {id:id,name:id,emoji:''};
 const memberLabel = id => { const m=member(id); return m.name + (m.emoji ? ' '+m.emoji : ''); };
 const readerColor = id => DATA.members.findIndex(m=>m.id===id)===1 ? 'var(--reader-b)' : 'var(--reader-a)';
+// Who chose a book is stored as a reader's id, as 'mutual' (you both did), or as '' (not recorded).
+// These three turn that into the words, the colour and the dropdown choices used everywhere.
+const MUTUAL = 'mutual';
+const pickLabel = id => id===MUTUAL ? 'Mutual pick'
+  : (id && DATA.members.some(m=>m.id===id)) ? member(id).name+"'s pick" : '';
+const pickColor = id => id===MUTUAL ? 'var(--gold)' : readerColor(id);
+const pickOptions = (current, blankLabel) =>
+  (blankLabel ? '<option value="">'+esc(blankLabel)+'</option>' : '')+
+  '<option value="'+MUTUAL+'"'+(current===MUTUAL?' selected':'')+'>Mutual</option>'+
+  DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(current===x.id?' selected':'')+'>'+
+    esc(memberLabel(x.id))+'</option>').join('');
 // the text colour that is readable on top of that reader's colour
 const readerOn = id => DATA.members.findIndex(m=>m.id===id)===1 ? 'var(--on-b)' : 'var(--on-a)';
 const fmtScore = n => (n===''||n==null||isNaN(n)) ? null : (Math.round(Number(n)*100)/100).toString();
@@ -1167,7 +1188,8 @@ function tidyTbr(d){
   const items = d && Array.isArray(d.items) ? d.items : [];
   return { items: items.filter(t=>t && t.title).map(t=>({
     id: String(t.id || newId()),
-    title: String(t.title), author: String(t.author||''), addedBy: String(t.addedBy||''),
+    title: String(t.title), author: String(t.author||''),
+    addedBy: String(t.addedBy||MUTUAL),          // older entries saved as "nobody in particular" count as mutual
     plan: planParts(t.plan) ? t.plan : '',
     cover: String(t.cover||''), pages: num(t.pages),
     genres: cleanGenres(Array.isArray(t.genres) ? t.genres : []),
@@ -1201,10 +1223,10 @@ async function addTbr(){
   const title = $('#tbr-title').value.trim();
   if (!title){ toast('Give it a title'); $('#tbr-title').focus(); return; }
   const item = { id:newId(), title:title, author:$('#tbr-author').value.trim(),
-    addedBy:$('#tbr-who').value||'', plan: planParts($('#tbr-month').value) ? $('#tbr-month').value : '',
-    cover:'', pages:null, genres:[], addedAt:new Date().toISOString() };
+    addedBy:$('#tbr-who').value||MUTUAL, plan: planParts($('#tbr-month').value) ? $('#tbr-month').value : '',
+    cover:'', pages:num($('#tbr-pages').value), genres:[], addedAt:new Date().toISOString() };
   TBR.items.push(item);
-  $('#tbr-title').value = ''; $('#tbr-author').value = ''; $('#tbr-title').focus();
+  $('#tbr-title').value = ''; $('#tbr-author').value = ''; $('#tbr-pages').value = ''; $('#tbr-title').focus();
   saveTbr(); toast(item.title+' is on the TBR');
 
   // find its cover in the background, so the list looks like a shelf rather than a spreadsheet
@@ -1302,12 +1324,12 @@ function renderTbr(){
     mSel.dataset.sig = sig;
     mSel.innerHTML = monthOptions(planParts(mSel.value) ? mSel.value : '');
     const keep = wSel.value;
-    wSel.innerHTML = '<option value="">Nobody in particular</option>'+DATA.members.map(x=>
-      '<option value="'+esc(x.id)+'">'+esc(memberLabel(x.id))+'</option>').join('');
-    wSel.value = keep; wSel.dataset.me = '';
+    wSel.innerHTML = pickOptions('');             // Mutual, then each of you
+    wSel.value = keep || MUTUAL; wSel.dataset.me = '';
   }
   if (me && wSel.dataset.me !== me){ wSel.value = me; wSel.dataset.me = me; }   // default to whoever "You are"
 
+  if (tbrEdit && !TBR.items.some(t=>t.id===tbrEdit.id)) tbrEdit = null;     // the book being edited is gone
   if (!n){
     $('#tbr-list').innerHTML = '<p class="empty-note">Nothing on the TBR yet. Add a book above, give it a month '+
       'whenever you have a plan, and press Add book on its row once you are sure.</p>';
@@ -1330,30 +1352,143 @@ function renderTbr(){
       (p ? MONTH_THEMES[p.no-1].colors['--accent'] : 'var(--fg-dim)')+'"></i>'+
       (p ? esc(MONTHS[p.no-1])+' <span>'+p.year+'</span>' : 'No month yet')+'</h3>'+
       (note ? '<p class="tbr-note">'+esc(note)+'</p>' : '')+
-      rows.map(t=>'<div class="tbr-row" data-id="'+esc(t.id)+'">'+coverMarkup(t)+
-        '<div class="tbr-book"><p class="card-title">'+esc(t.title)+'</p>'+
-          (t.author?'<p class="card-author">'+esc(t.author)+'</p>':'')+
-          (t.addedBy?'<p class="tbr-who" style="color:'+readerColor(t.addedBy)+'">'+
-            esc(member(t.addedBy).name)+"'s suggestion</p>":'')+'</div>'+
-        '<select class="tbr-plan" data-tbr-plan aria-label="Month for '+esc(t.title)+'">'+monthOptions(t.plan)+'</select>'+
-        '<button class="btn primary" data-tbr-add'+(planParts(t.plan)
-          ? ' aria-label="Add '+esc(t.title)+' to '+esc(planLabel(t.plan))+'"'
-          : ' disabled title="Pick a month first"')+'>Add book</button>'+
-        '<button class="tbr-del" data-tbr-del aria-label="Remove '+esc(t.title)+' from the TBR">×</button>'+
-      '</div>').join('')+'</section>';
+      rows.map(t=>{
+        const ed = tbrEdit && tbrEdit.id===t.id ? tbrEdit : null;
+        // while a row is being edited its cover shows the draft, so you see a new cover straight away
+        return '<div class="tbr-row'+(ed?' editing':'')+'" data-id="'+esc(t.id)+'">'+
+          coverMarkup(ed ? {title:t.title, cover:ed.cover} : t)+
+          '<div class="tbr-book"><p class="card-title">'+esc(t.title)+'</p>'+
+            (t.author?'<p class="card-author">'+esc(t.author)+'</p>':'')+tbrMeta(t)+'</div>'+
+          '<select class="tbr-plan" data-tbr-plan aria-label="Month for '+esc(t.title)+'">'+monthOptions(t.plan)+'</select>'+
+          '<button class="btn primary" data-tbr-add'+(planParts(t.plan)
+            ? ' aria-label="Add '+esc(t.title)+' to '+esc(planLabel(t.plan))+'"'
+            : ' disabled title="Pick a month first"')+'>Add book</button>'+
+          '<button class="tbr-edit-btn" data-tbr-edit aria-expanded="'+(ed?'true':'false')+
+            '" aria-label="Edit '+esc(t.title)+'">Edit</button>'+
+          '<button class="tbr-del" data-tbr-del aria-label="Remove '+esc(t.title)+' from the TBR">×</button>'+
+        '</div>'+(ed ? tbrEditor(ed) : '');
+      }).join('')+'</section>';
   }).join('');
 }
 
+// the line under a TBR book: who picked it (in their colour) and how long it is
+function tbrMeta(t){
+  const lab = pickLabel(t.addedBy);
+  if (!lab && !t.pages) return '';
+  return '<p class="tbr-who">'+(lab?'<b style="color:'+pickColor(t.addedBy)+'">'+esc(lab)+'</b>':'')+
+    (t.pages?'<span>'+t.pages+' pages</span>':'')+'</p>';
+}
+
+/* ---------- editing a TBR book ----------
+   Pressing Edit opens a small form under the row. What you type goes into tbrEdit (a draft),
+   NOT into the book, until you press Save changes; Cancel throws the draft away. Keeping it
+   as a draft also means the form survives if the list redraws (say the other person adds a book). */
+let tbrEdit = null;        // { id, title, author, pages, addedBy, cover, picks } while a form is open
+
+function tbrPicks(ed){
+  if (!ed.picks) return '';
+  return '<div class="cover-picks"><div class="picks-head"><span>'+ed.picks.length+' covers for “'+esc(ed.title)+
+    '”</span><button class="link" type="button" data-te-closepicks>Close</button></div>'+
+    '<div class="picks-grid">'+ed.picks.map((c,i)=>
+      '<button type="button" class="pick'+(c.url===ed.cover?' on':'')+'" data-te-pick="'+i+'" title="'+esc(c.label)+'">'+
+      '<img src="'+esc(c.url)+'" alt="Cover option '+(i+1)+'" loading="lazy" onerror="this.parentNode.style.display=\'none\'">'+
+      (c.label?'<span>'+esc(c.label)+'</span>':'')+'</button>').join('')+'</div></div>';
+}
+function tbrEditor(ed){
+  return '<div class="tbr-editor edit-block" data-id="'+esc(ed.id)+'"><div class="row">'+
+    '<label class="field"><span>Title</span><input type="text" data-te="title" value="'+esc(ed.title)+'"></label>'+
+    '<label class="field"><span>Author</span><input type="text" data-te="author" value="'+esc(ed.author)+'"></label>'+
+    '<label class="field"><span>Pages</span><input type="number" min="0" step="1" data-te="pages" value="'+esc(ed.pages==null?'':ed.pages)+'"></label>'+
+    '<label class="field"><span>Suggested by</span><select data-te="addedBy">'+pickOptions(ed.addedBy)+'</select></label>'+
+    '</div><div class="cover-row"><label class="field"><span>Cover image URL</span>'+
+    '<input type="url" data-te="cover" value="'+esc(ed.cover)+'" placeholder="Paste one, or hit Browse covers"></label>'+
+    '<button class="btn" type="button" data-te-find>Browse covers</button>'+
+    '<button class="btn ghost" type="button" data-te-clear>Clear</button></div>'+
+    '<div data-te-picksbox>'+tbrPicks(ed)+'</div>'+
+    '<div class="tbr-editor-foot"><button class="btn primary" type="button" data-te-save>Save changes</button>'+
+    '<button class="btn ghost" type="button" data-te-cancel>Cancel</button></div></div>';
+}
+function toggleTbrEdit(id){
+  const t = TBR.items.find(x=>x.id===id);
+  tbrEdit = (!t || (tbrEdit && tbrEdit.id===id)) ? null
+    : { id:t.id, title:t.title, author:t.author, pages:t.pages, addedBy:t.addedBy, cover:t.cover, picks:null };
+  renderTbr();
+  const first = $('#tbr-list .tbr-editor [data-te="title"]');
+  if (first) first.scrollIntoView({block:'nearest'});
+}
+// put a cover into the draft and show it in the row, the URL box and the grid of choices
+function setTbrDraftCover(url){
+  if (!tbrEdit) return;
+  tbrEdit.cover = url;
+  const editor = $('#tbr-list .tbr-editor'), row = editor && editor.previousElementSibling;
+  if (!editor) return;
+  const box = editor.querySelector('[data-te="cover"]');
+  if (box.value !== url) box.value = url;
+  editor.querySelectorAll('.pick').forEach((p,i)=>p.classList.toggle('on', !!url && tbrEdit.picks && tbrEdit.picks[i].url===url));
+  if (row) row.querySelector('.cover-slot').outerHTML = coverMarkup({ title:tbrEdit.title, cover:url });
+}
+async function browseTbrCovers(){
+  if (!tbrEdit) return;
+  if (!tbrEdit.title.trim()) return toast('Add a title first');
+  const id = tbrEdit.id, btn = $('#tbr-list .tbr-editor [data-te-find]');
+  if (btn) btn.textContent = 'Searching…';
+  const info = await lookupBook(tbrEdit.title.trim(), tbrEdit.author.trim());
+  if (!tbrEdit || tbrEdit.id!==id) return;                     // the form was closed while it searched
+  const again = $('#tbr-list .tbr-editor [data-te-find]');
+  if (again) again.textContent = 'Browse covers';
+  tbrEdit.picks = info.covers.length ? info.covers : null;
+  const box = $('#tbr-list [data-te-picksbox]');
+  if (box) box.innerHTML = tbrPicks(tbrEdit);
+  if (!info.covers.length) toast('Nothing found — paste a URL instead');
+}
+function saveTbrEdit(){
+  const t = tbrEdit && TBR.items.find(x=>x.id===tbrEdit.id);
+  if (!t){ tbrEdit = null; return renderTbr(); }
+  const title = String(tbrEdit.title||'').trim();
+  if (!title) return toast('Give it a title');
+  t.title = title;
+  t.author = String(tbrEdit.author||'').trim();
+  t.pages = num(tbrEdit.pages);
+  t.addedBy = tbrEdit.addedBy || MUTUAL;
+  t.cover = String(tbrEdit.cover||'').trim();
+  tbrEdit = null;
+  saveTbr(); toast('Saved');
+}
+
 $('#tbr-form').addEventListener('submit', e=>{ e.preventDefault(); addTbr(); });
+// typing in the edit form goes into the draft
+const intoDraft = e => {
+  const el = e.target.closest('[data-te]');
+  if (!el || !tbrEdit) return;
+  const k = el.dataset.te;
+  tbrEdit[k] = k==='pages' ? (el.value==='' ? null : Number(el.value)) : el.value;
+  if (k==='cover') setTbrDraftCover(el.value.trim());        // pasted a link: show it straight away
+};
+$('#tbr-list').addEventListener('input', intoDraft);
 $('#tbr-list').addEventListener('change', e=>{
   const sel = e.target.closest('[data-tbr-plan]');
-  if (sel) setTbrPlan(sel.closest('[data-id]').dataset.id, sel.value);
+  if (sel) return setTbrPlan(sel.closest('[data-id]').dataset.id, sel.value);
+  intoDraft(e);
+});
+$('#tbr-list').addEventListener('keydown', e=>{
+  if (e.key==='Enter' && e.target.closest('input[data-te]')){ e.preventDefault(); saveTbrEdit(); }
 });
 $('#tbr-list').addEventListener('click', e=>{
   const row = e.target.closest('[data-id]');
   if (!row) return;
-  if (e.target.closest('[data-tbr-add]')) return confirmTbr(row.dataset.id);
-  const del = e.target.closest('[data-tbr-del]');
+  const hit = sel => e.target.closest(sel);
+  if (hit('[data-tbr-add]')) return confirmTbr(row.dataset.id);
+  if (hit('[data-tbr-edit]')) return toggleTbrEdit(row.dataset.id);
+  if (hit('[data-te-save]')) return saveTbrEdit();
+  if (hit('[data-te-cancel]')){ tbrEdit = null; return renderTbr(); }
+  if (hit('[data-te-clear]')) return setTbrDraftCover('');
+  if (hit('[data-te-find]')) return browseTbrCovers();
+  if (hit('[data-te-closepicks]')){ if (tbrEdit) tbrEdit.picks = null; hit('[data-te-picksbox]').innerHTML = ''; return; }
+  if (hit('[data-te-pick]')){
+    if (tbrEdit && tbrEdit.picks) setTbrDraftCover(tbrEdit.picks[Number(hit('[data-te-pick]').dataset.tePick)].url);
+    return;
+  }
+  const del = hit('[data-tbr-del]');
   if (!del) return;
   if (del.classList.contains('armed')) return removeTbr(row.dataset.id);
   del.classList.add('armed'); del.textContent = 'Remove?';
@@ -1521,8 +1656,8 @@ function listRows(){
       const scores = {};
       DATA.members.forEach(x=>{ scores[x.id] = num((b.scores||{})[x.id]); });
       add({ book:b, type:'together', typeLabel:'Read together', order:i, scores:scores,
-        sub: b.pickedBy ? member(b.pickedBy).name+"'s pick" : '',
-        subColor: b.pickedBy ? readerColor(b.pickedBy) : '',
+        sub: pickLabel(b.pickedBy),
+        subColor: pickLabel(b.pickedBy) ? pickColor(b.pickedBy) : '',
         gr:num(b.goodreads), pages:num(b.pages) });
     });
     (m.top||[]).forEach((b,i)=>{
@@ -1818,8 +1953,8 @@ function quoteGroup(list, who, color){
 function bookTags(b){
   if (!(b.pages || (b.genres||[]).length || b.pickedBy)) return '';
   return '<div class="tags">'+
-    (b.pickedBy?'<span class="tag" style="color:'+readerColor(b.pickedBy)+
-      ';border-color:'+readerColor(b.pickedBy)+'">'+esc(member(b.pickedBy).name)+"'s pick</span>":'')+
+    (pickLabel(b.pickedBy)?'<span class="tag" style="color:'+pickColor(b.pickedBy)+
+      ';border-color:'+pickColor(b.pickedBy)+'">'+esc(pickLabel(b.pickedBy))+'</span>':'')+
     (b.pages?'<span class="tag">'+b.pages+' pages</span>':'')+
     (b.genres||[]).map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div>';
 }
@@ -1861,8 +1996,7 @@ function readView(m){
       '<div class="plan-row">'+coverMarkup(t)+
       '<div class="tbr-book"><p class="card-title">'+esc(t.title)+'</p>'+
         (t.author?'<p class="card-author">'+esc(t.author)+'</p>':'')+
-        (t.addedBy?'<p class="tbr-who" style="color:'+readerColor(t.addedBy)+'">'+
-          esc(member(t.addedBy).name)+"'s suggestion</p>":'')+'</div>'+
+        tbrMeta(t)+'</div>'+
       '<button class="btn primary" data-act="tbr-add" data-id="'+esc(t.id)+'">Add book</button></div>').join('');
   }
   html += '<div class="section-label">Top books of the month</div>';
@@ -1919,9 +2053,7 @@ function editView(m){
       '<label class="field"><span>Goodreads average</span><input type="number" step="0.01" min="0" max="5" data-f="'+p+'.goodreads" value="'+esc(b.goodreads==null?'':b.goodreads)+'"></label>'+
       '<label class="field"><span>Pages</span><input type="number" step="1" min="0" data-f="'+p+'.pages" value="'+esc(b.pages==null?'':b.pages)+'"></label>'+
       '<label class="field"><span>Whose pick</span><select data-f="'+p+'.pickedBy">'+
-        '<option value="">Not recorded</option>'+
-        DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(b.pickedBy===x.id?' selected':'')+'>'+
-          esc(memberLabel(x.id))+'</option>').join('')+'</select></label>'+
+        pickOptions(b.pickedBy, 'Not recorded')+'</select></label>'+
       '</div>'+coverField(p, b)+'<div class="row" style="margin-top:.85rem">'+
       DATA.members.map(x=>'<label class="field'+mineCls(x.id)+'"><span style="color:'+readerColor(x.id)+'">'+
         esc(memberLabel(x.id))+"'s score"+(me===x.id?' (you)':'')+'</span><input type="number" step="0.25" min="0" max="5" data-f="'+p+'.scores.'+
@@ -2052,7 +2184,8 @@ function wireMonthSheet(m){
 
 /* ================= wrapped ================= */
 function statsFor(){
-  const s = { books:0, pages:0, byMember:{}, gaps:[], genres:{}, grDelta:[], picks:{} };
+  const s = { books:0, pages:0, byMember:{}, gaps:[], genres:{}, grDelta:[], picks:{},
+    mutual:{n:0, room:[], best:null, worst:null} };
   DATA.members.forEach(x=>{
     s.byMember[x.id]={scores:[],pages:0,best:null,count:0};
     s.picks[x.id]={n:0, room:[], best:null, worst:null};
@@ -2078,10 +2211,10 @@ function statsFor(){
         if (bom.pages) mm.pages += bom.pages;
         if (!mm.best || v>mm.best.score) mm.best = {title:bom.title, score:v};
       });
-      if (bom.pickedBy && s.picks[bom.pickedBy]){
+      const pk = bom.pickedBy===MUTUAL ? s.mutual : s.picks[bom.pickedBy];
+      if (bom.pickedBy && pk){
         const got = vals.filter(v=>v!=null);
         const room = got.reduce((a,c)=>a+c,0)/got.length;
-        const pk = s.picks[bom.pickedBy];
         pk.n++; pk.room.push(room);
         const entry = {title:bom.title, month:m.name, room:room};
         if (!pk.best  || room > pk.best.room)  pk.best  = entry;
@@ -2169,6 +2302,18 @@ function renderWrapped(){
         '</div>';
     }).join('')+'</div>';
 
+  // one card of pick stats; used for each of you and for the picks you made together
+  const pickCard = (title, color, pk) => {
+    const a = avg(pk.room);
+    return '<div class="duel-card"><h5 style="color:'+color+'">'+title+'</h5>'+
+      '<div class="duel-row"><span>Books chosen</span><span>'+pk.n+'</span></div>'+
+      '<div class="duel-row"><span>Room average</span><span>'+(a==null?'—':a.toFixed(2))+'/5</span></div>'+
+      (pk.best?'<div class="duel-row"><span>Best call</span><span>'+esc(pk.best.title)+
+        ' · '+pk.best.room.toFixed(2)+'</span></div>':'')+
+      (pk.worst && pk.n>1?'<div class="duel-row"><span>Worst call</span><span>'+esc(pk.worst.title)+
+        ' · '+pk.worst.room.toFixed(2)+'</span></div>':'')+
+      '</div>';
+  };
   const pickers = DATA.members.filter(x=>s.picks[x.id].n>0);
   if (pickers.length){
     const scoreOf = id => avg(s.picks[id].room);
@@ -2184,22 +2329,14 @@ function renderWrapped(){
           : esc(member(lead.id).name)+"'s picks average "+gap.toFixed(2)+
             ' points higher across the room.')+'</p></div>';
     }
-    html += '<div class="duel">'+ pickers.map(x=>{
-      const pk = s.picks[x.id], a = avg(pk.room);
-      return '<div class="duel-card"><h5 style="color:'+readerColor(x.id)+'">'+
-        esc(memberLabel(x.id))+"'s picks</h5>"+
-        '<div class="duel-row"><span>Books chosen</span><span>'+pk.n+'</span></div>'+
-        '<div class="duel-row"><span>Room average</span><span>'+(a==null?'—':a.toFixed(2))+'/5</span></div>'+
-        (pk.best?'<div class="duel-row"><span>Best call</span><span>'+esc(pk.best.title)+
-          ' · '+pk.best.room.toFixed(2)+'</span></div>':'')+
-        (pk.worst && pk.n>1?'<div class="duel-row"><span>Worst call</span><span>'+esc(pk.worst.title)+
-          ' · '+pk.worst.room.toFixed(2)+'</span></div>':'')+
-        '</div>';
-    }).join('') +'</div>';
+    html += '<div class="duel">'+ pickers.map(x=>
+      pickCard(esc(memberLabel(x.id))+"'s picks", readerColor(x.id), s.picks[x.id])).join('')+
+      (s.mutual.n ? pickCard('Mutual picks', 'var(--gold)', s.mutual) : '')+'</div>';
   } else {
     html += '<div class="section-label">Who picks better</div>'+
-      '<p class="empty-note">No picks attributed yet. Open a month, hit edit, and set '+
-      '“Whose pick” on the book of the month — the tally builds from there.</p>';
+      (s.mutual.n ? '<div class="duel">'+pickCard('Mutual picks', 'var(--gold)', s.mutual)+'</div>'
+        : '<p class="empty-note">No picks attributed yet. Open a month, hit edit, and set '+
+          '“Whose pick” on the book of the month — the tally builds from there.</p>');
   }
 
   if (genres.length){
