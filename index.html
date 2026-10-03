@@ -568,6 +568,38 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
 .genre-row .gn{flex:1}
 .genre-row .gc{color:var(--fg-dim)}
 
+/* ---------- scrollbars in the theme's colours ----------
+   This restyles the scrollbar on computers. Phones draw their own thin one that fades away
+   and cannot be restyled; "color-scheme" (set in applyTheme) makes that one light on dark pages. */
+::-webkit-scrollbar{width:12px;height:12px}
+::-webkit-scrollbar-track{background:transparent}
+html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{background:var(--bg-2)}   /* the page's own scrollbar (browsers differ on which of the two they ask) */
+::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--fg) 32%,var(--bg));border-radius:99px;
+  border:3px solid transparent;background-clip:padding-box}      /* the see-through border is the gap round the thumb */
+::-webkit-scrollbar-thumb:hover{background-color:var(--accent)}
+::-webkit-scrollbar-corner{background:transparent}
+/* Firefox has no ::-webkit-scrollbar, it takes two colours instead: thumb, then track */
+@supports not selector(::-webkit-scrollbar){
+  *{scrollbar-color:color-mix(in srgb,var(--fg) 32%,var(--bg)) transparent}
+  html{scrollbar-color:color-mix(in srgb,var(--fg) 32%,var(--bg)) var(--bg-2)}
+}
+
+/* ---------- switching between Months / List / TBR ----------
+   setLayout() puts .view-in on the view that has just appeared, so it fades up instead of popping in. */
+.view-in{animation:view-in .3s ease-out}
+@keyframes view-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- genre tags ----------
+   Every genre has a colour of its own (see GENRE_COLORS in the script). On each tag, --g is that
+   colour and --gi is a version of it that is easy to read on the colours in use right now. */
+.tag.genre{color:var(--gi,color-mix(in srgb,var(--g) 55%,var(--fg)));
+  border-color:color-mix(in srgb,var(--g) 55%,transparent);background:color-mix(in srgb,var(--g) 15%,transparent)}
+.tag.sm{font-size:.7rem;padding:.1rem .5rem}
+.tags.tight{gap:.3rem;margin-top:.45rem}
+.gtags{display:flex;flex-wrap:wrap;gap:.25rem}
+.tbr-who{align-items:center}
+.tbr-who .tag{margin:.15rem 0}
+
 /* ---------- colors panel ---------- */
 .panel{position:fixed;top:0;right:0;bottom:0;width:min(390px,100%);z-index:60;background:var(--bg);
   border-left:1px solid var(--rule);overflow-y:auto;padding:1.5rem 1.5rem 4rem;
@@ -687,6 +719,7 @@ th[aria-sort=ascending] .arrows .up,th[aria-sort=descending] .arrows .dn{opacity
   .books .mfull{display:none}
   .books .mabbr{display:inline}
   .books .c-type,.books .c-genres{white-space:nowrap;min-width:0}
+  .books .gtags{flex-wrap:nowrap}
 
   .big-grid{grid-template-columns:1fr 1fr;gap:.7rem}
   .bignum{padding:.85rem}
@@ -905,7 +938,7 @@ function blankYear(y, from){
 /* A shared book ("read together"). A month keeps a LIST of these in m.boms,
    so one month can hold one book, two, or as many as you got through. */
 function newBom(init){
-  return Object.assign({ title:'', author:'', goodreads:null, cover:'', pages:null, genres:[],
+  return Object.assign({ title:'', author:'', goodreads:null, cover:'', pages:null, genres:[], mainGenre:'',
     pickedBy:'', scores:{}, quotes:Object.fromEntries(DATA.members.map(x=>[x.id,[]])) }, init||{});
 }
 const bookKey = b => (String(b.title||'')+'|'+String(b.author||'')).trim().toLowerCase();
@@ -915,6 +948,7 @@ function tidyBom(b, members){
   b.cover = b.cover || '';
   b.pages = num(b.pages);
   b.genres = cleanGenres(Array.isArray(b.genres) ? b.genres : []);
+  b.mainGenre = tidyMainGenre(b.mainGenre);      // '' means: use the automatic genres above
   b.scores = b.scores || {};
   b.pickedBy = b.pickedBy || '';
   const q = b.quotes || {};
@@ -953,6 +987,7 @@ function migrate(d){
       b.cover = b.cover || '';
       b.pages = num(b.pages);
       b.genres = cleanGenres(Array.isArray(b.genres) ? b.genres : []);
+      b.mainGenre = tidyMainGenre(b.mainGenre);
       if (b.quote !== undefined){
         if (!Array.isArray(b.quotes)) b.quotes = b.quote ? [b.quote] : [];
         delete b.quote;
@@ -1133,6 +1168,129 @@ function cleanGenres(cats){
   }));
   return out.slice(0,3);
 }
+
+/* ---------- main genre + genre colours ----------
+   The lookup guesses up to three genres per book and sometimes guesses badly. "Main genre" in a
+   book's edit form overrules it: pick one and that book shows just that genre everywhere (tags,
+   list, search, Wrapped). Leave it on Automatic and the guesses are used. */
+// The choices in the "Main genre" dropdown, in this order. Add, remove or reorder freely.
+const GENRE_CHOICES = ['Fantasy','Romantasy','Romance','Dark Romance','Science Fiction','Dystopian','Horror',
+  'Thriller','Mystery','Crime','Paranormal','Gothic','Historical Fiction','Literary Fiction','Contemporary',
+  'Classics','Young Adult','Adventure','Magical Realism','LitRPG','Humor','Graphic Novel','Short Stories',
+  'Poetry','Memoir','Biography','True Crime','History','Science','Philosophy','Self-Help','Nonfiction'];
+const GENRE_OTHER = '__other__';          // the "Something else…" line at the bottom of the dropdown
+
+// A colour for every genre. Each line is: words to look for in the genre's name, then the colour.
+// The first line that matches wins, which is why "dark romance" sits above plain romance.
+// To recolour a genre change the code after it; to add one, add a line.
+const GENRE_COLORS = [
+  [/romantasy|fantasy romance|romantic fantasy/,                    '#d65bd6'],   // orchid
+  [/dark romance/,                                                  '#b3154f'],   // wine
+  [/sci(ence)?[\s-]?fi|space|cyberpunk|alien|time travel|robot/,    '#19b5ff'],   // neon blue
+  [/dystop|apocalyp/,                                               '#f08a1c'],   // amber
+  [/horror|zombie|monster/,                                         '#dc143c'],   // crimson
+  [/thriller|suspense|spy|espionage/,                               '#ff5a36'],   // orange-red
+  [/litrpg|gamelit/,                                                '#8fd400'],   // lime
+  [/true crime|memoir|biograph|essay|histor(y|ies)$|^science$|psycholog|philosoph|politic|business|self.?help|non.?fiction|nature|travel|religio/,
+                                                                    '#3aa68d'],   // sea green: the real-world shelf
+  [/myster|crime|detective|noir|murder/,                            '#6f7dff'],   // indigo
+  [/fantasy|magic|dragon|fairy|fae|witch|wizard|myth/,              '#9b6bff'],   // violet
+  [/romanc|romantic|love/,                                          '#ff5c9a'],   // pink
+  [/gothic|paranormal|supernatural|ghost|vampire|werewol|occult/,   '#b04a9e'],   // plum
+  [/histor|war|military/,                                           '#c08a3e'],   // bronze
+  [/classic/,                                                       '#c9a227'],   // old gold
+  [/adventure|action|survival|western|pirate|sea stories/,          '#3fb950'],   // green
+  [/humou?r|comed|satir/,                                           '#f2c200'],   // yellow
+  [/graphic novel|comic|manga/,                                     '#ff8a5c'],   // coral
+  [/poet/,                                                          '#e58fb0'],   // rose
+  [/young adult|\bya\b|teen|children|juvenile|coming of age/,       '#22c7b0'],   // turquoise
+  [/literary|contemporary|drama|family|friendship|domestic|short stor/, '#6fa3c7']  // slate blue
+];
+const isHex = v => /^#[0-9a-f]{6}$/i.test(String(v||''));
+// p of colour a, the rest colour b: mixHex('#ff0000','#ffffff',.25) is a quarter red, three quarters white
+function mixHex(a, b, p){
+  const x = parseInt(a.slice(1),16), y = parseInt(b.slice(1),16);
+  return '#'+[16,8,0].map(sh=>Math.round((x>>sh&255)*p + (y>>sh&255)*(1-p)).toString(16).padStart(2,'0')).join('');
+}
+function hslHex(h, sat, lig){
+  const a = sat*Math.min(lig, 1-lig);
+  const f = n => { const k = (n+h/30)%12;
+    return Math.round(255*(lig - a*Math.max(-1, Math.min(k-3, 9-k, 1)))).toString(16).padStart(2,'0'); };
+  return '#'+f(0)+f(8)+f(4);
+}
+// how far apart two colours are in lightness: 1 = identical, 21 = black on white, 4.5+ = comfortable to read
+function contrast(a, b){
+  const x = luminance(a)+.05, y = luminance(b)+.05;
+  return x>y ? x/y : y/x;
+}
+const genreColorMemo = {};
+function genreColor(name){
+  const key = String(name||'').toLowerCase().trim();
+  if (genreColorMemo[key]) return genreColorMemo[key];
+  const hit = GENRE_COLORS.find(g=>g[0].test(key));
+  let c = hit && hit[1];
+  if (!c){                    // a genre that is not in the list still gets a colour, and always the same one
+    let h = 0;
+    for (const ch of key) h = (h*31 + ch.charCodeAt(0)) % 360;
+    c = hslHex(h, .58, .58);
+  }
+  return genreColorMemo[key] = c;
+}
+// The colour of the words on a tag: the genre's own colour where that is easy to read on the
+// colours in use, otherwise nudged toward the page's text colour until it is.
+function genreInk(c){
+  const t = activeTheme(), bg = t['--bg'], fg = t['--fg'];
+  if (!isHex(bg) || !isHex(fg)) return '';
+  // what sits behind the words: the tag's own faint tint, over the page and over the lighter panels
+  const backs = [bg, mixHex(bg, fg, .9)].map(b=>mixHex(c, b, .15));
+  for (let i=10; i>0; i--){
+    const ink = mixHex(c, fg, i/10);
+    if (backs.every(b=>contrast(ink, b) >= 4.5)) return ink;
+  }
+  return fg;
+}
+// what a book shows as its genre(s): the one you picked, otherwise the automatic ones
+const genresOf = b => b.mainGenre ? [b.mainGenre] : (b.genres||[]);
+function genreTag(name, small){
+  const c = genreColor(name), ink = genreInk(c);
+  return '<span class="tag genre'+(small?' sm':'')+'" style="--g:'+c+(ink?';--gi:'+ink:'')+'">'+esc(name)+'</span>';
+}
+const genreTags = (b, small, max) => genresOf(b).slice(0, max||3).map(g=>genreTag(g, small)).join('');
+
+// tidies whatever was picked or typed; a name that is on the list takes the list's spelling
+function tidyMainGenre(v){
+  const t = String(v==null ? '' : v).replace(/\s+/g,' ').trim().slice(0,30);
+  if (!t || t===GENRE_OTHER) return '';
+  return GENRE_CHOICES.find(n=>n.toLowerCase()===t.toLowerCase()) || t;
+}
+// the dropdown's entries: the list above, then anything you have typed yourselves and this book's automatic ones
+function genreChoices(book){
+  const seen = new Set(GENRE_CHOICES.map(n=>n.toLowerCase())), extra = [];
+  const add = n => { n = tidyMainGenre(n); if (n && !seen.has(n.toLowerCase())){ seen.add(n.toLowerCase()); extra.push(n); } };
+  (DATA ? allBooks() : []).concat(TBR.items).forEach(b=>add(b.mainGenre));
+  (book.genres||[]).forEach(add);
+  add(book.mainGenre);
+  return GENRE_CHOICES.concat(extra.sort((a,b)=>a.localeCompare(b)));
+}
+// the "Main genre" dropdown used in every edit form; attr is the form's own marker (data-f=… or data-te=…)
+function genreField(attr, book){
+  const cur = tidyMainGenre(book.mainGenre), auto = book.genres||[];
+  return '<label class="field"><span>Main genre</span><select '+attr+' data-genre-pick>'+
+    '<option value="">Automatic'+(auto.length ? ' ('+esc(auto.join(', '))+')' : '')+'</option>'+
+    genreChoices(book).map(n=>'<option'+(n===cur?' selected':'')+'>'+esc(n)+'</option>').join('')+
+    '<option value="'+GENRE_OTHER+'">Something else…</option></select></label>';
+}
+// choosing "Something else…" swaps the dropdown for a box to type your own genre in
+document.addEventListener('change', e=>{
+  const sel = e.target && e.target.closest ? e.target.closest('select[data-genre-pick]') : null;
+  if (!sel || sel.value !== GENRE_OTHER) return;
+  const box = document.createElement('input');
+  box.type = 'text'; box.maxLength = 30; box.placeholder = 'Type a genre'; box.autocomplete = 'off';
+  if (sel.dataset.f)  box.dataset.f  = sel.dataset.f;
+  if (sel.dataset.te) box.dataset.te = sel.dataset.te;
+  sel.replaceWith(box);
+  box.focus();
+});
 async function lookupBook(title, author){
   if (!title) return {covers:[],pages:null,genres:[]};
   const key = (title+'|'+(author||'')).toLowerCase();
@@ -1169,7 +1327,7 @@ async function lookupBook(title, author){
 async function enrichBooks(opts){
   const announce = opts && opts.announce;
   const tbrItems = TBR.items.slice();
-  const todo = allBooks().concat(tbrItems).filter(b=>b.title && (!b.cover || b.pages==null || !b.genres.length));
+  const todo = allBooks().concat(tbrItems).filter(b=>b.title && (!b.cover || b.pages==null || !(b.genres.length || b.mainGenre)));
   if (!todo.length){ if(announce) toast('Every book already has cover, pages and genres'); return; }
   if (announce) toast('Looking up '+todo.length+' book'+(todo.length>1?'s':'')+'…');
   let changed = 0, tbrChanged = false;
@@ -1213,6 +1371,7 @@ function tidyTbr(d){
     plan: planParts(t.plan) ? t.plan : '',
     cover: String(t.cover||''), pages: num(t.pages),
     genres: cleanGenres(Array.isArray(t.genres) ? t.genres : []),
+    mainGenre: tidyMainGenre(t.mainGenre),
     addedAt: String(t.addedAt||'')
   })) };
 }
@@ -1244,7 +1403,7 @@ async function addTbr(){
   if (!title){ toast('Give it a title'); $('#tbr-title').focus(); return; }
   const item = { id:newId(), title:title, author:$('#tbr-author').value.trim(),
     addedBy:$('#tbr-who').value||MUTUAL, plan: planParts($('#tbr-month').value) ? $('#tbr-month').value : '',
-    cover:'', pages:num($('#tbr-pages').value), genres:[], addedAt:new Date().toISOString() };
+    cover:'', pages:num($('#tbr-pages').value), genres:[], mainGenre:'', addedAt:new Date().toISOString() };
   TBR.items.push(item);
   $('#tbr-title').value = ''; $('#tbr-author').value = ''; $('#tbr-pages').value = ''; $('#tbr-title').focus();
   saveTbr(); toast(item.title+' is on the TBR');
@@ -1305,7 +1464,7 @@ async function confirmTbr(id){
   tbrBusy.add(id);
   try {
     await addBookToMonth(p.year, p.no, { title:t.title, author:t.author, cover:t.cover,
-      pages:t.pages, genres:t.genres.slice(), pickedBy:t.addedBy });
+      pages:t.pages, genres:(t.genres||[]).slice(), mainGenre:tidyMainGenre(t.mainGenre), pickedBy:t.addedBy });
   } catch(e){
     tbrBusy.delete(id);
     return toast('Could not add it — check your connection');
@@ -1393,17 +1552,17 @@ function renderTbr(){
 
 // the line under a TBR book: who picked it (in their colour) and how long it is
 function tbrMeta(t){
-  const lab = pickLabel(t.addedBy);
-  if (!lab && !t.pages) return '';
+  const lab = pickLabel(t.addedBy), g = genreTags(t, true, 1);     // one genre is plenty on a row this small
+  if (!lab && !t.pages && !g) return '';
   return '<p class="tbr-who">'+(lab?'<b style="color:'+pickColor(t.addedBy)+'">'+pickIcon(t.addedBy)+esc(lab)+'</b>':'')+
-    (t.pages?'<span>'+t.pages+' pages</span>':'')+'</p>';
+    (t.pages?'<span>'+t.pages+' pages</span>':'')+g+'</p>';
 }
 
 /* ---------- editing a TBR book ----------
    Pressing Edit opens a small form under the row. What you type goes into tbrEdit (a draft),
    NOT into the book, until you press Save changes; Cancel throws the draft away. Keeping it
    as a draft also means the form survives if the list redraws (say the other person adds a book). */
-let tbrEdit = null;        // { id, title, author, pages, addedBy, cover, picks } while a form is open
+let tbrEdit = null;        // { id, title, author, pages, addedBy, mainGenre, genres, cover, picks } while a form is open
 
 function tbrPicks(ed){
   if (!ed.picks) return '';
@@ -1420,6 +1579,7 @@ function tbrEditor(ed){
     '<label class="field"><span>Author</span><input type="text" data-te="author" value="'+esc(ed.author)+'"></label>'+
     '<label class="field"><span>Pages</span><input type="number" min="0" step="1" data-te="pages" value="'+esc(ed.pages==null?'':ed.pages)+'"></label>'+
     '<label class="field"><span>Suggested by</span><select data-te="addedBy">'+pickOptions(ed.addedBy)+'</select></label>'+
+    genreField('data-te="mainGenre"', ed)+
     '</div><div class="cover-row"><label class="field"><span>Cover image URL</span>'+
     '<input type="url" data-te="cover" value="'+esc(ed.cover)+'" placeholder="Paste one, or hit Browse covers"></label>'+
     '<button class="btn" type="button" data-te-find>Browse covers</button>'+
@@ -1431,7 +1591,8 @@ function tbrEditor(ed){
 function toggleTbrEdit(id){
   const t = TBR.items.find(x=>x.id===id);
   tbrEdit = (!t || (tbrEdit && tbrEdit.id===id)) ? null
-    : { id:t.id, title:t.title, author:t.author, pages:t.pages, addedBy:t.addedBy, cover:t.cover, picks:null };
+    : { id:t.id, title:t.title, author:t.author, pages:t.pages, addedBy:t.addedBy,
+        mainGenre:t.mainGenre||'', genres:t.genres||[], cover:t.cover, picks:null };
   renderTbr();
   const first = $('#tbr-list .tbr-editor [data-te="title"]');
   if (first) first.scrollIntoView({block:'nearest'});
@@ -1470,6 +1631,7 @@ function saveTbrEdit(){
   t.author = String(tbrEdit.author||'').trim();
   t.pages = num(tbrEdit.pages);
   t.addedBy = tbrEdit.addedBy || MUTUAL;
+  t.mainGenre = tidyMainGenre(tbrEdit.mainGenre);
   t.cover = String(tbrEdit.cover||'').trim();
   tbrEdit = null;
   saveTbr(); toast('Saved');
@@ -1481,7 +1643,8 @@ const intoDraft = e => {
   const el = e.target.closest('[data-te]');
   if (!el || !tbrEdit) return;
   const k = el.dataset.te;
-  tbrEdit[k] = k==='pages' ? (el.value==='' ? null : Number(el.value)) : el.value;
+  tbrEdit[k] = k==='pages' ? (el.value==='' ? null : Number(el.value))
+    : (k==='mainGenre' && el.value===GENRE_OTHER) ? '' : el.value;
   if (k==='cover') setTbrDraftCover(el.value.trim());        // pasted a link: show it straight away
 };
 $('#tbr-list').addEventListener('input', intoDraft);
@@ -1636,11 +1799,24 @@ function scorePass(v, f){
   return v >= Number(f);
 }
 
+const VIEW_BOX = { cards:'#grid', list:'#listview', tbr:'#tbrview' };
 function setLayout(next){
+  const was = layout;
   layout = (next==='list' || next==='tbr') ? next : 'cards';
   try { localStorage.setItem('bookclub-layout', layout); } catch(e){}
   paintLayout();
+  if (layout !== was){
+    // fade the view that just appeared (the .view-in rule in the styles does the moving)
+    const box = $(VIEW_BOX[layout]);
+    Object.values(VIEW_BOX).forEach(sel=>$(sel).classList.remove('view-in'));   // also clears one cut short by a quick second tap
+    void box.offsetWidth;                 // makes the browser notice, so the fade can run again
+    box.classList.add('view-in');
+  }
 }
+// once the fade has finished, take the marker off again
+Object.values(VIEW_BOX).forEach(sel=>$(sel).addEventListener('animationend', e=>{
+  if (e.animationName==='view-in') e.currentTarget.classList.remove('view-in');
+}));
 function paintLayout(){
   $('#grid').hidden = layout!=='cards';
   $('#listview').hidden = layout!=='list';
@@ -1690,7 +1866,7 @@ function listRows(){
     });
   });
   // "hay" is the text the search box looks through
-  out.forEach(r=>{ r.hay = [r.book.title, r.book.author].concat(r.book.genres||[]).join(' ').toLowerCase(); });
+  out.forEach(r=>{ r.hay = [r.book.title, r.book.author].concat(genresOf(r.book)).join(' ').toLowerCase(); });
   return out;
 }
 
@@ -1782,7 +1958,7 @@ function paintList(){
     '<td class="num'+(r.pages?'':' none')+'">'+(r.pages ? r.pages.toLocaleString() : '—')+'</td>'+
     '<td class="c-type">'+esc(r.typeLabel)+
       (r.sub?'<small style="color:'+r.subColor+'">'+(r.subIcon||'')+esc(r.sub)+'</small>':'')+'</td>'+
-    '<td class="c-genres">'+esc((r.book.genres||[]).join(', '))+'</td></tr>').join('')
+    '<td class="c-genres"><div class="gtags">'+genreTags(r.book, true)+'</div></td></tr>').join('')
     : '<tr class="none"><td colspan="'+cols.length+'">'+(all.length
         ? 'No books match those filters. <button class="link" data-clear-list="1">Clear filters</button>'
         : 'No books logged for '+YEAR+' yet.')+'</td></tr>';
@@ -1971,12 +2147,12 @@ function quoteGroup(list, who, color){
 }
 
 function bookTags(b){
-  if (!(b.pages || (b.genres||[]).length || b.pickedBy)) return '';
+  if (!(b.pages || genresOf(b).length || b.pickedBy)) return '';
   return '<div class="tags">'+
     (pickLabel(b.pickedBy)?'<span class="tag" style="color:'+pickColor(b.pickedBy)+
       ';border-color:'+pickColor(b.pickedBy)+'">'+pickIcon(b.pickedBy)+esc(pickLabel(b.pickedBy))+'</span>':'')+
     (b.pages?'<span class="tag">'+b.pages+' pages</span>':'')+
-    (b.genres||[]).map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div>';
+    genreTags(b)+'</div>';
 }
 function scoreLine(b){
   const s=b.scores||{}, g=fmtScore(b.goodreads);
@@ -2030,6 +2206,7 @@ function readView(m){
         '<p class="top-title">'+esc(b.title)+'</p>'+
         (b.author?'<p class="top-meta">'+esc(b.author)+'</p>':'')+
         (b.pages?'<p class="top-meta">'+b.pages+' pages</p>':'')+
+        (genresOf(b).length?'<div class="tags tight">'+genreTags(b, true)+'</div>':'')+
         (b.quotes||[]).map(q=>'<div class="quote" style="--qc:'+c+'"><p>'+esc(q)+'</p></div>').join('')+
       '</div></div>';
     }).join('')+'</div>';
@@ -2074,6 +2251,7 @@ function editView(m){
       '<label class="field"><span>Pages</span><input type="number" step="1" min="0" data-f="'+p+'.pages" value="'+esc(b.pages==null?'':b.pages)+'"></label>'+
       '<label class="field"><span>Whose pick</span><select data-f="'+p+'.pickedBy">'+
         pickOptions(b.pickedBy, 'Not recorded')+'</select></label>'+
+      genreField('data-f="'+p+'.mainGenre"', b)+
       '</div>'+coverField(p, b)+'<div class="row" style="margin-top:.85rem">'+
       DATA.members.map(x=>'<label class="field'+mineCls(x.id)+'"><span style="color:'+readerColor(x.id)+'">'+
         esc(memberLabel(x.id))+"'s score"+(me===x.id?' (you)':'')+'</span><input type="number" step="0.25" min="0" max="5" data-f="'+p+'.scores.'+
@@ -2097,6 +2275,7 @@ function editView(m){
     '<label class="field"><span>Author</span><input type="text" data-f="top.'+i+'.author" value="'+esc(b.author||'')+'"></label>'+
     '<label class="field"><span>Score</span><input type="number" step="0.25" min="0" max="5" data-f="top.'+i+'.score" value="'+esc(b.score==null?'':b.score)+'"></label>'+
     '<label class="field"><span>Pages</span><input type="number" step="1" min="0" data-f="top.'+i+'.pages" value="'+esc(b.pages==null?'':b.pages)+'"></label>'+
+    genreField('data-f="top.'+i+'.mainGenre"', b)+
     '</div>'+coverField('top.'+i, b)+
     quoteEditor('top.'+i+'.quotes', b.quotes, 'Favourite quotes', me===b.member)+'</div>').join('');
 
@@ -2131,6 +2310,7 @@ function commitFields(m){
     });
   });
   (m.top||[]).forEach(b=>{ b.quotes = (b.quotes||[]).map(s=>String(s||'').trim()).filter(Boolean); });
+  (m.boms||[]).concat(m.top||[]).forEach(b=>{ b.mainGenre = tidyMainGenre(b.mainGenre); });
 }
 
 function wireMonthSheet(m){
@@ -2144,7 +2324,7 @@ function wireMonthSheet(m){
     if (act==='add-bom') (m.boms=m.boms||[]).push(newBom({pickedBy: me||''}));
     if (act==='remove-bom') m.boms.splice(Number(btn.dataset.i),1);
     if (act==='add-top') (m.top=m.top||[]).push({member: me||DATA.members[0].id, title:'', author:'',
-      score:null, cover:'', pages:null, genres:[], quotes:[]});
+      score:null, cover:'', pages:null, genres:[], mainGenre:'', quotes:[]});
     if (act==='remove-top') m.top.splice(Number(btn.dataset.i),1);
     render(); renderSheet();
     // a freshly added book: jump to it instead of leaving you at the top of the page
@@ -2218,7 +2398,7 @@ function statsFor(){
       if (!vals.some(v=>v!=null)) return;          // nobody has scored this one yet
       s.books++;
       if (bom.pages) s.pages += bom.pages;
-      (bom.genres||[]).forEach(g=>{
+      genresOf(bom).forEach(g=>{
         s.genres[g] = s.genres[g] || {n:0, sum:0, c:0};
         s.genres[g].n++;
         vals.forEach(v=>{ if(v!=null){ s.genres[g].sum+=v; s.genres[g].c++; } });
@@ -2251,7 +2431,7 @@ function statsFor(){
       if (v==null || !b.title) return;
       s.books++;
       if (b.pages) s.pages += b.pages;
-      (b.genres||[]).forEach(g=>{
+      genresOf(b).forEach(g=>{
         s.genres[g] = s.genres[g] || {n:0,sum:0,c:0};
         s.genres[g].n++; s.genres[g].sum+=v; s.genres[g].c++;
       });
@@ -2365,7 +2545,7 @@ function renderWrapped(){
     html += genres.map(([g,v])=>{
       const a = v.c ? (v.sum/v.c) : null;
       return '<div class="genre-row"><span class="gn">'+esc(g)+
-        '<div class="bar"><i style="width:'+Math.round(v.n/top*100)+'%"></i></div></span>'+
+        '<div class="bar"><i style="width:'+Math.round(v.n/top*100)+'%;background:'+genreColor(g)+'"></i></div></span>'+
         '<span class="gc">'+v.n+' book'+(v.n>1?'s':'')+(a?' · '+a.toFixed(1)+'/5':'')+'</span></div>';
     }).join('');
   }
@@ -2537,6 +2717,8 @@ function applyTheme(){
   root.setProperty('--on-gold',   onColor(t['--gold']));
   root.setProperty('--on-a',      onColor(t['--reader-a']));
   root.setProperty('--on-b',      onColor(t['--reader-b']));
+  // lets the browser match the bits it draws itself (dropdown lists, the phone's scroll indicator)
+  root.setProperty('color-scheme', luminance(t['--bg']) > .35 ? 'light' : 'dark');
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', t['--bg']);
   themeMonth = new Date().getMonth();
