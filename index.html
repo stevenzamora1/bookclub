@@ -194,7 +194,6 @@ img{display:block;max-width:100%}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--fg-dim);display:inline-block;
   margin-right:.5rem;vertical-align:middle}
 .dot.live{background:#3fbf6b}.dot.saving{background:var(--gold)}.dot.err{background:var(--accent)}
-.who-pick{display:flex;gap:.4rem;margin-left:auto;align-items:center;flex-wrap:wrap}
 .chip{padding:.3rem .8rem;border:1px solid var(--rule);border-radius:99px;font-size:.82rem;
   font-weight:500;color:var(--fg);transition:border-color .15s,background .15s}
 .chip:hover{border-color:var(--fg-dim)}
@@ -657,7 +656,6 @@ html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{background:var(--bg-
     text-align:center;padding:.55rem .85rem}
   .chip{min-height:38px;display:inline-flex;align-items:center;padding:.3rem .85rem}
   .yr{width:40px;height:40px;font-size:1.1rem}
-  .who-pick{margin-left:0;width:100%}
   .viewbar > span:first-child{display:none}
   .sky .fl.hide-s{display:none}                 /* a small screen gets ten shapes instead of sixteen */
   #btn-wrapped{display:none}
@@ -743,7 +741,6 @@ html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{background:var(--bg-
   <div class="statusbar">
     <span class="status" id="status"><span class="dot"></span>Starting up</span>
     <span class="status" id="lastedit"></span>
-    <div class="who-pick" id="who-pick"><span>You are</span></div>
   </div>
 
   <header class="masthead">
@@ -1039,9 +1036,21 @@ async function initSync(){
       setStatus('err','Turn on Anonymous sign-in in Firebase Authentication');
     }
 
-    FB = { fs: fs, db: fs.getFirestore(application) };
-    await loadYear(YEAR);
+    // Keep a copy of the data in the browser, so the next visit can show the
+    // last-known books instantly while the live copy is fetched in the background.
+    let db;
+    try {
+      db = fs.initializeFirestore(application, {
+        localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() })
+      });
+    } catch(err){
+      console.warn('Offline cache unavailable, using memory only:', err);
+      db = fs.getFirestore(application);
+    }
+    FB = { fs: fs, db: db };
+    // Start the TBR at the same time as the year instead of waiting for the year to finish
     watchTbr();
+    await loadYear(YEAR);
   } catch(e){
     setStatus('err','Could not reach Firebase — edits stay on this device');
     LOCAL[YEAR] = migrate(JSON.parse(JSON.stringify(SEED)));
@@ -1092,7 +1101,7 @@ async function loadYear(y){
 }
 
 function afterLoad(){
-  applyTheme(); buildPanel(); syncPanelInputs(); buildWhoPicker(); render();
+  applyTheme(); buildPanel(); syncPanelInputs(); render();
   enrichBooks();
 }
 
@@ -1119,18 +1128,6 @@ function paintLastEdit(){
     : mins<1440 ? Math.round(mins/60)+' hr ago'
     : when.toLocaleDateString(undefined,{month:'short',day:'numeric'});
   $('#lastedit').textContent = 'Last edit by '+who+' · '+ago;
-}
-
-/* ================= identity ================= */
-function buildWhoPicker(){
-  const el = $('#who-pick');
-  el.innerHTML = '<span>You are</span>' + DATA.members.map(m =>
-    '<button class="chip" data-me="'+esc(m.id)+'" aria-pressed="'+(me===m.id)+
-    '" style="--c:'+readerColor(m.id)+';--oc:'+readerOn(m.id)+'">'+esc(memberLabel(m.id))+'</button>').join('');
-  el.querySelectorAll('[data-me]').forEach(b=>b.addEventListener('click',()=>{
-    me = (me===b.dataset.me) ? null : b.dataset.me;
-    buildWhoPicker(); renderTbr(); if (view) renderSheet();
-  }));
 }
 
 /* ================= book lookup ================= */
@@ -1350,6 +1347,10 @@ async function enrichBooks(opts){
 // that month as a book you are reading together.
 let TBR = { items: [] };
 let tbrRef = null;                         // where the list is saved (bookclub/tbr)
+// 'loading' until the saved list has actually arrived, 'ready' after, 'error' if Firebase refused.
+// Without this, "not loaded yet" looks exactly like "the TBR is empty".
+let tbrState = 'loading';
+const tbrReady = () => !FB || tbrState === 'ready';     // not syncing = nothing to wait for
 const tbrBusy = new Set();                 // rows whose "Add book" is still saving (stops double taps)
 
 const planKey   = (year, monthNo) => year+'-'+String(monthNo).padStart(2,'0');
@@ -1380,15 +1381,26 @@ function tidyTbr(d){
 function watchTbr(){
   if (!FB) return;
   tbrRef = FB.fs.doc(FB.db, window.COLLECTION, 'tbr');
-  FB.fs.onSnapshot(tbrRef, snap=>{
-    if (snap.metadata.hasPendingWrites) return;
-    TBR = tidyTbr(snap.exists() ? snap.data() : null);
-    if (DATA){ render(); if (view==='month' && !editing) renderSheet(); }
-  }, ()=>{});
+  FB.fs.onSnapshot(tbrRef, { includeMetadataChanges: true }, snap=>{
+    if (tbrState === 'ready' && snap.metadata.hasPendingWrites) return;   // our own save echoing back
+    // A cached copy saying "no TBR" may just mean this browser has never fetched it: wait for the server
+    if (snap.metadata.fromCache && !snap.exists()) return;
+    const fresh = tidyTbr(snap.exists() ? snap.data() : null);
+    const changed = tbrState !== 'ready' || JSON.stringify(fresh.items) !== JSON.stringify(TBR.items);
+    TBR = fresh; tbrState = 'ready';
+    if (changed && DATA){ render(); if (view==='month' && !editing) renderSheet(); }
+  }, err=>{
+    console.warn('TBR could not be loaded:', err);
+    tbrState = 'error';
+    setStatus('err', 'Could not load the TBR');
+    if (DATA) render();
+  });
 }
 async function saveTbr(){
   render(); if (view==='month' && !editing) renderSheet();
   if (!FB || !tbrRef) return;
+  // never save before the real list has arrived, or it would overwrite it with an empty one
+  if (!tbrReady()) return;
   setStatus('saving','Saving');
   try {
     // "months" is only here because the security rules refuse a document without one
@@ -1399,6 +1411,8 @@ async function saveTbr(){
 }
 
 async function addTbr(){
+  if (!tbrReady()) return toast(tbrState==='error' ? 'The TBR did not load — refresh and try again'
+                                                   : 'The TBR is still loading, one sec');
   const title = $('#tbr-title').value.trim();
   if (!title){ toast('Give it a title'); $('#tbr-title').focus(); return; }
   const item = { id:newId(), title:title, author:$('#tbr-author').value.trim(),
@@ -1509,6 +1523,12 @@ function renderTbr(){
   if (me && wSel.dataset.me !== me){ wSel.value = me; wSel.dataset.me = me; }   // default to whoever "You are"
 
   if (tbrEdit && !TBR.items.some(t=>t.id===tbrEdit.id)) tbrEdit = null;     // the book being edited is gone
+  if (!tbrReady()){
+    $('#tbr-list').innerHTML = tbrState==='error'
+      ? '<p class="empty-note">Couldn’t load the TBR. Check your connection and refresh — your list is still saved.</p>'
+      : '<p class="empty-note">Loading your TBR…</p>';
+    return;
+  }
   if (!n){
     $('#tbr-list').innerHTML = '<p class="empty-note">Nothing on the TBR yet. Add a book above, give it a month '+
       'whenever you have a plan, and press Add book on its row once you are sure.</p>';
