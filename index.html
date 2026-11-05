@@ -1733,6 +1733,9 @@ function render(){
   const scored = allBooks().filter(b=>b.title);
   const bits = ['<span><b>'+DATA.months.filter(m=>(m.boms||[]).length||(m.top||[]).length).length+'</b> months filled in</span>',
                 '<span><b>'+scored.length+'</b> books logged</span>'];
+  // how many shared books each of you finished first this year (counted only once any are recorded)
+  const finishes = DATA.months.flatMap(m=>(m.boms||[]).filter(b=>b.title && b.finishedFirst))
+    .map(b=>b.finishedFirst);
   DATA.members.forEach(m=>{
     const vals = allBooks().flatMap(b => b.scores
       ? (b.scores[m.id]!=null ? [Number(b.scores[m.id])] : [])
@@ -1740,7 +1743,11 @@ function render(){
     ).filter(n=>!isNaN(n));
     if (vals.length) bits.push('<span>'+esc(m.name)+' averages <b>'+
       (vals.reduce((a,c)=>a+c,0)/vals.length).toFixed(2)+'</b></span>');
+    if (finishes.length) bits.push('<span>🏁 '+esc(m.name)+' finished first <b>'+
+      finishes.filter(f=>f===m.id).length+'</b></span>');
   });
+  const ties = finishes.filter(f=>f===TIE).length;
+  if (ties) bits.push('<span>🏁 Finished together <b>'+ties+'</b></span>');
   $('#colophon').innerHTML = bits.join('');
 
   const today = new Date(), thisMonth = today.getMonth()+1;
