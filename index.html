@@ -907,6 +907,16 @@ const pickOptions = (current, blankLabel) =>
   '<option value="'+MUTUAL+'"'+(current===MUTUAL?' selected':'')+'>Mutual</option>'+
   DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(current===x.id?' selected':'')+'>'+
     esc(memberLabel(x.id))+'</option>').join('');
+// Who finished a shared book first: a reader's id, 'tie' (same time), or '' (not recorded).
+const TIE = 'tie';
+const firstLabel = id => id===TIE ? 'Finished together'
+  : (id && DATA.members.some(m=>m.id===id)) ? member(id).name+' finished first' : '';
+const firstColor = id => id===TIE ? 'var(--gold)' : readerColor(id);
+const firstOptions = current =>
+  '<option value="">Not recorded</option>'+
+  DATA.members.map(x=>'<option value="'+esc(x.id)+'"'+(current===x.id?' selected':'')+'>'+
+    esc(memberLabel(x.id))+'</option>').join('')+
+  '<option value="'+TIE+'"'+(current===TIE?' selected':'')+'>Same time</option>';
 // the text colour that is readable on top of that reader's colour
 const readerOn = id => DATA.members.findIndex(m=>m.id===id)===1 ? 'var(--on-b)' : 'var(--on-a)';
 const fmtScore = n => (n===''||n==null||isNaN(n)) ? null : (Math.round(Number(n)*100)/100).toString();
@@ -936,7 +946,7 @@ function blankYear(y, from){
    so one month can hold one book, two, or as many as you got through. */
 function newBom(init){
   return Object.assign({ title:'', author:'', goodreads:null, cover:'', pages:null, genres:[], mainGenre:'',
-    pickedBy:'', scores:{}, quotes:Object.fromEntries(DATA.members.map(x=>[x.id,[]])) }, init||{});
+    pickedBy:'', finishedFirst:'', scores:{}, quotes:Object.fromEntries(DATA.members.map(x=>[x.id,[]])) }, init||{});
 }
 const bookKey = b => (String(b.title||'')+'|'+String(b.author||'')).trim().toLowerCase();
 function tidyBom(b, members){
@@ -948,6 +958,7 @@ function tidyBom(b, members){
   b.mainGenre = tidyMainGenre(b.mainGenre);      // '' means: use the automatic genres above
   b.scores = b.scores || {};
   b.pickedBy = b.pickedBy || '';
+  b.finishedFirst = b.finishedFirst || '';
   const q = b.quotes || {};
   b.quotes = {};
   members.forEach(x=>{
@@ -2167,10 +2178,12 @@ function quoteGroup(list, who, color){
 }
 
 function bookTags(b){
-  if (!(b.pages || genresOf(b).length || b.pickedBy)) return '';
+  if (!(b.pages || genresOf(b).length || b.pickedBy || b.finishedFirst)) return '';
   return '<div class="tags">'+
     (pickLabel(b.pickedBy)?'<span class="tag" style="color:'+pickColor(b.pickedBy)+
       ';border-color:'+pickColor(b.pickedBy)+'">'+pickIcon(b.pickedBy)+esc(pickLabel(b.pickedBy))+'</span>':'')+
+    (firstLabel(b.finishedFirst)?'<span class="tag" style="color:'+firstColor(b.finishedFirst)+
+      ';border-color:'+firstColor(b.finishedFirst)+'">🏁 '+esc(firstLabel(b.finishedFirst))+'</span>':'')+
     (b.pages?'<span class="tag">'+b.pages+' pages</span>':'')+
     genreTags(b)+'</div>';
 }
@@ -2271,6 +2284,8 @@ function editView(m){
       '<label class="field"><span>Pages</span><input type="number" step="1" min="0" data-f="'+p+'.pages" value="'+esc(b.pages==null?'':b.pages)+'"></label>'+
       '<label class="field"><span>Whose pick</span><select data-f="'+p+'.pickedBy">'+
         pickOptions(b.pickedBy, 'Not recorded')+'</select></label>'+
+      '<label class="field"><span>Who finished first</span><select data-f="'+p+'.finishedFirst">'+
+        firstOptions(b.finishedFirst)+'</select></label>'+
       genreField('data-f="'+p+'.mainGenre"', b)+
       '</div>'+coverField(p, b)+'<div class="row" style="margin-top:.85rem">'+
       DATA.members.map(x=>'<label class="field'+mineCls(x.id)+'"><span style="color:'+readerColor(x.id)+'">'+
@@ -2405,13 +2420,23 @@ function wireMonthSheet(m){
 /* ================= wrapped ================= */
 function statsFor(){
   const s = { books:0, pages:0, byMember:{}, gaps:[], genres:{}, grDelta:[], picks:{},
-    mutual:{n:0, room:[], best:null, worst:null} };
+    mutual:{n:0, room:[], best:null, worst:null}, first:{}, firstTies:0, firstBooks:[] };
   DATA.members.forEach(x=>{
     s.byMember[x.id]={scores:[],pages:0,best:null,count:0};
     s.picks[x.id]={n:0, room:[], best:null, worst:null};
+    s.first[x.id]=0;
   });
 
   DATA.months.forEach(m=>{
+    (m.boms||[]).forEach(bom=>{
+      // who finished first is counted even before anyone scores the book
+      if (bom.title && bom.finishedFirst){
+        if (bom.finishedFirst===TIE) s.firstTies++;
+        else if (bom.finishedFirst in s.first) s.first[bom.finishedFirst]++;
+        else return;
+        s.firstBooks.push({title:bom.title, month:m.name, who:bom.finishedFirst});
+      }
+    });
     (m.boms||[]).forEach(bom=>{
       const sc = bom.scores||{};
       const vals = DATA.members.map(x=>num(sc[x.id]));
@@ -2466,6 +2491,27 @@ function statsFor(){
   return s;
 }
 
+// "Who finishes first": a race tally across the year's shared books
+function firstSection(s){
+  if (!s.firstBooks.length) return '<div class="section-label">Who finishes first</div>'+
+    '<p class="empty-note">No finishes recorded yet. Open a month, hit edit, and set '+
+    '“Who finished first” on the book of the month.</p>';
+  const ranked = DATA.members.slice().sort((a,b)=>s.first[b.id]-s.first[a.id]);
+  const lead = ranked[0], tied = ranked.length>1 && s.first[ranked[0].id]===s.first[ranked[1].id];
+  let html = '<div class="section-label">Who finishes first</div>'+
+    '<div class="duel-card" style="margin-bottom:1rem"><p class="bt" style="color:'+
+      (tied?'var(--gold)':readerColor(lead.id))+'">🏁 '+
+      (tied ? 'Neck and neck' : esc(member(lead.id).name)+' is faster')+'</p>'+
+    '<p class="empty-note">'+DATA.members.map(x=>esc(member(x.id).name)+' '+s.first[x.id])
+      .join(' · ')+(s.firstTies?' · '+s.firstTies+' finished together':'')+
+    ' — across '+s.firstBooks.length+' book'+(s.firstBooks.length>1?'s':'')+'.</p></div>';
+  html += '<div class="duel-card">'+s.firstBooks.map(f=>
+    '<div class="duel-row"><span>'+esc(f.title)+' · '+esc(f.month)+'</span>'+
+    '<span style="color:'+firstColor(f.who)+'">'+(f.who===TIE?'Together':esc(member(f.who).name))+
+    '</span></div>').join('')+'</div>';
+  return html;
+}
+
 function renderWrapped(){
   const s = statsFor();
   const avg = a => a.length ? (a.reduce((x,y)=>x+y,0)/a.length) : null;
@@ -2489,7 +2535,7 @@ function renderWrapped(){
 
   if (!s.books){
     html += '<p class="empty-note" style="margin-top:2rem">Nothing scored in '+YEAR+
-      ' yet — this fills in as you go.</p>';
+      ' yet — this fills in as you go.</p>'+firstSection(s);
     $('#sheet-inner').innerHTML = html;
     wireSimpleSheet(); return;
   }
@@ -2558,6 +2604,8 @@ function renderWrapped(){
         : '<p class="empty-note">No picks attributed yet. Open a month, hit edit, and set '+
           '“Whose pick” on the book of the month — the tally builds from there.</p>');
   }
+
+  html += firstSection(s);
 
   if (genres.length){
     html += '<div class="section-label">What you actually read</div>';
