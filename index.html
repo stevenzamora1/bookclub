@@ -2491,21 +2491,24 @@ function statsFor(){
   return s;
 }
 
-// "Who finishes first": a race tally across the year's shared books
+// "Who finishes first": a counter for each of you, then the book-by-book list
 function firstSection(s){
-  if (!s.firstBooks.length) return '<div class="section-label">Who finishes first</div>'+
+  const counter = '<div class="big-grid" style="margin-bottom:1rem">'+
+    DATA.members.map(x=>'<div class="bignum"><span class="n" style="color:'+readerColor(x.id)+'">'+
+      s.first[x.id]+'</span><span class="l">🏁 '+esc(memberLabel(x.id))+' finished first</span></div>').join('')+
+    '<div class="bignum"><span class="n" style="color:var(--gold)">'+s.firstTies+
+      '</span><span class="l">Finished together</span></div></div>';
+  let html = '<div class="section-label">Who finishes first</div>'+counter;
+  if (!s.firstBooks.length) return html+
     '<p class="empty-note">No finishes recorded yet. Open a month, hit edit, and set '+
     '“Who finished first” on the book of the month.</p>';
   const ranked = DATA.members.slice().sort((a,b)=>s.first[b.id]-s.first[a.id]);
   const lead = ranked[0], tied = ranked.length>1 && s.first[ranked[0].id]===s.first[ranked[1].id];
-  let html = '<div class="section-label">Who finishes first</div>'+
-    '<div class="duel-card" style="margin-bottom:1rem"><p class="bt" style="color:'+
-      (tied?'var(--gold)':readerColor(lead.id))+'">🏁 '+
-      (tied ? 'Neck and neck' : esc(member(lead.id).name)+' is faster')+'</p>'+
-    '<p class="empty-note">'+DATA.members.map(x=>esc(member(x.id).name)+' '+s.first[x.id])
-      .join(' · ')+(s.firstTies?' · '+s.firstTies+' finished together':'')+
-    ' — across '+s.firstBooks.length+' book'+(s.firstBooks.length>1?'s':'')+'.</p></div>';
-  html += '<div class="duel-card">'+s.firstBooks.map(f=>
+  const by = ranked.length>1 ? s.first[ranked[0].id]-s.first[ranked[1].id] : 0;
+  html += '<div class="duel-card"><p class="bt" style="color:'+
+      (tied?'var(--gold)':readerColor(lead.id))+'">'+
+      (tied ? 'Neck and neck' : esc(member(lead.id).name)+' leads by '+by)+'</p>'+
+    s.firstBooks.map(f=>
     '<div class="duel-row"><span>'+esc(f.title)+' · '+esc(f.month)+'</span>'+
     '<span style="color:'+firstColor(f.who)+'">'+(f.who===TIE?'Together':esc(member(f.who).name))+
     '</span></div>').join('')+'</div>';
