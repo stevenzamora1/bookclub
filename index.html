@@ -427,6 +427,10 @@ input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
 .menu-list button:hover,.menu-list button:focus-visible{background:var(--bg-3)}
 
 /* ---------- TBR ---------- */
+.t5-toggle{display:inline-flex;align-items:center;gap:.4rem;margin-left:.4rem;padding:.3rem .8rem .3rem .6rem;
+  border:1px solid var(--rule);border-radius:99px;font-size:.82rem;font-weight:500;color:var(--fg);cursor:pointer}
+.t5-toggle:hover{border-color:var(--fg-dim)}
+.t5-toggle input{margin:0;width:1rem;height:1rem;accent-color:var(--accent);cursor:pointer}
 .chip .count{display:inline-block;margin-left:.4rem;min-width:1.25rem;padding:0 .35rem;border-radius:99px;
   font-size:.72rem;font-weight:700;line-height:1.25rem;text-align:center;background:var(--bg-3);color:var(--fg)}
 .chip[aria-pressed=true] .count{background:color-mix(in srgb,currentColor 22%,transparent);color:inherit}
@@ -641,7 +645,63 @@ html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{background:var(--bg-
 .toast.show{transform:translate(-50%,0);opacity:1;visibility:visible;transition-delay:0s}
 
 /* ---------- phones ---------- */
+/* ---------- top 5s: Steven's and Mia's side by side, above the months ---------- */
+.tops5{margin:0 0 2.75rem}
+.t5-title{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:clamp(1.7rem,4vw,2.3rem);
+  line-height:1;margin:0 0 1.2rem;letter-spacing:.01em}
+.t5-title span{color:var(--fg-dim);font-weight:600}
+.t5-people{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,30rem),1fr));gap:1.75rem 2.5rem}
+.t5-person{min-width:0}
+.t5-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-bottom:.6rem;
+  margin-bottom:.9rem;border-bottom:2px solid var(--c)}
+.t5-name{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:1.5rem;line-height:1;color:var(--c);margin:0}
+.t5-head .btn{padding:.4rem .8rem;font-size:.82rem}
+.t5-label{font-size:.82rem;font-weight:500;color:var(--fg-dim);margin:0 0 .5rem}
+/* five ranked covers; each is a big rank number with the cover laid over its right edge */
+.t5-row{list-style:none;margin:0 0 1.1rem;padding:.3rem 0 .4rem;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.35rem}
+.t5-item{position:relative;padding-left:1.35rem;min-width:0}
+.t5-n{position:absolute;left:0;bottom:2.55rem;z-index:0;font-family:var(--display);font-weight:800;
+  font-size:clamp(3.4rem,5vw,4.4rem);line-height:.8;letter-spacing:-.04em;color:var(--bg);
+  -webkit-text-stroke:1.5px var(--c);paint-order:stroke;pointer-events:none;user-select:none}
+.t5-item.first .t5-n{color:var(--c);-webkit-text-stroke:0}
+.t5-open{display:block;width:100%;text-align:left;position:relative;z-index:1}
+.t5-open .cover-slot{transition:transform .2s ease}
+.t5-open:hover .cover-slot,.t5-open:focus-visible .cover-slot{transform:translateY(-4px)}
+.t5-open .cover-fallback{font-size:.62rem;padding:.35rem}
+.t5-both{position:absolute;z-index:2;left:50%;top:.3rem;transform:translateX(-50%);font-size:.62rem;font-weight:600;
+  padding:.08rem .4rem;border-radius:99px;background:var(--gold);color:var(--on-gold);white-space:nowrap}
+.t5-t,.t5-s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t5-t{font-weight:600;font-size:.78rem;line-height:1.25;margin:.5rem 0 0}
+.t5-s{font-size:.72rem;color:var(--fg-dim);margin:.1rem 0 0;line-height:1.4}
+.t5-s b{color:var(--c);font-weight:600}
+/* an open slot */
+.t5-item.add .cover-slot{background:none;box-shadow:none;border:1.5px dashed var(--rule)}
+.t5-item.add .cover-fallback{background:none;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--ui);font-weight:500;font-size:1.2rem;text-transform:none;color:var(--fg-dim)}
+.t5-item.add .t5-n{opacity:.3}
+/* the editor */
+.t5-list{list-style:none;margin:0 0 1rem;padding:0;display:grid;gap:.6rem}
+.t5-er{display:grid;grid-template-columns:2.2rem 52px minmax(0,1fr) auto;align-items:center;gap:.85rem;
+  border:1px solid var(--rule);border-radius:var(--r-l);padding:.6rem .75rem;background:var(--bg-2)}
+.t5-er .rank{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1;color:var(--c);text-align:center}
+.t5-er .cover-fallback{font-size:.5rem;padding:.25rem}
+.t5-er .bt{font-weight:600;margin:0;line-height:1.25}
+.t5-er .ba{font-size:.85rem;color:var(--fg-dim);margin:0}
+.t5-ctl{display:flex;gap:.3rem;flex-wrap:wrap;justify-content:flex-end}
+.t5-ctl .btn{padding:.45rem .7rem}
+.t5-er .cover-picks{grid-column:1/-1}
+.t5-add{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.6rem;align-items:end;margin-bottom:.8rem}
+.t5-add .field{margin:0}
+.t5-type{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
+.t5-who{display:flex;gap:.4rem}
+
 @media (max-width:640px){
+  /* on a phone the covers would be tiny five across, so the row scrolls sideways instead */
+  .t5-row{display:flex;overflow-x:auto;gap:.3rem;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+  .t5-item{flex:0 0 96px;padding-left:1.3rem;scroll-snap-align:start}
+  .t5-er{grid-template-columns:1.8rem 44px minmax(0,1fr)}
+  .t5-ctl{grid-column:1/-1;justify-content:flex-start}
+  .t5-type{grid-template-columns:1fr}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.6rem .9rem}
   .card{--gap:.55rem}
   .card-month{font-size:1.2rem}
@@ -763,6 +823,8 @@ html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{background:var(--bg-
       <button class="chip" data-layout="cards" aria-pressed="true">Months</button>
       <button class="chip" data-layout="list" aria-pressed="false">List</button>
       <button class="chip" data-layout="tbr" aria-pressed="false">TBR<span class="count" id="tbr-count" hidden></span></button>
+      <!-- shows or hides the Top 5s; on by itself in December -->
+      <label class="t5-toggle" id="t5-toggle"><input type="checkbox" id="t5-show"> Top 5s</label>
       <span class="grow"></span>
       <button class="btn gold" id="btn-wrapped">Wrapped</button>
       <details class="menu" id="more">
@@ -778,6 +840,9 @@ html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{background:var(--bg-
       </details>
     </div>
     <input type="file" id="file-input" accept="application/json,.json" hidden>
+
+    <!-- each of your top 5s of the year, side by side; filled in by renderTops5() -->
+    <section class="tops5" id="tops5" aria-label="Top 5s of the year"></section>
 
     <div class="grid" id="grid"></div>
 
@@ -877,7 +942,7 @@ const MONTH_THEMES = [
 /* ================= state ================= */
 let DATA = null;
 let YEAR = Number(window.START_YEAR) || 2026;
-let view = null;              // null | 'month' | 'wrapped'
+let view = null;              // null | 'month' | 'wrapped' | 'top5'
 let openMonth = null, editing = false, me = null;
 let FB = null, docRef = null, unsub = null, saveTimer = null;
 const LOCAL = {};             // year -> data, used when Firebase is off
@@ -938,6 +1003,7 @@ function blankYear(y, from){
     themeMode: base.themeMode==='fixed' ? 'fixed' : 'auto',
     meta: { updatedBy:'', updatedAt:'' },
     backlog: [],
+    top5: {},
     months: MONTHS.map(n=>({ id:n.toLowerCase(), name:n, boms:[], top:[] }))
   };
 }
@@ -982,6 +1048,13 @@ function migrate(d){
   d.meta = d.meta || {updatedBy:'',updatedAt:''};
   d.backlog = Array.isArray(d.backlog) ? d.backlog : [];
   d.backlog.forEach(b=>{ b.title=b.title||''; b.author=b.author||''; b.addedBy=b.addedBy||''; });
+  // each reader's two top 5s of the year, best first:
+  // { steven:{ club:[{title,author,cover}], own:[...] }, mia:{...} }
+  const t5 = (d.top5 && typeof d.top5==='object') ? d.top5 : {};
+  const tidyT5 = l => (Array.isArray(l) ? l : []).filter(b=>b && b.title).slice(0,5)
+    .map(b=>({ title:String(b.title), author:String(b.author||''), cover:String(b.cover||'') }));
+  d.top5 = {};
+  d.members.forEach(x=>{ const v = t5[x.id] || {}; d.top5[x.id] = { club:tidyT5(v.club), own:tidyT5(v.own) }; });
   d.months = d.months || [];
   d.months.forEach(m=>{
     m.top = Array.isArray(m.top) ? m.top : [];
@@ -1810,7 +1883,7 @@ function render(){
 
   $('#grid').querySelectorAll('.card').forEach(c=>
     c.addEventListener('click',()=>openSheet('month', c.dataset.month)));
-  paintLayout(); renderList(); renderNow(); renderTbr();
+  paintLayout(); renderList(); renderNow(); renderTbr(); renderTops5();
   paintLastEdit();
 }
 
@@ -1857,6 +1930,9 @@ Object.values(VIEW_BOX).forEach(sel=>$(sel).addEventListener('animationend', e=>
 }));
 function paintLayout(){
   $('#grid').hidden = layout!=='cards';
+  $('#tops5').hidden = layout!=='cards' || !t5Shown();
+  $('#t5-toggle').hidden = layout!=='cards';
+  $('#t5-show').checked = t5Shown();
   $('#listview').hidden = layout!=='list';
   $('#tbrview').hidden = layout!=='tbr';
   document.querySelectorAll('[data-layout]').forEach(b=>
@@ -2119,6 +2195,215 @@ $('#now').addEventListener('click', e=>{
   if (b.dataset.edit){ editing = true; renderSheet(); }   // nothing picked yet: go straight to editing
 });
 
+/* ================= top 5s of the year ================= */
+// Each of you keeps two ranked top 5s: your favourite book club books (the ones you read
+// together) and your favourite books you read on your own. Steven's and Mia's sit side by
+// side above the months; "Edit" opens a page to add, reorder and pick covers.
+const T5_KINDS = [
+  { key:'club', label:'Book club', long:'Top 5 book club books', hint:'From the books you read together' },
+  { key:'own',  label:'On my own', long:'Top 5 books read on my own', hint:'From your top books of the month' }
+];
+let t5Who = null;                        // whose lists the editor shows
+
+// Shown by itself in December. The "Top 5s" box next to Months / List / TBR shows or
+// hides it any other time. What you tick is remembered in this browser for the rest of
+// that month only, so December still turns it on even if you hid it in November.
+const monthStamp = () => { const d = new Date(); return d.getFullYear()+'-'+(d.getMonth()+1); };
+function t5Shown(){
+  try {
+    const saved = JSON.parse(localStorage.getItem('bookclub-top5') || 'null');
+    if (saved && saved.month === monthStamp()) return !!saved.show;
+  } catch(e){}
+  return new Date().getMonth() === 11;   // December
+}
+$('#t5-show').addEventListener('change', e=>{
+  try { localStorage.setItem('bookclub-top5', JSON.stringify({ month:monthStamp(), show:e.target.checked })); } catch(err){}
+  paintLayout();
+});
+let t5Picks = null;                      // cover choices open in the editor: {kind, i, covers}
+const t5List = (id, kind) => {
+  DATA.top5 = DATA.top5 || {};
+  const p = DATA.top5[id] = DATA.top5[id] || {};
+  return p[kind] = p[kind] || [];
+};
+// the score this reader gave the book this year, if they logged it
+function t5Score(id, book){
+  const k = bookKey(book);
+  for (const m of DATA.months){
+    for (const b of (m.boms||[])) if (bookKey(b)===k && num((b.scores||{})[id])!=null) return num(b.scores[id]);
+    for (const b of (m.top||[])) if (b.member===id && bookKey(b)===k && num(b.score)!=null) return num(b.score);
+  }
+  return null;
+}
+
+function t5Row(id, kind){
+  const list = t5List(id, kind);
+  const others = DATA.members.filter(x=>x.id!==id).map(x=>new Set(t5List(x.id, kind).map(bookKey)));
+  let html = '';
+  for (let i=0; i<5; i++){
+    const b = list[i];
+    if (!b){
+      html += '<li class="t5-item add"><span class="t5-n" aria-hidden="true">'+(i+1)+'</span>'+
+        '<button class="t5-open" data-t5-edit="'+esc(id)+'" aria-label="Add number '+(i+1)+'">'+
+        coverMarkup(null, '', '+')+'<p class="t5-t">&nbsp;</p><p class="t5-s">&nbsp;</p></button></li>';
+      continue;
+    }
+    const sc = fmtScore(t5Score(id, b));
+    const both = others.some(set=>set.has(bookKey(b)));
+    html += '<li class="t5-item'+(i===0?' first':'')+'"><span class="t5-n" aria-hidden="true">'+(i+1)+'</span>'+
+      '<button class="t5-open" data-t5-edit="'+esc(id)+'" title="'+esc(b.title)+(b.author?' — '+esc(b.author):'')+
+        '" aria-label="Number '+(i+1)+': '+esc(b.title)+'">'+
+        (both?'<span class="t5-both">Both</span>':'')+coverMarkup(b)+
+        '<p class="t5-t">'+esc(b.title)+'</p>'+
+        '<p class="t5-s">'+(sc?'<b>'+sc+'/5</b>':'')+(sc&&b.author?' · ':'')+esc(b.author||'')+(sc||b.author?'':'&nbsp;')+'</p>'+
+      '</button></li>';
+  }
+  return '<ol class="t5-row">'+html+'</ol>';
+}
+
+function renderTops5(){
+  $('#tops5').innerHTML = '<h2 class="t5-title">Top 5s <span>of '+YEAR+'</span></h2><div class="t5-people">'+
+    DATA.members.map(x=>
+      '<div class="t5-person" style="--c:'+readerColor(x.id)+'">'+
+        '<div class="t5-head"><h3 class="t5-name">'+esc(memberLabel(x.id))+'</h3>'+
+          '<button class="btn" data-t5-edit="'+esc(x.id)+'">Edit</button></div>'+
+        T5_KINDS.map(k=>'<p class="t5-label">'+k.label+'</p>'+t5Row(x.id, k.key)).join('')+
+      '</div>').join('')+'</div>';
+}
+$('#tops5').addEventListener('click', e=>{
+  const b = e.target.closest('[data-t5-edit]');
+  if (!b) return;
+  t5Who = b.dataset.t5Edit; t5Picks = null;
+  openSheet('top5'); $('#sheet').scrollTop = 0;
+});
+
+// books that can go on a list and aren't on it yet: shared books for the book club list,
+// this reader's own top books for the other one. Best scored first.
+function t5Choices(id, kind){
+  const have = new Set(t5List(id, kind).map(bookKey)), seen = new Set(), out = [];
+  DATA.months.forEach(m=>{
+    const src = kind==='club' ? (m.boms||[]) : (m.top||[]).filter(b=>b.member===id);
+    src.forEach(b=>{
+      const k = bookKey(b);
+      if (!b.title || have.has(k) || seen.has(k)) return;
+      seen.add(k);
+      out.push({ title:b.title, author:b.author||'', cover:b.cover||'', score:t5Score(id, b) });
+    });
+  });
+  return out.sort((a,b)=>(b.score??-1)-(a.score??-1));
+}
+
+function t5Editor(id, k){
+  const list = t5List(id, k.key), choices = t5Choices(id, k.key), next = list.length+1;
+  let html = '<div class="section-label">'+k.long+' · '+list.length+' of 5</div>';
+  html += list.length ? '<ol class="t5-list">'+list.map((b,i)=>
+    '<li class="t5-er"><span class="rank">'+(i+1)+'</span>'+coverMarkup(b)+
+    '<div><p class="bt">'+esc(b.title)+'</p>'+(b.author?'<p class="ba">'+esc(b.author)+'</p>':'')+'</div>'+
+    '<div class="t5-ctl" data-kind="'+k.key+'">'+
+      '<button class="btn" data-mv="-1" data-i="'+i+'" aria-label="Move up"'+(i===0?' disabled':'')+'>↑</button>'+
+      '<button class="btn" data-mv="1" data-i="'+i+'" aria-label="Move down"'+(i===list.length-1?' disabled':'')+'>↓</button>'+
+      '<button class="btn" data-cov="'+i+'">Cover</button>'+
+      '<button class="btn ghost" data-del="'+i+'" aria-label="Remove">×</button></div>'+
+    (t5Picks && t5Picks.kind===k.key && t5Picks.i===i ? '<div class="cover-picks" data-kind="'+k.key+'">'+
+      '<div class="picks-head"><span>'+t5Picks.covers.length+' covers</span>'+
+      '<button class="link" data-closepicks="1">Close</button></div><div class="picks-grid">'+
+      t5Picks.covers.map((c,j)=>'<button class="pick'+(c.url===b.cover?' on':'')+'" data-pick="'+j+'">'+
+        '<img src="'+esc(c.url)+'" alt="Cover option '+(j+1)+'" loading="lazy" onerror="this.parentNode.style.display=\'none\'">'+
+        (c.label?'<span>'+esc(c.label)+'</span>':'')+'</button>').join('')+'</div></div>' : '')+
+    '</li>').join('')+'</ol>'
+    : '<p class="empty-note" style="margin-bottom:1rem">Nothing here yet.</p>';
+  if (list.length >= 5) return html+'<p class="empty-note">Full. Remove one to make room for another.</p>';
+  if (choices.length) html += '<div class="t5-add">'+
+    '<label class="field"><span>'+k.hint+'</span><select data-choice="'+k.key+'">'+
+    choices.map((c,i)=>'<option value="'+i+'">'+esc(c.title)+(c.author?' — '+esc(c.author):'')+
+      (c.score!=null?' ('+fmtScore(c.score)+'/5)':'')+'</option>').join('')+'</select></label>'+
+    '<button class="btn primary" data-add="logged" data-kind="'+k.key+'">Add as #'+next+'</button></div>';
+  html += '<div class="t5-add t5-type">'+
+    '<label class="field"><span>'+(choices.length?'Or type any book':'Title')+'</span>'+
+      '<input type="text" data-title="'+k.key+'" placeholder="Title"></label>'+
+    '<label class="field"><span>Author</span><input type="text" data-author="'+k.key+'" placeholder="Optional"></label>'+
+    '<button class="btn'+(choices.length?'':' primary')+'" data-add="typed" data-kind="'+k.key+'">Add as #'+next+'</button></div>';
+  return html;
+}
+
+function renderTop5Sheet(){
+  if (!DATA.members.some(x=>x.id===t5Who)) t5Who = me || DATA.members[0].id;
+  const id = t5Who;
+  paintWash(t5List(id,'club').concat(t5List(id,'own')).map(b=>b.cover).filter(Boolean).slice(0,3));
+  $('#sheet-inner').innerHTML = '<div class="t5-sheet" style="--c:'+readerColor(id)+'">'+
+    '<div class="sheet-bar"><button class="btn ghost" data-act="close">← All months</button>'+
+    '<div class="t5-who" role="group" aria-label="Whose lists">'+DATA.members.map(x=>
+      '<button class="chip" data-who="'+esc(x.id)+'" aria-pressed="'+(x.id===id)+'" style="--c:'+
+      readerColor(x.id)+';--oc:'+readerOn(x.id)+'">'+esc(memberLabel(x.id))+'</button>').join('')+'</div></div>'+
+    '<h2 class="sheet-month">'+esc(member(id).name)+"'s top 5s</h2>"+
+    '<p class="empty-note">Your favourites of '+YEAR+', best first. Use the arrows to reorder.</p>'+
+    T5_KINDS.map(k=>t5Editor(id, k)).join('')+'</div>';
+
+  const root = $('#sheet-inner .t5-sheet');
+  const done = () => { queueSave(); render(); renderSheet(); };
+  const kindOf = el => el.dataset.kind || (el.closest('[data-kind]')||{dataset:{}}).dataset.kind;
+  root.addEventListener('click', async e=>{
+    const t = sel => e.target.closest(sel);
+    if (t('[data-act="close"]')) return closeSheet();
+    if (t('[data-who]')){ t5Who = t('[data-who]').dataset.who; t5Picks = null; return renderSheet(); }
+    if (t('[data-mv]')){
+      const b = t('[data-mv]'), list = t5List(id, kindOf(b)), i = Number(b.dataset.i), j = i + Number(b.dataset.mv);
+      if (j<0 || j>=list.length) return;
+      [list[i], list[j]] = [list[j], list[i]]; t5Picks = null; return done();
+    }
+    if (t('[data-del]')){
+      const b = t('[data-del]');
+      if (!b.classList.contains('armed')){             // two taps, so a stray one doesn't lose a book
+        b.classList.add('armed'); b.textContent = 'Remove?';
+        setTimeout(()=>{ if (b.isConnected){ b.classList.remove('armed'); b.textContent = '×'; } }, 3000);
+        return;
+      }
+      t5List(id, kindOf(b)).splice(Number(b.dataset.del),1); t5Picks = null; return done();
+    }
+    if (t('[data-closepicks]')){ t5Picks = null; return renderSheet(); }
+    if (t('[data-pick]') && t5Picks){
+      t5List(id, t5Picks.kind)[t5Picks.i].cover = t5Picks.covers[Number(t('[data-pick]').dataset.pick)].url;
+      toast('Cover set'); return done();
+    }
+    if (t('[data-cov]')){
+      const b = t('[data-cov]'), kind = kindOf(b), i = Number(b.dataset.cov), book = t5List(id, kind)[i];
+      b.textContent = 'Searching…';
+      const info = await lookupBook(book.title, book.author);
+      if (!info.covers.length){ b.textContent = 'Cover'; return toast('No covers found'); }
+      t5Picks = { kind:kind, i:i, covers:info.covers }; return renderSheet();
+    }
+    const add = t('[data-add]');
+    if (!add) return;
+    const kind = add.dataset.kind, list = t5List(id, kind);
+    if (list.length >= 5) return;
+    let book;
+    if (add.dataset.add==='logged'){
+      const c = t5Choices(id, kind)[Number(root.querySelector('[data-choice="'+kind+'"]').value)];
+      if (!c) return;
+      book = { title:c.title, author:c.author, cover:c.cover };
+    } else {
+      const title = root.querySelector('[data-title="'+kind+'"]').value.trim();
+      const author = root.querySelector('[data-author="'+kind+'"]').value.trim();
+      if (!title) return toast('Add a title first');
+      if (list.some(b=>bookKey(b)===bookKey({title, author}))) return toast('Already on the list');
+      book = { title:title, author:author, cover:'' };
+    }
+    if (!book.cover){                                   // find a cover if it doesn't have one
+      add.textContent = 'Finding a cover…'; add.disabled = true;
+      const info = await lookupBook(book.title, book.author);
+      if (info.covers[0]) book.cover = info.covers[0].url;
+    }
+    list.push(book);
+    toast('Added as #'+list.length); done();
+  });
+  root.addEventListener('keydown', e=>{
+    const kind = e.target.dataset && (e.target.dataset.title || e.target.dataset.author);
+    if (e.key==='Enter' && kind){
+      e.preventDefault(); root.querySelector('[data-add="typed"][data-kind="'+kind+'"]').click();
+    }
+  });
+}
+
 /* ================= sheet ================= */
 function openSheet(kind, id){
   view = kind; openMonth = id||null; editing = false;
@@ -2143,6 +2428,7 @@ function renderSheet(){
   if (view==='month') return renderMonthSheet();
   paintWash([]);
   if (view==='wrapped') return renderWrapped();
+  if (view==='top5') return renderTop5Sheet();
 }
 
 /* The colour behind an open month: its covers, blurred until only their colours are left
